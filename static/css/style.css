@@ -1,0 +1,256 @@
+/* Custom properties for easy color changes */
+:root {
+    --bg-color: #1a1a2e; /* Dark background */
+    --card-bg: #16213e; /* Slightly lighter dark for cards */
+    --text-color: #e0e0e0; /* Light text for readability */
+    --primary-color: #0f3460; /* Dark blue primary */
+    --accent-color: #e94560; /* Reddish accent */
+    --border-color: rgba(255, 255, 255, 0.1); /* Subtle border for cards */
+    --header-text-color: #ffffff; /* White text for header */
+}
+
+body {
+    font-family: 'Inter', sans-serif; /* A modern, clean sans-serif font */
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh; /* Ensure body takes full viewport height */
+}
+
+.container {
+    width: 100%;
+    max-width: 900px; /* Max width to match the reference look */
+    padding: 20px;
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+/* General card styling */
+.card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 20px 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Soft shadow */
+    border: 1px solid var(--border-color); /* Subtle border */
+}
+
+header {
+    background-color: var(--card-bg); /* Use card background for header */
+    color: var(--header-text-color);
+    padding: 15px 0;
+    text-align: center;
+    border-radius: 8px; /* Match card border-radius */
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+}
+
+.fancy-title {
+    font-family: 'Rubik One', sans-serif; /* A bold, modern font */
+    font-size: 2.5em; /* Adjusted for the reference */
+    margin: 0;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    color: var(--header-text-color);
+}
+
+h2 {
+    color: var(--accent-color); /* Use accent color for section titles */
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-top: 0; /* Remove top margin for consistency */
+    margin-bottom: 20px;
+    font-size: 1.6em;
+}
+
+h3 {
+    color: var(--text-color); /* Lighter text for subheadings */
+    margin-top: 15px;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.description p, .stack-info p, .stack-info ul, .description ul {
+    margin-bottom: 10px;
+    font-size: 0.95em;
+    line-height: 1.7;
+}
+
+.description ul, .stack-info ul {
+    list-style-type: '🔹 '; /* Custom bullet point */
+    margin-left: 20px;
+    padding-left: 0; /* Remove default padding */
+}
+
+.description ul li, .stack-info ul li {
+    margin-bottom: 5px;
+}
+
+.quote {
+    font-style: italic;
+    text-align: center;
+    margin-top: 25px;
+    color: var(--accent-color);
+    font-size: 1.05em;
+    padding: 10px 0;
+    border-top: 1px dashed var(--border-color);
+    border-bottom: 1px dashed var(--border-color);
+}
+
+/* Stats section styling */
+.stats-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Space between cards */
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    flex: 1; /* Distribute space equally */
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px); /* Slight lift on hover */
+}
+
+.stat-card h3 {
+    color: var(--accent-color);
+    margin: 0 0 10px 0;
+    font-size: 1.1em;
+}
+
+.stat-card p {
+    font-size: 2.2em; /* Larger text for numbers */
+    font-weight: bold;
+    color: var(--header-text-color);
+    margin: 0;
+}
+
+/* Map specific styling */
+#map {
+    height: 450px; /* Slightly reduced height for better fit */
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.2); /* Inner shadow for map */
+    background-color: #333; /* Fallback for map loading */
+}
+
+/* Upload section styling */
+.upload-section {
+    padding: 20px 30px;
+    text-align: center;
+}
+
+.upload-section input[type="file"] {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border: 1px solid var(--accent-color);
+    border-radius: 5px;
+    padding: 10px;
+    margin-right: 15px;
+    cursor: pointer;
+    font-size: 0.9em;
+    box-sizing: border-box; /* Include padding in width */
+}
+
+/* Style the file input button (browser default styling is hard to change) */
+.upload-section input[type="file"]::-webkit-file-upload-button {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.upload-section input[type="file"]::-webkit-file-upload-button:hover {
+    background-color: #c93650;
+}
+
+.upload-section button {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.upload-section button:hover {
+    background-color: #c93650;
+}
+
+#uploadStatus {
+    margin-top: 15px;
+    font-weight: bold;
+    color: var(--text-color);
+    font-size: 0.9em;
+}
+
+/* Links within text */
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #c93650;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    .fancy-title {
+        font-size: 2em;
+    }
+
+    .stats-section {
+        flex-direction: column; /* Stack cards vertically on small screens */
+        gap: 15px;
+    }
+
+    .card {
+        padding: 15px 20px;
+    }
+
+    h2 {
+        font-size: 1.4em;
+    }
+}
+
+@media (max-width: 480px) {
+    .fancy-title {
+        font-size: 1.8em;
+    }
+    .stat-card p {
+        font-size: 1.8em;
+    }
+    .upload-section input[type="file"],
+    .upload-section button {
+        width: 100%; /* Full width for inputs on very small screens */
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Rubik+One&display=swap');
