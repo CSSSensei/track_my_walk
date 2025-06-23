@@ -84,4 +84,16 @@ async function fetchWalksAndDisplay() {
     }
 }
 
+document.querySelectorAll('.stat-card').forEach(card => {
+    card.addEventListener('mousemove', function(e) {
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left; // x position within the element
+        const y = e.clientY - rect.top;  // y position within the element
+
+        // Update the position of the gradient
+        this.style.setProperty('--mouse-x', `${x}px`);
+        this.style.setProperty('--mouse-y', `${y}px`);
+    });
+});
+
 document.addEventListener('DOMContentLoaded', initMap);

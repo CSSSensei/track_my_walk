@@ -1,4 +1,12 @@
 /* Custom properties for easy color changes */
+@font-face {
+    font-family: 'Morfin Sans';
+    src: url('../fonts/MorfinSans-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 :root {
     --bg-color: #1a1a2e; /* Dark background */
     --card-bg: #16213e; /* Slightly lighter dark for cards */
@@ -50,8 +58,8 @@ header {
 }
 
 .fancy-title {
-    font-family: 'Rubik One', sans-serif; /* A bold, modern font */
-    font-size: 2.5em; /* Adjusted for the reference */
+    font-family: 'Morfin Sans', sans-serif;
+    font-size: 2.5em;
     margin: 0;
     letter-spacing: 1px;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
@@ -118,10 +126,38 @@ h3 {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     border: 1px solid var(--border-color);
     transition: transform 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 1;
 }
 
-.stat-card:hover {
-    transform: translateY(-5px); /* Slight lift on hover */
+.stat-card::before {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(233, 69, 96, 0.4) 0%, rgba(233, 69, 96, 0) 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    pointer-events: none;
+    z-index: -1;
+    left: var(--mouse-x, 0);
+    top: var(--mouse-y, 0);
+}
+
+.stat-card:hover::before {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.stat-card:hover h3,
+.stat-card:hover p {
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+    color: var(--accent-color);
+    text-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
 }
 
 .stat-card h3 {
