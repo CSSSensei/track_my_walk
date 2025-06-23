@@ -148,8 +148,7 @@ h3 {
 
 /* Upload section styling */
 .upload-section {
-    padding: 20px 30px;
-    text-align: center;
+    display: none;
 }
 
 .upload-section input[type="file"] {

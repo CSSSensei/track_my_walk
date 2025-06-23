@@ -3,9 +3,12 @@ from flask import Flask, render_template, request, jsonify
 import sqlite3
 from datetime import datetime
 import os
+from dotenv import load_dotenv, find_dotenv
 
 app = Flask(__name__)
+
 DATABASE = 'walks.db'
+API_KEY = os.getenv('API_KEY')
 
 
 def get_db():
@@ -45,13 +48,22 @@ def get_walks():
     return jsonify([dict(walk) for walk in walks])
 
 
+# --- MODIFIED ENDPOINT FOR LOADING (ONLY API) ---
 @app.route('/upload_location_history', methods=['POST'])
 def upload_location_history():
+    # Check API-key
+    auth_header = request.headers.get('X-API-Key')  # Или 'Authorization' с префиксом 'Bearer '
+    if not auth_header or auth_header != API_KEY:
+        return jsonify({'error': 'Unauthorized: Invalid or missing API Key'}), 401  # 401 Unauthorized
+
+    # Check file
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
     file = request.files['file']
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
+
+    # File Processing
     if file:
         try:
             data = json.load(file)
@@ -68,9 +80,9 @@ def upload_location_history():
                     prev_loc = locations[i - 1]
                     curr_loc = locations[i]
 
-                    time_diff = (int(curr_loc['timestampMs']) - int(prev_loc['timestampMs'])) / 1000 / 60  # in minutes
+                    time_diff = (int(curr_loc['timestampMs']) - int(prev_loc['timestampMs'])) / 1000 / 60
 
-                    if time_diff < 5:  # If points are close in time
+                    if time_diff < 5:
                         current_route.append([curr_loc['longitudeE7'] / 1e7, curr_loc['latitudeE7'] / 1e7])
                     else:
                         if len(current_route) > 1:  # Route must consist of at least 2 points
@@ -82,7 +94,7 @@ def upload_location_history():
 
             db = get_db()
             cursor = db.cursor()
-            print(walk_routes)
+
             for route_coords in walk_routes:
                 # Create a GeoJSON LineString object
                 geojson_path = {
@@ -90,8 +102,7 @@ def upload_location_history():
                     "coordinates": route_coords
                 }
 
-                co2_saved = len(route_coords) * 10  # Simplified CO2 calculation
-
+                co2_saved = len(route_coords) * 10  # Simplified CO2 calculation TODO complex CO2 calculation
                 # Date of the walk (take the first point of the route)
                 # Need to convert first coordinate back to original format to get timestamp
                 first_original_loc = next((loc for loc in locations if
@@ -101,7 +112,7 @@ def upload_location_history():
                     date_ms = int(first_original_loc['timestampMs'])
                     walk_date = datetime.fromtimestamp(date_ms / 1000).strftime('%Y-%m-%d %H:%M:%S')
                 else:
-                    walk_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # Fallback
+                    walk_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
                 cursor.execute(
                     'INSERT INTO walks (name, date, description, path_geojson, co2_saved) VALUES (?, ?, ?, ?, ?)',

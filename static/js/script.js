@@ -84,47 +84,4 @@ async function fetchWalksAndDisplay() {
     }
 }
 
-// Upload the Google Location History file
-async function uploadFile() {
-    const fileInput = document.getElementById('locationHistoryFile');
-    const statusText = document.getElementById('uploadStatus');
-    const file = fileInput.files[0];
-
-    if (!file) {
-        statusText.textContent = 'Пожалуйста, выберите файл.';
-        statusText.style.color = 'red';
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    statusText.textContent = 'Загрузка...';
-    statusText.style.color = 'var(--text-color)'; /* Use variable for color */
-
-    try {
-        const response = await fetch('/upload_location_history', {
-            method: 'POST',
-            body: formData,
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            statusText.textContent = result.message;
-            statusText.style.color = 'lightgreen'; /* Use a direct color for success */
-            // Refresh walks and stats on the map after successful upload
-            fetchWalksAndDisplay();
-        } else {
-            statusText.textContent = `Ошибка: ${result.error}`;
-            statusText.style.color = 'var(--accent-color)'; /* Use accent color for error */
-        }
-    } catch (error) {
-        statusText.textContent = `Произошла ошибка при загрузке: ${error}`;
-        statusText.style.color = 'var(--accent-color)';
-        console.error('Upload error:', error);
-    }
-}
-
-// Ensure the map is initialized when the DOM is ready
 document.addEventListener('DOMContentLoaded', initMap);
