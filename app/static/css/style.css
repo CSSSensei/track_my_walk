@@ -1,8 +1,52 @@
 /* General Body and Container */
+:root {
+    /* Light Theme Colors */
+    --bg-color: #f0f2f5;
+    --container-bg: #ffffff;
+    --text-color: #333;
+    --heading-color: #555;
+    --card-bg: #f9f9f9;
+    --card-border: #ddd;
+    --shadow-light: rgba(0, 0, 0, 0.08);
+    --shadow-medium: rgba(0, 0, 0, 0.1);
+    --stat-card-bg: #e8f5e9;
+    --stat-card-shadow: rgba(0, 0, 0, 0.05);
+    --link-color: #4CAF50;
+    --link-hover-color: #388E3C;
+    --fancy-title-shadow: rgba(0, 0, 0, 0.1);
+    --quote-border: #eee;
+}
+
+body.dark-mode {
+    /* Dark Theme Colors */
+    --bg-color: #2c2c2c; /* Dark grey */
+    --container-bg: #2c2c2c; /* Slightly lighter dark grey */
+    --text-color: #e0e0e0; /* Light grey for text */
+    --heading-color: #f0f0f0; /* Lighter grey for headings */
+    --card-bg: #3a3a3a; /* Darker card background */
+    --card-border: #555;
+    --shadow-light: rgba(0, 0, 0, 0.3);
+    --shadow-medium: rgba(0, 0, 0, 0.5);
+    --stat-card-bg: #335d35; /* Darker green for stat cards */
+    --stat-card-shadow: rgba(0, 0, 0, 0.2);
+    --link-color: #8bc34a; /* Lighter green for links */
+    --link-hover-color: #aed581; /* Even lighter green on hover */
+    --fancy-title-shadow: rgba(0, 0, 0, 0.3);
+    --quote-border: #666;
+}
+
+@font-face {
+    font-family: 'Morfin Sans';
+    src: url('../fonts/MorfinSans-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #f0f2f5;
-    color: #333;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     line-height: 1.6;
     margin: 0;
     padding: 20px;
@@ -11,12 +55,13 @@ body {
     align-items: flex-start;
     min-height: 100vh;
     box-sizing: border-box;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for theme change */
 }
 
 .container {
-    background-color: #ffffff;
+    background-color: var(--container-bg);
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px var(--shadow-medium);
     padding: 30px;
     max-width: 960px;
     width: 100%;
@@ -24,62 +69,87 @@ body {
     display: flex;
     flex-direction: column;
     gap: 25px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Headings and Titles */
 header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 2px;
+    position: relative; /* For positioning the theme toggle button */
 }
 
 .fancy-title {
-    font-size: 2.8em;
-    color: #4CAF50; /* Green */
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    font-family: 'Morfin Sans', sans-serif;
+    font-size: 3.2em;
+    color: #4CAF50; /* Green - consistent accent */
+    text-shadow: 2px 2px 5px var(--fancy-title-shadow);
     margin-bottom: 10px;
     font-weight: 700;
 }
 
 h2 {
-    color: #555;
+    color: var(--heading-color);
     font-size: 1.8em;
     margin-bottom: 15px;
-    border-bottom: 2px solid #eee;
     padding-bottom: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: color 0.3s ease, border-color 0.3s ease;
 }
 
 .section-title-link a {
-    color: #4CAF50;
+    color: var(--link-color);
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .section-title-link a:hover {
-    color: #388E3C; /* Darker green on hover */
+    color: var(--link-hover-color);
     text-decoration: underline;
 }
 
+/* Theme Toggle Button */
+.theme-toggle-button {
+    background-color: #4CAF50; /* Green accent */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    position: absolute;
+    top: 10px; /* Adjust as needed */
+    right: 10px; /* Adjust as needed */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.theme-toggle-button:hover {
+    background-color: #388E3C; /* Darker green */
+    transform: translateY(-1px);
+}
 
 /* Cards for Sections */
 .card {
-    background-color: #f9f9f9;
+    background-color: var(--card-bg);
     border-radius: 15px;
     padding: 25px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s ease-in-out;
+    box-shadow: 0 5px 15px var(--shadow-light);
+    transition: transform 0.2s ease-in-out, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+/*
 .card:hover {
     transform: translateY(-3px);
 }
+*/
 
 /* Intro Section */
 .intro-section p {
     font-size: 1.1em;
-    color: #666;
+    color: var(--text-color); /* Use text-color variable */
 }
 
 /* Stats Section */
@@ -91,16 +161,16 @@ h2 {
 }
 
 .stat-card {
-    background-color: #e8f5e9; /* Light green */
+    background-color: var(--stat-card-bg);
     padding: 20px;
     border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px var(--stat-card-shadow);
     position: relative;
     overflow: hidden;
     cursor: pointer;
     --mouse-x: 0px;
     --mouse-y: 0px;
-    transition: transform 0.2s ease-in-out;
+    transition: transform 0.2s ease-in-out, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .stat-card:hover {
@@ -132,15 +202,16 @@ h2 {
 }
 
 .stat-card h3 {
-    color: #388E3C;
+    color: var(--heading-color); /* Use heading color variable */
     margin-top: 0;
     font-size: 1.2em;
+    transition: color 0.3s ease;
 }
 
 .stat-card p {
     font-size: 2.2em;
     font-weight: 700;
-    color: #4CAF50;
+    color: #4CAF50; /* Green accent - consistent */
     margin: 10px 0 0;
 }
 
@@ -149,7 +220,7 @@ h2 {
     height: 400px;
     width: 100%;
     border-radius: 10px;
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 0 8px var(--shadow-light);
 }
 
 /* Recent Walks Section (Index Page) */
@@ -160,32 +231,34 @@ h2 {
 }
 
 .recent-walk-card, .all-walk-card {
-    background-color: #fff;
-    border: 1px solid #ddd;
+    background-color: var(--container-bg); /* Use container bg for walk cards for consistency with main container */
+    border: 1px solid var(--card-border);
     border-radius: 10px;
     padding: 15px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 8px var(--shadow-light);
+    transition: all 0.2s ease-in-out, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
 }
 
 .recent-walk-card:hover, .all-walk-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    border-color: #4CAF50;
+    box-shadow: 0 5px 15px var(--shadow-medium);
+    border-color: #4CAF50; /* Green accent */
 }
 
 .recent-walk-card h4, .all-walk-card h4 {
     margin-top: 0;
     margin-bottom: 10px;
-    color: #388E3C;
+    color: var(--heading-color); /* Use heading color variable */
     font-size: 1.1em;
+    transition: color 0.3s ease;
 }
 
 .recent-walk-card p, .all-walk-card p {
     margin: 5px 0;
     font-size: 0.95em;
-    color: #666;
+    color: var(--text-color); /* Use text-color variable */
+    transition: color 0.3s ease;
 }
 
 /* All Walks Page Grid */
@@ -206,17 +279,18 @@ h2 {
 .walk-details-section p {
     font-size: 1.1em;
     margin-bottom: 8px;
+    color: var(--text-color);
 }
 
 .walk-details-section strong {
-    color: #4CAF50;
+    color: #4CAF50; /* Green accent */
 }
 
 .single-walk-map {
     height: 500px !important; /* Larger map for single walk */
     width: 100%;
     border-radius: 10px;
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 0 8px var(--shadow-light);
 }
 
 /* Description Section */
@@ -228,11 +302,11 @@ h2 {
 
 .description ul li {
     margin-bottom: 8px;
-    color: #555;
+    color: var(--text-color); /* Use text-color variable */
 }
 
 .description p b, .description ul li b {
-    color: #4CAF50;
+    color: #4CAF50; /* Green accent */
 }
 
 .description .quote {
@@ -240,8 +314,8 @@ h2 {
     text-align: right;
     margin-top: 20px;
     font-size: 1.1em;
-    color: #777;
-    border-top: 1px solid #eee;
+    color: var(--text-color); /* Use text-color variable */
+    border-top: 1px solid var(--quote-border);
     padding-top: 10px;
 }
 
@@ -254,14 +328,31 @@ h2 {
 }
 
 .upload-section input[type="file"] {
-    border: 1px solid #ddd;
+    border: 1px solid var(--card-border);
     border-radius: 8px;
     padding: 10px 15px;
-    background-color: #f0f0f0;
+    background-color: var(--card-bg); /* Use card-bg variable */
+    color: var(--text-color);
     cursor: pointer;
     width: 100%;
     max-width: 400px;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
+
+.upload-section input[type="file"]::file-selector-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.upload-section input[type="file"]::file-selector-button:hover {
+    background-color: #388E3C;
+}
+
 
 .upload-section button {
     background-color: #4CAF50;
@@ -271,7 +362,7 @@ h2 {
     padding: 12px 25px;
     font-size: 1em;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -281,8 +372,9 @@ h2 {
 }
 
 #uploadStatus {
-    color: #555;
+    color: var(--text-color); /* Use text-color variable */
     font-size: 0.9em;
+    transition: color 0.3s ease;
 }
 
 /* Stack Info Section */
@@ -293,11 +385,11 @@ h2 {
 
 .stack-info ul li {
     margin-bottom: 10px;
-    color: #555;
+    color: var(--text-color); /* Use text-color variable */
 }
 
 .stack-info ul li b {
-    color: #4CAF50;
+    color: #4CAF50; /* Green accent */
 }
 
 /* Back Link */
@@ -305,13 +397,13 @@ h2 {
     display: inline-block;
     margin-top: 20px;
     text-decoration: none;
-    color: #4CAF50;
+    color: var(--link-color);
     font-weight: bold;
     transition: color 0.3s ease;
 }
 
 .back-link:hover {
-    color: #388E3C;
+    color: var(--link-hover-color);
 }
 
 
@@ -363,6 +455,11 @@ h2 {
 
     .stat-card p {
         font-size: 1.5em;
+    }
+
+    .theme-toggle-button {
+        position: static; /* Remove absolute positioning */
+        margin-top: 15px; /* Add some space */
     }
 }
 

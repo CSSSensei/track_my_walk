@@ -1,179 +1,279 @@
-/* Specific styles for admin page */
+/* Define dark green theme variables */
+:root {
+    --admin-bg-color: #1a1a1a;          /* Very dark grey for background */
+    --admin-container-bg: #2a2a2a;      /* Darker grey for main container */
+    --admin-card-bg: #3a3a3a;           /* Dark grey for cards */
+    --admin-text-color: #e0e0e0;        /* Light grey for general text */
+    --admin-heading-color: #f0f0f0;     /* Lighter grey for headings */
+    --admin-border-color: #555;         /* Medium grey for borders */
+    --admin-accent-color: #8bc34a;      /* Lighter green for accents (buttons, links, highlights) */
+    --admin-accent-color-hover: #aed581; /* Even lighter green for hover states */
+    --admin-primary-color: #4a4a4a;     /* Darker grey for input backgrounds */
+    --admin-danger-color: #dc3545;      /* Red for delete/warning buttons */
+    --admin-danger-color-hover: #c82333;/* Darker red for hover */
+    --admin-success-color: #aed581;     /* Light green for success messages */
+    --admin-info-color: #6daee1;        /* Blue for info messages */
+    --admin-shadow-light: rgba(0, 0, 0, 0.3); /* Lighter shadow */
+    --admin-shadow-medium: rgba(0, 0, 0, 0.5); /* Stronger shadow */
+    --admin-header-text-color: #f0f0f0; /* For elements like Flatpickr month/year */
+    --admin-map-overlay-color: rgba(76, 175, 80, 0.5); /* Greenish overlay for map interactions */
+}
+
+
 body {
     font-family: 'Inter', sans-serif;
-    background: var(--bg-color);
-    color: var(--text-color);
+    background: var(--admin-bg-color); /* Use dark background variable */
+    color: var(--admin-text-color);    /* Use light text color variable */
     padding: 20px;
     margin: 0;
     display: flex;
     justify-content: center;
+    align-items: flex-start; /* Align content to the top (prevents login form from stretching too much) */
     min-height: 100vh;
+    box-sizing: border-box; /* Ensures padding doesn't add to total width/height */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
 }
+
+/* Specific styling for the admin login/panel container */
 .container {
-    max-width: 1000px;
+    max-width: 960px; /* Adjusted to your original general container max-width */
     width: 100%;
-    margin: 0 auto;
+    margin: 0 auto; /* Center it horizontally */
+    background: var(--admin-container-bg); /* Darker container background */
+    border-radius: 15px; /* Slightly more rounded corners */
+    padding: 30px; /* Generous padding */
+    box-shadow: 0 10px 30px var(--admin-shadow-medium); /* Stronger, darker shadow */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
+
+/* Card styling within the admin panel */
 .card {
-    background: var(--card-bg);
-    padding: 20px 30px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--border-color);
+    background: var(--admin-card-bg); /* Dark card background */
+    padding: 25px 30px; /* Slightly more padding */
+    border-radius: 10px; /* More rounded corners */
+    margin-bottom: 5px; /* More spacing */
+    box-shadow: 0 5px 20px var(--admin-shadow-light); /* Darker, more subtle shadow */
+    border: 1px solid var(--admin-border-color); /* Darker border */
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
+
 h1, h2 {
-    color: var(--accent-color);
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 10px;
+    color: var(--admin-heading-color); /* Use heading color for consistency */
+    border-bottom: 1px solid var(--admin-border-color); /* Darker border */
+    padding-bottom: 12px; /* More padding */
     margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 1.6em;
+    margin-bottom: 25px; /* More spacing */
+    font-size: 2em; /* Slightly larger heading */
+    text-align: center; /* Center align headings */
+    transition: color 0.3s ease, border-color 0.3s ease;
 }
+
+/* Specific styling for login page h1/h2 if needed for smaller font, otherwise general h1/h2 will apply */
+body.admin-login-page h1,
+body.admin-login-page h2 {
+    font-size: 1.8em; /* Slightly smaller for login page title */
+}
+
+
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px; /* More spacing */
 }
+
 label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 10px; /* More spacing */
     font-weight: bold;
-    color: var(--text-color);
-    font-size: 0.95em;
+    color: var(--admin-text-color); /* Use general text color */
+    font-size: 1em;
+    transition: color 0.3s ease;
 }
+
 input[type="text"],
+input[type="password"], /* Added password type for login form */
 input[type="datetime-local"],
 textarea {
-    width: calc(100% - 22px);
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background: var(--primary-color);
-    color: var(--text-color);
-    font-size: 1em;
+    width: calc(100% - 24px); /* Account for padding and border */
+    padding: 12px; /* More padding */
+    border: 1px solid var(--admin-border-color); /* Darker border */
+    border-radius: 6px; /* Slightly more rounded */
+    background: var(--admin-primary-color); /* Darker input background */
+    color: var(--admin-text-color); /* Light text in input */
+    font-size: 1.05em; /* Slightly larger font */
     box-sizing: border-box;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
+
 input[type="text"]:focus,
+input[type="password"]:focus,
 input[type="datetime-local"]:focus,
 textarea:focus {
     outline: none;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 2px rgba(233, 69, 96, 0.3);
+    border-color: var(--admin-accent-color); /* Green accent on focus */
+    box-shadow: 0 0 0 3px var(--admin-accent-color-hover); /* Green glowing effect */
 }
 
+/* General button styles */
 button {
-    background: var(--accent-color);
+    background: var(--admin-accent-color); /* Green accent for general buttons */
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
+    padding: 12px 25px; /* Larger padding */
+    border-radius: 6px; /* More rounded */
     cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 8px var(--admin-shadow-light);
 }
 button:hover {
-    background: #c93650;
+    background: var(--admin-accent-color-hover); /* Lighter green on hover */
+    transform: translateY(-1px);
 }
+
+/* Submit button specific styles */
 .submit-button {
-    background: #4CAF50;
+    background: var(--admin-accent-color); /* Consistent green */
     width: 100%;
-    padding: 15px 20px;
-    font-size: 1.2em;
-    margin-top: 25px;
+    padding: 18px 20px; /* Even larger */
+    font-size: 1.3em;
+    margin-top: 30px; /* More margin top */
+    box-shadow: 0 4px 15px var(--admin-shadow-medium);
 }
 .submit-button:hover {
-    background: #45a049; /* Dark Green */
+    background: var(--admin-accent-color-hover); /* Lighter green on hover */
 }
+
+/* Control buttons (e.g., Delete, Clear Map) */
 .control-button-group button {
-    background: #e94560; /* Red */
+    background: var(--admin-danger-color); /* Red for destructive actions */
 }
 .control-button-group button:hover {
-    background: #c93650; /* Dark Red */
+    background: var(--admin-danger-color-hover); /* Darker red */
 }
 
 
 #map {
     height: 500px;
     width: 100%;
-    margin-top: 20px;
-    border-radius: 8px;
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
-    background-color: #333;
+    margin-top: 25px; /* More margin */
+    border-radius: 10px; /* More rounded corners for map */
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.4); /* Stronger inset shadow */
+    background-color: #333; /* Dark background for map area */
 }
+
 #message {
-    margin-top: 20px;
-    padding: 10px;
-    border-radius: 5px;
+    margin-top: 25px; /* More margin */
+    padding: 12px; /* More padding */
+    border-radius: 8px; /* More rounded */
     font-weight: bold;
     text-align: center;
+    font-size: 1em;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease, background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
 }
+#message.visible {
+    opacity: 1; /* Make visible when class is added */
+}
+
 .message.error {
-    background-color: rgba(255, 0, 0, 0.2);
-    color: var(--accent-color);
+    background-color: rgba(220, 53, 69, 0.2); /* Red with transparency */
+    color: var(--admin-danger-color); /* Use red accent for text */
 }
 .message.success {
-    background-color: rgba(0, 255, 0, 0.2);
-    color: lightgreen;
+    background-color: rgba(139, 195, 74, 0.2); /* Green with transparency */
+    color: var(--admin-success-color); /* Use light green for text */
 }
+.message.info { /* New style for info messages */
+    background-color: rgba(109, 174, 225, 0.2); /* Blue with transparency */
+    color: var(--admin-info-color); /* Use blue for text */
+}
+
+
 .main-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    margin-bottom: 20px;
+    gap: 30px; /* More gap */
+    margin-bottom: 1px; /* More margin */
 }
+
 @media (max-width: 768px) { /* Adaptability for mobile */
     .main-grid {
         grid-template-columns: 1fr; /* One column for small screens */
     }
+    .container {
+        padding: 20px; /* Adjust padding for smaller screens */
+    }
+    h1, h2 {
+        font-size: 1.6em;
+    }
+    button, .submit-button {
+        padding: 10px 20px;
+        font-size: 1em;
+    }
 }
+
 .control-button-group {
-    margin-top: 15px;
+    margin-top: 25px; /* More margin */
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: 20px; /* More gap */
+    flex-wrap: wrap; /* Allow wrapping on small screens */
 }
+
 .logout-link {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 1px; /* More margin */
 }
 .logout-link a {
-    color: var(--accent-color);
+    color: var(--admin-accent-color); /* Green accent */
     text-decoration: none;
     font-weight: bold;
     font-size: 1.1em;
+    transition: color 0.3s ease;
 }
 .logout-link a:hover {
     text-decoration: underline;
+    color: var(--admin-accent-color-hover); /* Lighter green on hover */
 }
 
+
+/* Flatpickr overrides for dark theme */
 .flatpickr-calendar {
-    background: var(--card-bg) !important;
-    border: 1px solid var(--border-color) !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+    background: var(--admin-card-bg) !important; /* Dark background */
+    border: 1px solid var(--admin-border-color) !important; /* Dark border */
+    box-shadow: 0 4px 15px var(--admin-shadow-medium) !important; /* Stronger shadow */
+    color: var(--admin-text-color) !important;
 }
-.flatpickr-current-month .flatpickr-month {
-    color: var(--header-text-color) !important;
+.flatpickr-current-month .flatpickr-month,
+.flatpickr-current-month .flatpickr-year {
+    color: var(--admin-header-text-color) !important; /* Light text for month/year */
 }
 .flatpickr-weekday, .flatpickr-day {
-    color: var(--text-color) !important;
+    color: var(--admin-text-color) !important; /* Light text for weekdays/days */
 }
-.flatpickr-day.selected, .flatpickr-day.selected:hover, .flatpickr-day.startRange, .flatpickr-day.startRange:hover, .flatpickr-day.endRange, .flatpickr-day.endRange:hover {
-    background: var(--accent-color) !important;
-    border-color: var(--accent-color) !important;
-    color: white !important;
+.flatpickr-day.selected, .flatpickr-day.selected:hover,
+.flatpickr-day.startRange, .flatpickr-day.startRange:hover,
+.flatpickr-day.endRange, .flatpickr-day.endRange:hover {
+    background: var(--admin-accent-color) !important; /* Green selected day */
+    border-color: var(--admin-accent-color) !important;
+    color: white !important; /* White text on selected date */
 }
 .flatpickr-day.today.selected {
-    background: var(--primary-color) !important;
-    border-color: var(--primary-color) !important;
+    background: var(--admin-primary-color) !important; /* A slightly different dark color for today selected */
+    border-color: var(--admin-primary-color) !important;
 }
 .flatpickr-day.today:hover {
-     background: rgba(var(--accent-color-rgb), 0.7) !important; /* Lighter accent for hover */
+     background: var(--admin-map-overlay-color) !important; /* Use a related green for today hover */
 }
 .flatpickr-time input.flatpickr-hour, .flatpickr-time input.flatpickr-minute, .flatpickr-time input.flatpickr-second {
-    color: var(--header-text-color) !important;
-    background: var(--primary-color) !important;
+    color: var(--admin-header-text-color) !important;
+    background: var(--admin-primary-color) !important; /* Dark input background for time pickers */
     border: none !important;
 }
 .numInputWrapper span.arrowUp:after, .numInputWrapper span.arrowDown:after {
-    border-bottom-color: var(--text-color) !important;
-    border-top-color: var(--text-color) !important;
+    border-bottom-color: var(--admin-text-color) !important;
+    border-top-color: var(--admin-text-color) !important;
+}
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+    color: var(--admin-text-color) !important; /* Arrows color */
 }

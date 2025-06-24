@@ -1,10 +1,24 @@
 // app/static/js/all_walks.js
-document.addEventListener('DOMContentLoaded', fetchAllWalksAndDisplay);
+document.addEventListener('DOMContentLoaded', initAllWalksPage);
+
+function applyTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode')    ;
+    } else {
+        document.body.classList.remove('dark-mode');
+    }
+}
+
+function initAllWalksPage() {
+    applyTheme(); // Apply theme on load
+    fetchAllWalksAndDisplay();
+}
 
 async function fetchAllWalksAndDisplay() {
     try {
         const response = await fetch('/walks'); // Fetch all walks (already sorted by date DESC)
-        const walks = await await response.json();
+        const walks = await response.json();
         const allWalksContainer = document.getElementById('all-walks-grid');
         allWalksContainer.innerHTML = ''; // Clear previous content
 

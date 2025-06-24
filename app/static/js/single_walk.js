@@ -1,5 +1,19 @@
 // app/static/js/single_walk.js
-document.addEventListener('DOMContentLoaded', initSingleWalkMap);
+document.addEventListener('DOMContentLoaded', initSingleWalkPage);
+
+function applyTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
+    }
+}
+
+function initSingleWalkPage() {
+    applyTheme(); // Apply theme on load
+    initSingleWalkMap();
+}
 
 function initSingleWalkMap() {
     // walkData is passed from Flask in single_walk.html
@@ -19,7 +33,6 @@ function initSingleWalkMap() {
             day: 'numeric'
         });
     }
-
 
     let map;
     const mapContainer = document.getElementById('singleWalkMap');
@@ -43,13 +56,16 @@ function initSingleWalkMap() {
             const geoJsonLayer = L.geoJSON(geojsonData, {
                 style: function (feature) {
                     return {
-                        color: '#4CAF50', // Green color for single walk path
+                        color: '#4CAF50', // Green color for single walk path - consistent accent
                         weight: 5,
                         opacity: 0.9
                     };
                 },
                 // Add circles for start/end points or markers
                 pointToLayer: function (feature, latlng) {
+                    // This logic assumes `isStart` and `isEnd` properties are added to GeoJSON points.
+                    // Your current walk_processing.py doesn't add these. If you want start/end markers,
+                    // you'd need to modify walk_processing.py to add these properties to the first and last point.
                     if (feature.properties && feature.properties.isStart) {
                         return L.circleMarker(latlng, {
                             radius: 8,
@@ -70,7 +86,7 @@ function initSingleWalkMap() {
                             fillOpacity: 0.8
                         });
                     }
-                    return null; // Don't draw other points
+                    return null; // Don't draw other points by default
                 }
             }).addTo(map);
 

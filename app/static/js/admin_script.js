@@ -130,10 +130,25 @@ async function submitWalk() {
 function showMessage(text, type) {
     const msgDiv = document.getElementById('message');
     msgDiv.textContent = text;
-    // We clear the previous classes and add the necessary one
-    msgDiv.className = 'message';
+    msgDiv.className = 'message'; // Clear previous classes
+
     if (type) {
         msgDiv.classList.add(type);
+    }
+
+    // Add 'visible' class to trigger opacity transition
+    if (text) { // Only make visible if there's text
+        msgDiv.classList.add('visible');
+    } else {
+        msgDiv.classList.remove('visible'); // Hide if text is empty
+    }
+
+    // Optional: Hide message after a few seconds
+    if (type === 'success' || type === 'info') {
+        setTimeout(() => {
+            msgDiv.classList.remove('visible');
+            // msgDiv.textContent = ''; // Optionally clear text after hiding
+        }, 5000); // Message disappears after 5 seconds
     }
 }
 

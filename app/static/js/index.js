@@ -2,8 +2,20 @@
 let map;
 let geoJsonLayers = []; // To store Leaflet GeoJSON layers for clearing/updating
 
+// Function to apply theme based on localStorage
+function applyTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
+    }
+}
+
 // Initialize the Leaflet Map
 function initMap() {
+    applyTheme(); // Apply theme on load
+
     // Center map on Moscow
     map = L.map('map').setView([55.751244, 37.618423], 10);
 
@@ -14,7 +26,18 @@ function initMap() {
 
     fetchWalksAndDisplay();
     fetchRecentWalks();
+
+    // event listener for theme toggle button
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 }
+
+// Function to toggle theme
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
+    const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+    localStorage.setItem('theme', currentTheme);
+}
+
 
 // Fetch all walks from the backend and display them on the main map
 async function fetchWalksAndDisplay() {
@@ -83,8 +106,7 @@ async function fetchRecentWalks() {
 
             walkCard.innerHTML = `
                 <h4>${walk.name || 'Без названия'}</h4>
-                <p>Дата: ${walkDate}</p>
-                <p>Протяженность: ${walk.distance.toFixed(2)} км</p>
+                <p>${walkDate} — ${walk.distance.toFixed(2)} км</p>
             `;
             walkCard.addEventListener('click', () => {
                 window.location.href = `/walk/${walk.id}`; // Navigate to single walk page
