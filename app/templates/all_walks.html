@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Все мои прогулки</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="fancy-title">Все мои прогулки</h1>
+            <nav>
+                <a href="{{ url_for('main.index') }}" class="back-link">&larr; На главную</a>
+            </nav>
+        </header>
+
+        <section class="all-walks-section card">
+            <div id="all-walks-grid" class="all-walks-grid">
+                <!-- All walks will be loaded here by JavaScript -->
+            </div>
+        </section>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/all_walks.js') }}"></script>
+</body>
+</html>

@@ -34,6 +34,15 @@
             <div id="map"></div>
         </section>
 
+        <section class="recent-walks-section card">
+            <h2 class="section-title-link">
+                <a href="{{ url_for('main.all_walks') }}">Прогулки</a>
+            </h2>
+            <div id="recent-walks-list" class="recent-walks-grid">
+                <!-- Recent walks will be loaded here by JavaScript -->
+            </div>
+        </section>
+
         <section class="description card">
             <h2>О проекте</h2>
             <p>Это мой личный дневник и трекер прогулок по Москве. Моя большая мечта — исходить весь город пешком, открывая для себя новые места, сохраняя воспоминания и ненамеренно минимизируя углеродный след.</p>
@@ -83,6 +92,6 @@
         </section>
     </div>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </body>
 </html>
