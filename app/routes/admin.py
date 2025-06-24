@@ -1,7 +1,7 @@
 import json
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session, flash, current_app
 from datetime import datetime
-import database
+from ..extensions import database
 from app.utils import distance
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')  # Admin routes prefixed with /admin

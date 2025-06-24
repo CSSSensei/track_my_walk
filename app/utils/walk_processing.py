@@ -1,29 +1,116 @@
-# app/utils/walk_processing.py
-from datetime import datetime
+from datetime import datetime, timedelta
+import re
+from typing import List, Optional, Dict, Any
+from ..models.route import Route
 
 
-def process_google_location_history(locations):
-    walk_routes = []
-    current_route = []
+def parse_coordinates(coord_str: str) -> Optional[List[float]]:
+    numbers = re.findall(r'[-+]?\d*\.\d+|\d+', coord_str)
+    if len(numbers) != 2:
+        return None
+    # Google обычно хранит как 'lat, lon', GeoJSON - [lon, lat]
+    return [float(numbers[1]), float(numbers[0])]
 
-    if locations:
-        # GeoJSON coordinates are [longitude, latitude]
-        current_route.append([locations[0]['longitudeE7'] / 1e7, locations[0]['latitudeE7'] / 1e7])
 
-        for i in range(1, len(locations)):
-            prev_loc = locations[i - 1]
-            curr_loc = locations[i]
+def parse_time(time_str: str) -> datetime:
+    """
+    Парсит строку времени ISO 8601 с учетом смещения UTC.
+    Обрабатывает различные форматы миллисекунд и смещений (+HH:MM, +HHMM, Z).
+    """
+    # Удаляем миллисекунды для упрощения парсинга, если они есть
+    time_str_parts = time_str.split('.')
+    main_part = time_str_parts[0]
 
-            time_diff = (int(curr_loc['timestampMs']) - int(prev_loc['timestampMs'])) / 1000 / 60
+    offset = ''
+    if len(time_str_parts) > 1:
+        # Пытаемся обработать смещение, если оно есть после миллисекунд (e.g., +03:00)
+        offset_part = time_str_parts[1].split('+', 1)  # Разделяем только один раз
+        if len(offset_part) > 1:
+            offset = '+' + offset_part[1]
+            if ':' in offset:  # Удаляем двоеточие из смещения для %z
+                offset = offset.replace(':', '')
+        else:  # Случай, когда заканчивается на Z или нет смещения после мс
+            if time_str.endswith('Z'):
+                offset = 'Z'
+            elif '-' in time_str_parts[1]:  # Случай, когда это -HH:MM или -HHMM
+                offset = '-' + time_str_parts[1].split('-')[1]
+                if ':' in offset:
+                    offset = offset.replace(':', '')
+            elif '+' in time_str_parts[1]:  # Случай, когда это +HH:MM или +HHMM
+                offset = '+' + time_str_parts[1].split('+')[1]
+                if ':' in offset:
+                    offset = offset.replace(':', '')
 
-            if time_diff < 5:
-                current_route.append([curr_loc['longitudeE7'] / 1e7, curr_loc['latitudeE7'] / 1e7])
-            else:
-                if len(current_route) > 1:  # Route must consist of at least 2 points
-                    walk_routes.append(current_route)
-                current_route = [[curr_loc['longitudeE7'] / 1e7, curr_loc['latitudeE7'] / 1e7]]
+    full_time_str_to_parse = main_part + offset if offset else main_part
 
-        if len(current_route) > 1:
-            walk_routes.append(current_route)
+    # Если смещение Z, то это UTC. Просто убираем Z, добавляем +0000 для парсера.
+    if time_str.endswith('Z'):
+        dt_object = datetime.strptime(time_str[:-1] + '+0000', "%Y-%m-%dT%H:%M:%S%z")
+    else:
+        # Пытаемся распарсить с учетом потенциального смещения типа +HH:MM или +HHMM
+        try:
+            dt_object = datetime.strptime(full_time_str_to_parse, "%Y-%m-%dT%H:%M:%S%z")
+        except ValueError:
+            # Если не получилось с %z, попробуем без смещения (это менее точно, но может потребоваться для кривых данных)
+            # В этом случае часовой пояс будет потерян, и время будет наивным.
+            # Для Timeline данных это рискованно, но может быть как запасной вариант.
+            dt_object = datetime.strptime(main_part, "%Y-%m-%dT%H:%M:%S")
+
+    return dt_object
+
+
+def process_google_location_history(segments: List[Dict[str, Any]]) -> List[Route]:
+    walk_routes: List[Route] = []
+
+    # Соберем все точки из ВСЕХ сегментов timelinePath в один массив
+    print("Собираем все точки из всех сегментов timelinePath...")
+    all_global_timeline_points: List[Dict[str, Any]] = []
+    for segment in segments:
+        if 'timelinePath' in segment:
+            for location in segment['timelinePath']:
+                coords = parse_coordinates(location.get('point', ''))
+                try:
+                    point_time_dt = parse_time(location.get('time', ''))
+                    if coords:
+                        all_global_timeline_points.append({
+                            'coords': coords,
+                            'time_dt': point_time_dt
+                        })
+                except (ValueError, TypeError) as e:
+                    print(f"Ошибка парсинга времени для точки маршрута: {e}. Пропускаем точку: {location.get('time')}")
+
+    # Отсортируем все точки по времени
+    all_global_timeline_points.sort(key=lambda x: x['time_dt'])
+
+    print("Обрабатываем сегменты 'WALKING'...")
+    for segment in segments:
+        if 'activity' in segment and segment['activity'].get('topCandidate', {}).get('type') == 'WALKING':
+            try:
+                activity_start_str = segment.get('startTime')
+                activity_end_str = segment.get('endTime')
+
+                activity_start_dt = parse_time(activity_start_str)
+                activity_end_dt = parse_time(activity_end_str)
+
+                current_walk_path_geojson: List[List[float]] = []
+
+                # Для каждого интервала WALKING активности, выбрать точки из all_global_timeline_points
+                # Проходим по глобальному списку точек, ищем те, что входят в текущий интервал прогулки.
+                # Используем оптимизацию для отсортированного списка (two-pointer approach)
+                # (Хотя полный проход для каждого интервала тоже сработает, если интервалы могут сильно перекрываться)
+
+                # Для упрощения и надежности, пройдемся по всем точкам для каждого интервала WALKING.
+                # Это гарантирует, что мы не пропустим точки, даже если интервалы walking очень плотно расположены.
+                for point_data in all_global_timeline_points:
+                    if activity_start_dt <= point_data['time_dt'] <= activity_end_dt:
+                        current_walk_path_geojson.append(point_data['coords'])
+
+                # Добавляем маршрут, если в нем больше одной точки
+                if len(current_walk_path_geojson) > 1:
+                    walk_routes.append(Route(activity_start_str, activity_end_str, current_walk_path_geojson))
+
+            except (ValueError, TypeError) as e:
+                print(
+                    f"Ошибка парсинга времени для сегмента активности: {e}. Пропускаем сегмент: {segment.get('startTime')} - {segment.get('endTime')}")
 
     return walk_routes

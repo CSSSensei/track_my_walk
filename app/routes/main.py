@@ -1,6 +1,6 @@
 import json
 from flask import Blueprint, render_template, jsonify
-import database
+from ..extensions import database
 
 bp = Blueprint('main', __name__)
 

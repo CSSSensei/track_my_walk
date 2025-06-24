@@ -1,13 +1,13 @@
 import sqlite3
 from flask import current_app, g
 from pprint import pprint
-DATABASE = 'walks.db'
 
 
 def get_db():
     if 'db' not in g:
+        db_path = current_app.config['DATABASE']
         g.db = sqlite3.connect(
-            current_app.config['DATABASE'],
+            db_path,
             detect_types=sqlite3.PARSE_DECLTYPES
         )
         g.db.row_factory = sqlite3.Row
@@ -44,7 +44,8 @@ def init_db_command(app):
 
 
 if __name__ == '__main__':
-    db = sqlite3.connect(DATABASE)
+    from config import Config
+    db = sqlite3.connect(Config.DATABASE)
     cursor = db.cursor()
     cursor.execute('SELECT * FROM walks ORDER BY date DESC')
     rows = cursor.fetchall()

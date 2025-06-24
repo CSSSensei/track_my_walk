@@ -74,10 +74,10 @@ async function fetchWalksAndDisplay() {
         document.getElementById('totalDistance').textContent = totalDistanceKm.toFixed(2) + ' км'; // Format to 2 decimal places
 
         // Optionally, zoom map to fit all features
-        if (geoJsonLayers.length > 0) {
-            const group = new L.featureGroup(geoJsonLayers);
-            map.fitBounds(group.getBounds());
-        }
+//        if (geoJsonLayers.length > 0) {
+//            const group = new L.featureGroup(geoJsonLayers);
+//            map.fitBounds(group.getBounds());
+//        }
 
     } catch (error) {
         console.error('Error fetching walks:', error);
