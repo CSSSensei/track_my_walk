@@ -58,8 +58,6 @@ def add_walk():
         except ValueError:
             walk_date = datetime.now()
 
-        walk_date_formatted = walk_date.strftime('%Y-%m-%d %H:%M:%S')
-
         if not isinstance(coordinates, list) or not all(isinstance(c, list) and len(c) == 2 for c in coordinates):
             return jsonify({'error': 'Invalid coordinates format. Expected [[lon, lat], ...]'})
 
@@ -69,24 +67,25 @@ def add_walk():
                 "type": "Point",  # If only one point
                 "coordinates": coordinates[0]
             }
-            co2_saved = 0  # No distance for a single point
+            walk_distance = 0  # No distance for a single point
+            co2_saved = 0
         else:
             geojson_path = {
                 "type": "LineString",
                 "coordinates": coordinates
             }
-            co2_saved = 0
+            walk_distance = 0
             for i in range(len(coordinates) - 1):
                 p1_lon, p1_lat = coordinates[i]
                 p2_lon, p2_lat = coordinates[i + 1]
-                distance_segment = distance.calculate_distance_km(p1_lat, p1_lon, p2_lat, p2_lon)
-                co2_saved += distance_segment * 0.15  # Example: 150g CO2 per km
+                walk_distance += distance.calculate_distance_km(p1_lat, p1_lon, p2_lat, p2_lon)
+            co2_saved = walk_distance * 0.15  # Example: 150g CO2 per km
 
         db = database.get_db()
         cursor = db.cursor()
         cursor.execute(
-            'INSERT INTO walks (name, date, description, path_geojson, co2_saved) VALUES (?, ?, ?, ?, ?)',
-            (name, walk_date_formatted, description, json.dumps(geojson_path), co2_saved)
+            'INSERT INTO walks (name, date, description, path_geojson, distance, co2_saved) VALUES (?, ?, ?, ?, ?, ?)',
+            (name, int(walk_date.timestamp()), description, json.dumps(geojson_path), walk_distance, co2_saved)
         )
         db.commit()
         return jsonify({'message': 'Walk added successfully'}), 200

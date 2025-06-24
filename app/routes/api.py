@@ -1,7 +1,11 @@
 import json
+from typing import List
+
 from flask import Blueprint, request, jsonify, current_app
 from ..extensions import database
 from app.utils import walk_processing, distance
+from ..models.route import Route
+from app.utils import time_conversion
 
 bp = Blueprint('api', __name__, url_prefix='/api')  # API routes prefixed with /api
 
@@ -23,7 +27,7 @@ def upload_location_history():
         try:
             data = json.load(file)
             segments = data.get('semanticSegments', [])
-            walk_routes = walk_processing.process_google_location_history(segments)
+            walk_routes: List[Route] = walk_processing.process_google_location_history(segments)
 
             db = database.get_db()
             cursor = db.cursor()
@@ -35,18 +39,18 @@ def upload_location_history():
                     "coordinates": route_coords.path_geojson
                 }
 
-                co2_saved = 0
+                walk_distance = 0
                 for i in range(len(route_coords.path_geojson) - 1):
                     p1_lon, p1_lat = route_coords.path_geojson[i]
                     p2_lon, p2_lat = route_coords.path_geojson[i + 1]
-                    distance_segment = distance.calculate_distance_km(p1_lat, p1_lon, p2_lat, p2_lon)
-                    co2_saved += distance_segment * 0.15
-                walk_date = route_coords.start_time
+                    walk_distance += distance.calculate_distance_km(p1_lat, p1_lon, p2_lat, p2_lon)
+
+                co2_saved = walk_distance * 0.15
 
                 cursor.execute(
-                    'INSERT INTO walks (name, date, description, path_geojson, co2_saved) VALUES (?, ?, ?, ?, ?)',
-                    (f"Прогулка из Google Timeline ({walk_date})", walk_date, "Импортировано из Google Location History",
-                     json.dumps(geojson_path), co2_saved)
+                    'INSERT INTO walks (name, date, description, path_geojson, distance, co2_saved) VALUES (?, ?, ?, ?, ?, ?)',
+                    (f"Прогулка из Google Timeline ({time_conversion.unix_time_to_readable(route_coords.start_time)})", route_coords.start_time, "Импортировано из Google Location History",
+                     json.dumps(geojson_path), walk_distance, co2_saved)
                 )
             db.commit()
             return jsonify({'message': f'Successfully processed {len(walk_routes)} potential walks.'}), 200

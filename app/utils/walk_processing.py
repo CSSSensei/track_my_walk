@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import re
 from typing import List, Optional, Dict, Any
-from ..models.route import Route
+from app.models.route import Route
 
 
 def parse_coordinates(coord_str: str) -> Optional[List[float]]:
@@ -86,11 +86,9 @@ def process_google_location_history(segments: List[Dict[str, Any]]) -> List[Rout
     for segment in segments:
         if 'activity' in segment and segment['activity'].get('topCandidate', {}).get('type') == 'WALKING':
             try:
-                activity_start_str = segment.get('startTime')
-                activity_end_str = segment.get('endTime')
 
-                activity_start_dt = parse_time(activity_start_str)
-                activity_end_dt = parse_time(activity_end_str)
+                activity_start_dt = parse_time(segment.get('startTime'))
+                activity_end_dt = parse_time(segment.get('endTime'))
 
                 current_walk_path_geojson: List[List[float]] = []
 
@@ -107,10 +105,15 @@ def process_google_location_history(segments: List[Dict[str, Any]]) -> List[Rout
 
                 # Добавляем маршрут, если в нем больше одной точки
                 if len(current_walk_path_geojson) > 1:
-                    walk_routes.append(Route(activity_start_str, activity_end_str, current_walk_path_geojson))
+                    walk_routes.append(Route(int(activity_start_dt.timestamp()), int(activity_end_dt.timestamp()), current_walk_path_geojson))
 
             except (ValueError, TypeError) as e:
                 print(
                     f"Ошибка парсинга времени для сегмента активности: {e}. Пропускаем сегмент: {segment.get('startTime')} - {segment.get('endTime')}")
 
     return walk_routes
+
+
+if __name__ == '__main__':
+    print(int(parse_time('2025-06-22T18:42:24.000+03:00').timestamp()))
+    print(parse_time('2025-06-22T18:42:24.000+03:00'))

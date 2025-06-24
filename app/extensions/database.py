@@ -28,9 +28,10 @@ def init_db(app):
             CREATE TABLE IF NOT EXISTS walks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT,
-                date TEXT,
+                date INTEGER,
                 description TEXT,
                 path_geojson TEXT, -- Storing as GeoJSON LineString string
+                distance REAL,
                 co2_saved REAL
             )
         ''')
@@ -45,6 +46,7 @@ def init_db_command(app):
 
 if __name__ == '__main__':
     from config import Config
+    print(Config.DATABASE)
     db = sqlite3.connect(Config.DATABASE)
     cursor = db.cursor()
     cursor.execute('SELECT * FROM walks ORDER BY date DESC')

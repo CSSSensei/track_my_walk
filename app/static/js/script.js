@@ -1,19 +1,6 @@
 let map;
 let geoJsonLayers = []; // To store Leaflet GeoJSON layers for clearing/updating
 
-// Function to calculate distance between two lat/lng points using Haversine formula
-function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Radius of Earth in kilometers
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Distance in km
-    return distance;
-}
-
 // Initialize the Leaflet Map
 function initMap() {
     // Center map on Moscow
@@ -55,16 +42,8 @@ async function fetchWalksAndDisplay() {
                 }).addTo(map);
                 geoJsonLayers.push(geoJsonLayer);
 
-                // Calculate distance for this walk
-                if (geojsonData.type === "LineString" && geojsonData.coordinates && geojsonData.coordinates.length > 1) {
-                    let walkDistance = 0;
-                    for (let i = 0; i < geojsonData.coordinates.length - 1; i++) {
-                        const p1 = geojsonData.coordinates[i];
-                        const p2 = geojsonData.coordinates[i+1];
-                        // Remember GeoJSON coordinates are [longitude, latitude]
-                        walkDistance += calculateDistance(p1[1], p1[0], p2[1], p2[0]);
-                    }
-                    totalDistanceKm += walkDistance;
+                if (typeof walk.distance === 'number') {
+                    totalDistanceKm += walk.distance;
                 }
             }
         });

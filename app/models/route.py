@@ -4,8 +4,8 @@ from typing import List
 
 @dataclass
 class Route:
-    start_time: str
-    end_time: str
+    start_time: int
+    end_time: int
     path_geojson: List[List[float]]
 
     def to_dict(self):
