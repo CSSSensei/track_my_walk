@@ -180,14 +180,43 @@ async function uploadFile() {
 
 
 document.querySelectorAll('.stat-card').forEach(card => {
+    const textLayer = card.querySelector('.text-layer');
+
     card.addEventListener('mousemove', function(e) {
         const rect = this.getBoundingClientRect();
-        const x = e.clientX - rect.left; // x position within the element
-        const y = e.clientY - rect.top;  // y position within the element
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
 
-        // Update the position of the gradient
+        // Обновление позиции свечения
         this.style.setProperty('--mouse-x', `${x}px`);
         this.style.setProperty('--mouse-y', `${y}px`);
+
+        // Параллакс-эффект (разная глубина)
+        const normalizedX = (x / rect.width - 0.5) * 2;
+        const normalizedY = (y / rect.height - 0.5) * 2;
+
+        // Разная сила вращения для слоев
+        const glassRotateY = normalizedX * 35;
+        const glassRotateX = -normalizedY * 35;
+
+        const textRotateY = normalizedX; // Текст вращается слабее
+        const textRotateX = -normalizedY;
+
+        // Применяем вращение
+        this.style.transform = `scale(1.05) rotateX(${glassRotateX}deg) rotateY(${glassRotateY}deg)`;
+        textLayer.style.transform = `translateZ(30px) scale(1.10) rotateX(${textRotateX}deg) rotateY(${textRotateY}deg)`;
+    });
+
+    card.addEventListener('mouseleave', function() {
+        // Плавный возврат в исходное состояние
+        this.style.transform = 'scale(1) rotateX(0) rotateY(0)';
+        textLayer.style.transform = 'translateZ(30px) scale(1) rotateX(0) rotateY(0)';
+
+        // Плавное исчезновение свечения
+        setTimeout(() => {
+            this.style.removeProperty('--mouse-x');
+            this.style.removeProperty('--mouse-y');
+        }, 300);
     });
 });
 
