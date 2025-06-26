@@ -1,6 +1,5 @@
 /* General Body and Container */
 :root {
-    /* Light Theme Colors - Keeping your original light theme */
     --bg-color: #f0f2f5;
     --container-bg: #ffffff;
     --text-color: #333;
@@ -15,6 +14,11 @@
     --link-hover-color: #388E3C;
     --fancy-title-shadow: rgba(0, 0, 0, 0.1);
     --quote-border: #eee;
+
+    /* Sticky header specific light theme colors */
+    --sticky-header-bg-initial: transparent;
+    --sticky-header-bg-scrolled: rgba(255, 255, 255, 0.9);
+    --sticky-header-text-scrolled: #333;
 }
 
 body.dark-mode {
@@ -35,6 +39,11 @@ body.dark-mode {
     --quote-border: #334433; /* Dark green border for quote */
     --accent-primary: #66FF00; /* Primary accent for general elements */
     --accent-secondary: #00FF99; /* Secondary accent for specific elements */
+
+    /* Sticky header specific dark theme colors */
+    --sticky-header-bg-initial: transparent;
+    --sticky-header-bg-scrolled: rgba(10, 20, 10, 0.9); /* Slightly less opaque dark green */
+    --sticky-header-text-scrolled: #F0F0F0;
 }
 
 @font-face {
@@ -51,13 +60,54 @@ body {
     color: var(--text-color);
     line-height: 1.6;
     margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    padding: 0; /* Remove initial padding */
+    display: flex; /* Adjust to column for sticky header */
+    flex-direction: column;
+    justify-content: flex-start; /* Align content to the top */
+    align-items: center; /* Center content horizontally */
     min-height: 100vh;
     box-sizing: border-box;
     transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for theme change */
+}
+
+/* Sticky Header Container */
+#sticky-header-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Ensure it stays on top */
+    padding: 5px 20px; /* Add padding for the header content */
+    box-sizing: border-box;
+    background-color: var(--sticky-header-bg-initial); /* Initial transparent background */
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
+    text-align: center; /* Center header content */
+}
+
+#sticky-header-container.scrolled {
+    background-color: var(--sticky-header-bg-scrolled); /* Opaque background on scroll */
+    backdrop-filter: blur(6px); /* Blur effect */
+    -webkit-backdrop-filter: blur(10px); /* For Safari */
+    box-shadow: 0 2px 10px var(--shadow-medium); /* Add shadow on scroll */
+}
+
+.sticky-header-content {
+    display: flex;
+    justify-content: center; /* Center the title and button */
+    align-items: center;
+    max-width: 960px; /* Match container width for consistency */
+    margin: 0 auto;
+    position: relative; /* For positioning theme toggle button */
+}
+
+/* Ensure the content starts below the sticky header */
+.content-wrapper {
+    width: 100%;
+    padding-top: 115px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center; /* Center the container inside */
+    align-items: flex-start;
 }
 
 .container {
@@ -75,20 +125,28 @@ body {
 }
 
 /* Headings and Titles */
-header {
-    text-align: center;
-    margin-bottom: 2px;
-    position: relative; /* For positioning the theme toggle button */
+/* Header itself is now inside sticky-header-container, so its original styling might need adjustment */
+header { /* This now styles .sticky-header-content */
+    /* Remove original text-align and margin-bottom here as it's handled by .sticky-header-content */
+    margin-bottom: 0;
 }
+
 
 .fancy-title {
     font-family: 'Morfin Sans', sans-serif;
     font-size: 3.2em;
     color: var(--link-color); /* Use green from dark-mode for consistency */
     text-shadow: 2px 2px 5px var(--fancy-title-shadow);
-    margin-bottom: 10px;
+    margin-bottom: 0; /* Remove margin-bottom as it's part of a flex container now */
     font-weight: 700;
+    line-height: 1; /* Adjust line-height for better vertical centering */
+    transition: color 0.3s ease; /* Transition color for smooth theme change */
 }
+
+#sticky-header-container.scrolled .fancy-title {
+    color: var(--sticky-header-text-scrolled); /* Change color on scroll if desired */
+}
+
 
 h2 {
     color: var(--heading-color);
@@ -123,15 +181,20 @@ h2 {
     font-size: 0.9em;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    position: absolute;
-    top: 10px; /* Adjust as needed */
-    right: 10px; /* Adjust as needed */
+    position: absolute; /* Position relative to .sticky-header-content */
+    top: 70%; /* Center vertically */
+    right: 0px; /* Adjust as needed */
+    transform: translateY(-50%); /* Adjust for vertical centering */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Darker shadow */
+}
+
+#sticky-header-container.scrolled .theme-toggle-button {
+    color: var(--sticky-header-text-scrolled);
 }
 
 .theme-toggle-button:hover {
     background-color: var(--link-color); /* Darker green */
-    transform: translateY(-1px);
+    transform: translateY(-50%) scale(1.05); /* Slightly larger on hover */
 }
 
 /* Cards for Sections */
@@ -437,6 +500,12 @@ h2 {
     .upload-section input[type="file"], .upload-section button {
         max-width: 100%;
     }
+    #sticky-header-container {
+        padding: 10px; /* Adjust padding for smaller screens */
+    }
+    .content-wrapper {
+        padding-top: 70px; /* Adjust based on header height for mobile */
+    }
 }
 
 @media (max-width: 480px) {
@@ -464,5 +533,15 @@ h2 {
     .theme-toggle-button {
         position: static; /* Remove absolute positioning */
         margin-top: 15px; /* Add some space */
+        transform: translateY(0); /* Remove transform */
+    }
+    .sticky-header-content {
+        flex-direction: column; /* Stack title and button vertically */
+    }
+    #sticky-header-container {
+        padding: 10px; /* Adjust padding */
+    }
+    .content-wrapper {
+        padding-top: 120px; /* Adjust based on stacked header height */
     }
 }

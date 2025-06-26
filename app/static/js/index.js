@@ -12,6 +12,17 @@ function applyTheme() {
     }
 }
 
+// Function to handle sticky header blur effect
+function handleStickyHeader() {
+    const stickyHeader = document.getElementById('sticky-header-container');
+    // Adjust scroll threshold based on your needs, e.g., 50px
+    if (window.scrollY > 50) {
+        stickyHeader.classList.add('scrolled');
+    } else {
+        stickyHeader.classList.remove('scrolled');
+    }
+}
+
 // Initialize the Leaflet Map
 function initMap() {
     applyTheme(); // Apply theme on load
@@ -29,6 +40,11 @@ function initMap() {
 
     // event listener for theme toggle button
     document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+    // Add scroll event listener for sticky header
+    window.addEventListener('scroll', handleStickyHeader);
+    // Call it once on load to set initial state if page is already scrolled
+    handleStickyHeader();
 }
 
 // Function to toggle theme
