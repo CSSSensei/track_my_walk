@@ -36,8 +36,7 @@ async function fetchAllWalksAndDisplay() {
 
             walkCard.innerHTML = `
                 <h4>${walk.name || 'Без названия'}</h4>
-                <p>Дата: ${walkDate}</p>
-                <p>Протяженность: ${walk.distance.toFixed(2)} км</p>
+                <p>${walkDate} — ${walk.distance.toFixed(2)} км</p>
                 ${walk.description ? `<p>${walk.description.substring(0, 100)}...</p>` : ''}
             `;
             walkCard.addEventListener('click', () => {

@@ -1,16 +1,16 @@
 /* General Body and Container */
 :root {
-    /* Light Theme Colors */
+    /* Light Theme Colors - Keeping your original light theme */
     --bg-color: #f0f2f5;
     --container-bg: #ffffff;
     --text-color: #333;
     --heading-color: #555;
     --card-bg: #f9f9f9;
     --card-border: #ddd;
-    --shadow-light: rgba(0, 0, 0, 0.08);
-    --shadow-medium: rgba(0, 0, 0, 0.1);
+    --shadow-light: rgba(0, 0, 0, 0);
+    --shadow-medium: rgba(0, 0, 0, 0);
     --stat-card-bg: #e8f5e9;
-    --stat-card-shadow: rgba(0, 0, 0, 0.05);
+    --stat-card-shadow: rgba(0, 0, 0, 0);
     --link-color: #4CAF50;
     --link-hover-color: #388E3C;
     --fancy-title-shadow: rgba(0, 0, 0, 0.1);
@@ -18,21 +18,23 @@
 }
 
 body.dark-mode {
-    /* Dark Theme Colors */
-    --bg-color: #2c2c2c; /* Dark grey */
-    --container-bg: #2c2c2c; /* Slightly lighter dark grey */
-    --text-color: #e0e0e0; /* Light grey for text */
-    --heading-color: #f0f0f0; /* Lighter grey for headings */
-    --card-bg: #3a3a3a; /* Darker card background */
-    --card-border: #555;
-    --shadow-light: rgba(0, 0, 0, 0.3);
-    --shadow-medium: rgba(0, 0, 0, 0.5);
-    --stat-card-bg: #335d35; /* Darker green for stat cards */
-    --stat-card-shadow: rgba(0, 0, 0, 0.2);
-    --link-color: #8bc34a; /* Lighter green for links */
-    --link-hover-color: #aed581; /* Even lighter green on hover */
-    --fancy-title-shadow: rgba(0, 0, 0, 0.3);
-    --quote-border: #666;
+    /* Dark Theme Colors (Green Neo-style) */
+    --bg-color: #0A140A; /* Very dark green */
+    --container-bg: #152015; /* Darker green */
+    --text-color: #E0E0E0; /* Light grey for text */
+    --heading-color: #F0F0F0; /* Lighter grey for headings */
+    --card-bg: #202B20; /* Dark green for cards */
+    --card-border: #334433; /* Darker green border */
+    --shadow-light: rgba(0, 0, 0, 0); /* Stronger light shadow */
+    --shadow-medium: rgba(0, 0, 0, 0); /* Stronger medium shadow */
+    --stat-card-bg: #004D00; /* Even darker green for stat cards */
+    --stat-card-shadow: rgba(0, 0, 0, 0); /* Stronger shadow for stat cards */
+    --link-color: #66FF00; /* Bright lime green for links */
+    --link-hover-color: #99FF33; /* Even lighter lime green on hover */
+    --fancy-title-shadow: rgba(0, 0, 0, 0.5); /* Stronger shadow for fancy title */
+    --quote-border: #334433; /* Dark green border for quote */
+    --accent-primary: #66FF00; /* Primary accent for general elements */
+    --accent-secondary: #00FF99; /* Secondary accent for specific elements */
 }
 
 @font-face {
@@ -82,7 +84,7 @@ header {
 .fancy-title {
     font-family: 'Morfin Sans', sans-serif;
     font-size: 3.2em;
-    color: #4CAF50; /* Green - consistent accent */
+    color: var(--link-color); /* Use green from dark-mode for consistency */
     text-shadow: 2px 2px 5px var(--fancy-title-shadow);
     margin-bottom: 10px;
     font-weight: 700;
@@ -91,6 +93,7 @@ header {
 h2 {
     color: var(--heading-color);
     font-size: 1.8em;
+    margin-top: 0px;
     margin-bottom: 15px;
     padding-bottom: 10px;
     display: flex;
@@ -112,8 +115,8 @@ h2 {
 
 /* Theme Toggle Button */
 .theme-toggle-button {
-    background-color: #4CAF50; /* Green accent */
-    color: white;
+    background-color: var(--stat-card-bg); /* Green accent */
+    color:  var(--text-color); /* Changed to black for better contrast */
     border: none;
     border-radius: 5px;
     padding: 8px 15px;
@@ -123,11 +126,11 @@ h2 {
     position: absolute;
     top: 10px; /* Adjust as needed */
     right: 10px; /* Adjust as needed */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Darker shadow */
 }
 
 .theme-toggle-button:hover {
-    background-color: #388E3C; /* Darker green */
+    background-color: var(--link-color); /* Darker green */
     transform: translateY(-1px);
 }
 
@@ -184,7 +187,7 @@ h2 {
     left: var(--mouse-x);
     width: 0;
     height: 0;
-    background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(76, 175, 80, 0.3) 0%, transparent 80%);
+    background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(102, 255, 0, 0.2) 0%, transparent 80%); /* Lime green with transparency */
     transform: translate(-50%, -50%);
     border-radius: 50%;
     animation: expand-gradient 0.5s forwards;
@@ -198,7 +201,7 @@ h2 {
 
 @keyframes expand-gradient {
     from { width: 0; height: 0; opacity: 0; }
-    to { width: 300px; height: 300px; opacity: 1; }
+    to { width: 250px; height:250px; opacity: 1; }
 }
 
 .stat-card h3 {
@@ -211,7 +214,7 @@ h2 {
 .stat-card p {
     font-size: 2.2em;
     font-weight: 700;
-    color: #4CAF50; /* Green accent - consistent */
+    color: var(--link-color); /* Green accent - consistent */
     margin: 10px 0 0;
 }
 
@@ -220,7 +223,8 @@ h2 {
     height: 400px;
     width: 100%;
     border-radius: 10px;
-    box-shadow: inset 0 0 8px var(--shadow-light);
+    box-shadow: inset 0 0 8px var(--shadow-medium); /* Darker inset shadow */
+    background-color: #334433; /* Dark green background for maps */
 }
 
 /* Recent Walks Section (Index Page) */
@@ -243,7 +247,7 @@ h2 {
 .recent-walk-card:hover, .all-walk-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 5px 15px var(--shadow-medium);
-    border-color: #4CAF50; /* Green accent */
+    border-color: var(--link-color); /* Green accent */
 }
 
 .recent-walk-card h4, .all-walk-card h4 {
@@ -283,14 +287,14 @@ h2 {
 }
 
 .walk-details-section strong {
-    color: #4CAF50; /* Green accent */
+    color: var(--link-color); /* Green accent */
 }
 
 .single-walk-map {
     height: 500px !important; /* Larger map for single walk */
     width: 100%;
     border-radius: 10px;
-    box-shadow: inset 0 0 8px var(--shadow-light);
+    box-shadow: inset 0 0 8px var(--shadow-medium); /* Darker inset shadow */
 }
 
 /* Description Section */
@@ -306,7 +310,7 @@ h2 {
 }
 
 .description p b, .description ul li b {
-    color: #4CAF50; /* Green accent */
+    color: var(--link-color); /* Green accent */
 }
 
 .description .quote {
@@ -340,8 +344,8 @@ h2 {
 }
 
 .upload-section input[type="file"]::file-selector-button {
-    background-color: #4CAF50;
-    color: white;
+    background-color: var(--link-color);
+    color: black; /* Changed to black for better contrast */
     border: none;
     border-radius: 5px;
     padding: 8px 15px;
@@ -350,24 +354,24 @@ h2 {
 }
 
 .upload-section input[type="file"]::file-selector-button:hover {
-    background-color: #388E3C;
+    background-color: var(--link-hover-color);
 }
 
 
 .upload-section button {
-    background-color: #4CAF50;
-    color: white;
+    background-color: var(--link-color);
+    color: black; /* Changed to black for better contrast */
     border: none;
     border-radius: 8px;
     padding: 12px 25px;
     font-size: 1em;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Darker shadow */
 }
 
 .upload-section button:hover {
-    background-color: #388E3C;
+    background-color: var(--link-hover-color);
     transform: translateY(-2px);
 }
 
@@ -389,7 +393,7 @@ h2 {
 }
 
 .stack-info ul li b {
-    color: #4CAF50; /* Green accent */
+    color: var(--link-color); /* Green accent */
 }
 
 /* Back Link */
@@ -462,4 +466,3 @@ h2 {
         margin-top: 15px; /* Add some space */
     }
 }
-

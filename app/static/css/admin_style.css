@@ -1,22 +1,22 @@
 /* Define dark green theme variables */
 :root {
-    --admin-bg-color: #1a1a1a;          /* Very dark grey for background */
-    --admin-container-bg: #2a2a2a;      /* Darker grey for main container */
-    --admin-card-bg: #3a3a3a;           /* Dark grey for cards */
-    --admin-text-color: #e0e0e0;        /* Light grey for general text */
-    --admin-heading-color: #f0f0f0;     /* Lighter grey for headings */
-    --admin-border-color: #555;         /* Medium grey for borders */
-    --admin-accent-color: #8bc34a;      /* Lighter green for accents (buttons, links, highlights) */
-    --admin-accent-color-hover: #aed581; /* Even lighter green for hover states */
-    --admin-primary-color: #4a4a4a;     /* Darker grey for input backgrounds */
-    --admin-danger-color: #dc3545;      /* Red for delete/warning buttons */
-    --admin-danger-color-hover: #c82333;/* Darker red for hover */
-    --admin-success-color: #aed581;     /* Light green for success messages */
-    --admin-info-color: #6daee1;        /* Blue for info messages */
-    --admin-shadow-light: rgba(0, 0, 0, 0.3); /* Lighter shadow */
-    --admin-shadow-medium: rgba(0, 0, 0, 0.5); /* Stronger shadow */
-    --admin-header-text-color: #f0f0f0; /* For elements like Flatpickr month/year */
-    --admin-map-overlay-color: rgba(76, 175, 80, 0.5); /* Greenish overlay for map interactions */
+    --admin-bg-color: #0A140A;          /* Very dark green for background */
+    --admin-container-bg: #152015;      /* Darker green for main container */
+    --admin-card-bg: #202B20;           /* Dark green for cards */
+    --admin-text-color: #E0E0E0;        /* Light grey for general text */
+    --admin-heading-color: #F0F0F0;     /* Lighter grey for headings */
+    --admin-border-color: #334433;      /* Darker green for borders */
+    --admin-accent-color: #66FF00;      /* Bright lime green for accents (buttons, links, highlights) */
+    --admin-accent-color-hover: #99FF33; /* Even lighter lime green for hover states */
+    --admin-primary-color: #2B3D2B;     /* Slightly darker green for input backgrounds */
+    --admin-danger-color: #FF4444;      /* Red for delete/warning buttons (kept bright for contrast) */
+    --admin-danger-color-hover: #CC0000;/* Darker red for hover */
+    --admin-success-color: #00FF99;     /* Bright turquoise for success messages */
+    --admin-info-color: #00CCFF;        /* Bright blue for info messages (for contrast) */
+    --admin-shadow-light: rgba(0, 0, 0, 0.4); /* Lighter shadow, slightly stronger */
+    --admin-shadow-medium: rgba(0, 0, 0, 0.6); /* Stronger shadow */
+    --admin-header-text-color: #F0F0F0; /* For elements like Flatpickr month/year */
+    --admin-map-overlay-color: rgba(102, 255, 0, 0.3); /* Greenish overlay for map interactions (lime green based) */
 }
 
 
@@ -115,7 +115,7 @@ textarea:focus {
 /* General button styles */
 button {
     background: var(--admin-accent-color); /* Green accent for general buttons */
-    color: white;
+    color: black; /* Changed to black for better contrast with bright green */
     border: none;
     padding: 12px 25px; /* Larger padding */
     border-radius: 6px; /* More rounded */
@@ -145,6 +145,7 @@ button:hover {
 /* Control buttons (e.g., Delete, Clear Map) */
 .control-button-group button {
     background: var(--admin-danger-color); /* Red for destructive actions */
+    color: white; /* Ensure text is white for red buttons */
 }
 .control-button-group button:hover {
     background: var(--admin-danger-color-hover); /* Darker red */
@@ -156,8 +157,8 @@ button:hover {
     width: 100%;
     margin-top: 25px; /* More margin */
     border-radius: 10px; /* More rounded corners for map */
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.4); /* Stronger inset shadow */
-    background-color: #333; /* Dark background for map area */
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.6); /* Stronger inset shadow */
+    background-color: #334433; /* Dark green background for map area */
 }
 
 #message {
@@ -175,16 +176,16 @@ button:hover {
 }
 
 .message.error {
-    background-color: rgba(220, 53, 69, 0.2); /* Red with transparency */
+    background-color: rgba(255, 68, 68, 0.2); /* Red with transparency */
     color: var(--admin-danger-color); /* Use red accent for text */
 }
 .message.success {
-    background-color: rgba(139, 195, 74, 0.2); /* Green with transparency */
-    color: var(--admin-success-color); /* Use light green for text */
+    background-color: rgba(0, 255, 153, 0.2); /* Green with transparency */
+    color: var(--admin-success-color); /* Use bright turquoise for text */
 }
 .message.info { /* New style for info messages */
-    background-color: rgba(109, 174, 225, 0.2); /* Blue with transparency */
-    color: var(--admin-info-color); /* Use blue for text */
+    background-color: rgba(0, 204, 255, 0.2); /* Blue with transparency */
+    color: var(--admin-info-color); /* Use bright blue for text */
 }
 
 
@@ -255,11 +256,12 @@ button:hover {
 .flatpickr-day.endRange, .flatpickr-day.endRange:hover {
     background: var(--admin-accent-color) !important; /* Green selected day */
     border-color: var(--admin-accent-color) !important;
-    color: white !important; /* White text on selected date */
+    color: black !important; /* Changed to black for better contrast */
 }
 .flatpickr-day.today.selected {
     background: var(--admin-primary-color) !important; /* A slightly different dark color for today selected */
     border-color: var(--admin-primary-color) !important;
+    color: var(--admin-text-color) !important; /* Ensure text is visible */
 }
 .flatpickr-day.today:hover {
      background: var(--admin-map-overlay-color) !important; /* Use a related green for today hover */
