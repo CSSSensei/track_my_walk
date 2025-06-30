@@ -13,7 +13,6 @@ function initMap() {
     map.on('click', function(e) {
         drawnRoute.push([e.latlng.lng, e.latlng.lat]);
         updateRoute();
-        showMessage('');
     });
 }
 
@@ -40,7 +39,7 @@ function updateRoute() {
 function clearMap() {
     drawnRoute = [];
     if (polyline) map.removeLayer(polyline);
-    showMessage(''); // Clear message
+    showMessage('Карта очищена.', 'info');
     document.getElementById('coordinatesString').value = ''; // Also clear the row field
 }
 
@@ -119,6 +118,7 @@ async function submitWalk() {
             showMessage(result.message, 'success');
             clearForm();
         } else {
+            // The server should return hresult.error in case of an error
             showMessage(result.error || 'Произошла ошибка на сервере.', 'error');
         }
     } catch (error) {
@@ -127,30 +127,29 @@ async function submitWalk() {
     }
 }
 
-function showMessage(text, type) {
+function showMessage(text, type = 'info') {
     const msgDiv = document.getElementById('message');
     msgDiv.textContent = text;
-    msgDiv.className = 'message'; // Clear previous classes
+    msgDiv.className = 'toast-message';
 
     if (type) {
         msgDiv.classList.add(type);
     }
 
-    // Add 'visible' class to trigger opacity transition
-    if (text) { // Only make visible if there's text
+    if (text) {
         msgDiv.classList.add('visible');
     } else {
-        msgDiv.classList.remove('visible'); // Hide if text is empty
+        msgDiv.classList.remove('visible');
+        return;
     }
 
-    // Optional: Hide message after a few seconds
-    if (type === 'success' || type === 'info') {
-        setTimeout(() => {
-            msgDiv.classList.remove('visible');
-            // msgDiv.textContent = ''; // Optionally clear text after hiding
-        }, 5000); // Message disappears after 5 seconds
-    }
+    setTimeout(() => {
+        msgDiv.classList.remove('visible');
+        // Optional: clear the text after opening, so as not to take up memory
+        // setTimeout(() => msgDiv.textContent = '', 500); // Slight delay after disappearing
+    }, 5000);
 }
+
 
 // Clearing the form after successful submission
 function clearForm() {

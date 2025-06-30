@@ -14,6 +14,8 @@
 
 </head>
 <body>
+    <div id="message" class="toast-message"></div>
+
     <div class="container">
         <div class="card">
             <h1>Добавить новую прогулку</h1>
@@ -51,8 +53,7 @@
             </div>
 
             <button onclick="submitWalk()" class="submit-button">Добавить прогулку</button>
-            <div id="message" class="message"></div>
-        </div>
+            </div>
 
         <div class="logout-link">
             <a href="{{ url_for('admin.admin_logout') }}">Выйти</a>

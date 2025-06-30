@@ -27,7 +27,6 @@ def admin_login():
 
         if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
             session['is_authenticated'] = True
-            flash('Вы успешно вошли!', 'success')
             return redirect(url_for('admin.admin_page'))
         else:
             flash('Неверное имя пользователя или пароль.', 'error')
@@ -37,7 +36,6 @@ def admin_login():
 @bp.route('/logout')  # /admin/logout
 def admin_logout():
     session.pop('is_authenticated', None)
-    flash('Вы вышли из системы.', 'info')
     return redirect(url_for('main.index'))  # Redirect to main index after logout
 
 

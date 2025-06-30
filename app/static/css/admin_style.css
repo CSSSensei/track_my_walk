@@ -17,6 +17,11 @@
     --admin-shadow-medium: rgba(0, 0, 0, 0.6); /* Stronger shadow */
     --admin-header-text-color: #F0F0F0; /* For elements like Flatpickr month/year */
     --admin-map-overlay-color: rgba(102, 255, 0, 0.3); /* Greenish overlay for map interactions (lime green based) */
+    --toast-bg-opacity: 0.3; /* Opacity for the message background */
+    --toast-blur-amount: 20px;
+    --toast-error-bg: rgba(255, 68, 68, var(--toast-bg-opacity));
+    --toast-success-bg: rgba(0, 255, 153, var(--toast-bg-opacity));
+    --toast-info-bg: rgba(0, 204, 255, var(--toast-bg-opacity));
 }
 
 
@@ -161,31 +166,47 @@ button:hover {
     background-color: #334433; /* Dark green background for map area */
 }
 
-#message {
-    margin-top: 25px; /* More margin */
-    padding: 12px; /* More padding */
-    border-radius: 8px; /* More rounded */
+.toast-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    padding: 15px 30px;
+    border-radius: 10px;
     font-weight: bold;
     text-align: center;
-    font-size: 1em;
-    opacity: 0; /* Initially hidden */
-    transition: opacity 0.3s ease, background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
-}
-#message.visible {
-    opacity: 1; /* Make visible when class is added */
+    font-size: 1.1em;
+    color: var(--admin-text-color);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(var(--toast-blur-amount));
+    -webkit-backdrop-filter: blur(var(--toast-blur-amount)); /* For Safari */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out, background-color 0.3s ease;
+    max-width: 600px;
+    width: 90%;
 }
 
-.message.error {
-    background-color: rgba(255, 68, 68, 0.2); /* Red with transparency */
-    color: var(--admin-danger-color); /* Use red accent for text */
+.toast-message.visible {
+    opacity: 1;
+    visibility: visible;
 }
-.message.success {
-    background-color: rgba(0, 255, 153, 0.2); /* Green with transparency */
-    color: var(--admin-success-color); /* Use bright turquoise for text */
+
+.toast-message.error {
+    background-color: var(--toast-error-bg);
+    color: var(--admin-danger-color);
+    border: 1px solid var(--admin-danger-color);
 }
-.message.info { /* New style for info messages */
-    background-color: rgba(0, 204, 255, 0.2); /* Blue with transparency */
-    color: var(--admin-info-color); /* Use bright blue for text */
+.toast-message.success {
+    background-color: var(--toast-success-bg);
+    color: var(--admin-success-color);
+    border: 1px solid var(--admin-success-color);
+}
+.toast-message.info {
+    background-color: var(--toast-info-bg);
+    color: var(--admin-info-color);
+    border: 1px solid var(--admin-info-color);
 }
 
 
@@ -209,6 +230,11 @@ button:hover {
     button, .submit-button {
         padding: 10px 20px;
         font-size: 1em;
+    }
+    .toast-message {
+        width: 95%; /* Adjust width for very small screens */
+        padding: 10px 15px;
+        font-size: 0.9em;
     }
 }
 
