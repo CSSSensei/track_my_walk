@@ -4,32 +4,194 @@
     <meta charset="UTF-8">
     <title>Admin Login</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #1a1a2e; color: #e0e0e0; }
-        .login-container { max-width: 400px; margin: 100px auto; padding: 20px; background: #16213e; border-radius: 8px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; }
-        input { width: 100%; padding: 10px; border: 1px solid #0f3460; border-radius: 4px; background: #1a1a2e; color: white; }
-        button { background: #e94560; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
-        .error { color: #e94560; margin-top: 10px; }
+        :root {
+            --bg-color: #0A140A;
+            --container-bg: #152015;
+            --text-color: #E0E0E0;
+            --heading-color: #F0F0F0;
+            --input-bg: #202B20;
+            --input-border: #334433;
+            --button-bg: #66FF00;
+            --button-hover-bg: #99FF33;
+            --error-color: #FF6347;
+            --success-color: #66FF00;
+            --info-color: #4D96FF;
+            --shadow-light: rgba(0, 0, 0, 0.2);
+            --shadow-medium: rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .login-container {
+            max-width: 450px;
+            width: 90%;
+            padding: 40px;
+            background-color: var(--container-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow-medium);
+            text-align: center;
+        }
+
+        h2 {
+            color: var(--heading-color);
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 5px rgba(102, 255, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--heading-color);
+            font-size: 1.1em;
+        }
+
+        input {
+            width: calc(100% - 20px);
+            padding: 12px 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1.1em;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--button-bg);
+            box-shadow: 0 0 8px rgba(102, 255, 0, 0.5);
+        }
+
+        button {
+            background-color: var(--button-bg);
+            color: black;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px var(--shadow-light);
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: var(--button-hover-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px var(--shadow-medium);
+        }
+
+        .flash-message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .flash-error {
+            background-color: rgba(255, 99, 71, 0.2);
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+
+        .flash-success {
+            background-color: rgba(102, 255, 0, 0.2);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .flash-info {
+            background-color: rgba(77, 150, 255, 0.2);
+            color: var(--info-color);
+            border: 1px solid var(--info-color);
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+            }
+
+            h2 {
+                font-size: 1.8em;
+                margin-bottom: 20px;
+            }
+
+            button {
+                padding: 12px 20px;
+                font-size: 1.1em;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <h2>Admin Login</h2>
-        {% if error %}
-            <p class="error">{{ error }}</p>
-        {% endif %}
-        <form method="POST">
+        <h2>Вход в админ-панель</h2>
+
+        <!-- Flash сообщения из Flask -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('admin.admin_login') }}">
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+                <label for="username">Имя пользователя</label>
+                <input type="text" id="username" name="username" required autofocus>
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password">Пароль</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <button type="submit">Login</button>
+            <button type="submit">Войти</button>
         </form>
     </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (username.length < 3) {
+                alert('Имя пользователя должно содержать минимум 3 символа');
+                e.preventDefault();
+                return;
+            }
+
+            if (password.length < 6) {
+                alert('Пароль должен содержать минимум 6 символов');
+                e.preventDefault();
+                return;
+            }
+        });
+
+        // Autofocus on the username field when loading
+        window.onload = function() {
+            document.getElementById('username').focus();
+        };
+    </script>
 </body>
 </html>
