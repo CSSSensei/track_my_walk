@@ -1,6 +1,8 @@
-import json
+from typing import List
+
 from flask import Blueprint, render_template, jsonify, abort
 from ..extensions import database
+from ..models.walk import Walk
 
 bp = Blueprint('main', __name__)
 
@@ -12,13 +14,8 @@ def index():
 
 @bp.route('/walks', methods=['GET'])
 def get_walks():
-    """Возвращает все прогулки из БД, отсортированные по дате (от новой к старой)."""
-    db = database.get_db()
-    cursor = db.cursor()
-    cursor.execute('SELECT * FROM walks ORDER BY date DESC')
-    walks = cursor.fetchall()
-    # Преобразуем Row объекты в словари для jsonify
-    return jsonify([dict(walk) for walk in walks])
+    walks: List[Walk] = database.get_walks_from_db()  # Получаем список объектов Walk
+    return jsonify([walk.to_dict() for walk in walks])
 
 
 @bp.route('/all_walks')
@@ -32,12 +29,9 @@ def single_walk(walk_id):
     """
     Отображает страницу с деталями одной прогулки и её картой.
     """
-    db = database.get_db()
-    cursor = db.cursor()
-    cursor.execute('SELECT * FROM walks WHERE id = ?', (walk_id,))
-    walk = cursor.fetchone()
+    walk = database.get_walk_by_id(walk_id)
 
     if walk is None:
         abort(404, description="Прогулка не найдена")
 
-    return render_template('single_walk.html', walk=dict(walk))
+    return render_template('single_walk.html', walk=walk.to_dict())

@@ -18,3 +18,15 @@ class Walk:
             'distance': self.distance,
             'co2_saved': self.co2_saved
         }
+
+    @classmethod
+    def from_db_row(cls, row):
+        return cls(
+            id=row[0],  # id
+            name=row[1],  # name
+            date=row[2],  # date
+            description=row[3],  # description
+            path_geojson=row[4],  # path_geojson
+            distance=row[5],  # distance
+            co2_saved=row[6]  # co2_saved
+        )

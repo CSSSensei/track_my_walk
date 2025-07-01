@@ -39,10 +39,10 @@
                 </div>
 
                 <div>
-                    <label for="coordinatesString">Ввести координаты строкой (долгота,широта;долгота,широта;...):</label>
-                    <textarea id="coordinatesString" rows="6" placeholder="Пример: 37.6176,55.7512;37.6200,55.7530"></textarea>
+                    <label for="coordinatesString">Ввести координаты строкой ([долгота, широта], [долгота, широта],...):</label>
+                    <textarea id="coordinatesString" rows="6" placeholder="Пример: [37.6176, 55.7512], [37.6200, 55.7530]"></textarea>
                     <button onclick="parseCoordinatesString()" style="margin-top: 10px;">Применить строку</button>
-                    <p style="font-size: 0.85em; color: gray; margin-top: 5px;">Разделитель: точка с запятой для точек, запятая для долготы/широты.</p>
+                    <p style="font-size: 0.85em; color: gray; margin-top: 5px;">Долгота, широта заключены в квадратные скобки, геоточки разделяются запятыми</p>
                 </div>
             </div>
 

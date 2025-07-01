@@ -1,6 +1,9 @@
 import sqlite3
+from typing import List, Optional
+
 from flask import current_app, g
 from pprint import pprint
+from app.models.walk import Walk
 
 
 def get_db():
@@ -44,15 +47,40 @@ def init_db_command(app):
         print('Initialized the database.')
 
 
-if __name__ == '__main__':
-    from config import Config
-    print(Config.DATABASE)
-    db = sqlite3.connect(Config.DATABASE)
+def get_walks_from_db() -> List[Walk]:
+    db = get_db()
     cursor = db.cursor()
     cursor.execute('SELECT * FROM walks ORDER BY date DESC')
-    rows = cursor.fetchall()
-    cursor.execute('PRAGMA table_info(walks)')
-    columns = [column[1] for column in cursor.fetchall()]
-    for row in rows:
-        pprint(dict(zip(columns, row)))
-    db.close()
+    walks_data = cursor.fetchall()
+    return [Walk.from_db_row(walk) for walk in walks_data]
+
+
+def get_walk_by_id(walk_id: int) -> Optional[Walk]:
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM walks WHERE id = ?', (walk_id,))
+    walk = cursor.fetchone()
+    print(dict(walk))
+    if walk:
+        return Walk.from_db_row(walk)
+    return None
+
+
+if __name__ == '__main__':
+    from config import Config
+    # print(Config.DATABASE)
+    # db = sqlite3.connect(Config.DATABASE)
+    # cursor = db.cursor()
+    # cursor.execute('SELECT * FROM walks ORDER BY date DESC LIMIT 10')
+    # rows = cursor.fetchall()
+    # cursor.execute('PRAGMA table_info(walks)')
+    # columns = [column[1] for column in cursor.fetchall()]
+    # for row in rows:
+    #     pprint(dict(zip(columns, row)))
+    # db.close()
+    db = sqlite3.connect(Config.DATABASE)
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM walks ORDER BY date DESC LIMIT 2')
+    walks_data = cursor.fetchall()
+    # Преобразуем Row объекты в словари для jsonify
+    print(list(Walk.from_db_row(walk).to_dict() for walk in walks_data))
