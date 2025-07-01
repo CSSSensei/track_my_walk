@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, request, jsonify, redirect, url_fo
 from datetime import datetime
 from ..extensions import database
 from app.utils import distance
+from ..utils.walk_processing import import_walks_from_json
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')  # Admin routes prefixed with /admin
 
@@ -92,3 +93,24 @@ def add_walk():
         return jsonify({'error': f'Missing data field: {e}'}), 400
     except Exception as e:
         return jsonify({'error': f'An error occurred: {str(e)}'}), 500
+
+
+@bp.route('/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({'message': 'Файл не найден в запросе.'}), 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return jsonify({'message': 'Файл не выбран.'}), 400
+
+    if not file.filename.endswith('.json'):
+        return jsonify({'message': 'Допустимы только JSON файлы.'}), 400
+
+    if file:
+        try:
+            len_walk_routes = import_walks_from_json(file)
+            return jsonify({'message': f'Successfully processed {len_walk_routes} potential walks.'}), 200
+        except Exception as e:
+            return jsonify({'message': str(e)}), 500
