@@ -127,6 +127,23 @@ async function fetchWalksAndDisplay() {
                             weight: 4,
                             opacity: 0.8
                         };
+                    },
+                    onEachFeature: function (feature, layer) {
+                        layer.walkId = walk.id;
+
+                        layer.on('click', function (e) {
+                            window.location.href = `/walk/${e.target.walkId}`;
+                        });
+
+                        // ПОДСКАЗКА ПРИ НАВЕДЕНИИ
+                        const walkDate = new Date(walk.date * 1000).toLocaleDateString('ru-RU');
+                        const tooltipContent = `<b>${walk.name || 'Без названия'}</b><br>${walkDate} — ${walk.distance.toFixed(2)} км`;
+
+                        layer.bindTooltip(tooltipContent, {
+                            permanent: false, // Подсказка исчезает, когда курсор уходит
+                            direction: 'auto',
+                            className: 'walk-tooltip' // Класс для стилизации подсказки
+                        });
                     }
                 }).addTo(map);
                 geoJsonLayers.push(geoJsonLayer);
@@ -141,16 +158,11 @@ async function fetchWalksAndDisplay() {
         document.getElementById('totalWalks').textContent = walks.length;
         document.getElementById('totalDistance').textContent = totalDistanceKm.toFixed(2) + ' км'; // Format to 2 decimal places
 
-        // Optionally, zoom map to fit all features
-//        if (geoJsonLayers.length > 0) {
-//            const group = new L.featureGroup(geoJsonLayers);
-//            map.fitBounds(group.getBounds());
-//        }
-
     } catch (error) {
         console.error('Error fetching walks:', error);
     }
 }
+
 
 // New function to fetch and display the 4 most recent walks
 async function fetchRecentWalks() {
