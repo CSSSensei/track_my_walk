@@ -2,9 +2,9 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
-load_dotenv()
-
 BASE_DIR = Path(__file__).parent
+env_path = BASE_DIR / '.env'
+load_dotenv(env_path)
 INSTANCE_DIR = BASE_DIR / 'instance'
 INSTANCE_DIR.mkdir(exist_ok=True)  # Создаем папку, если нет папки instance
 
