@@ -35,12 +35,12 @@ class DBInterface(abc.ABC):
         """Adds a new walk to the database and returns its ID."""
         pass
 
-    # @abc.abstractmethod
-    # def update_walk(self, walk: Walk) -> None:
-    #     """Updates an existing walk in the database."""
-    #     pass
-    #
-    # @abc.abstractmethod
-    # def delete_walk(self, walk_id: int) -> None:
-    #     """Deletes a walk from the database by its ID."""
-    #     pass
+    @abc.abstractmethod
+    def update_walk(self, walk: Walk) -> None:
+        """Updates an existing walk in the database."""
+        pass
+
+    @abc.abstractmethod
+    def delete_walk(self, walk_id: int) -> bool:
+        """Deletes a walk from the database by its ID."""
+        pass

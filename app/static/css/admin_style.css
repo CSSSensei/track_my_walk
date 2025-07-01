@@ -13,8 +13,8 @@
     --admin-danger-color-hover: #CC0000;/* Darker red for hover */
     --admin-success-color: #00FF99;     /* Bright turquoise for success messages */
     --admin-info-color: #00CCFF;        /* Bright blue for info messages (for contrast) */
-    --admin-shadow-light: rgba(0, 0, 0, 0.4); /* Lighter shadow, slightly stronger */
-    --admin-shadow-medium: rgba(0, 0, 0, 0.6); /* Stronger shadow */
+    --admin-shadow-light: rgba(0, 0, 0, 0); /* Lighter shadow, slightly stronger */
+    --admin-shadow-medium: rgba(0, 0, 0, 0); /* Stronger shadow */
     --admin-header-text-color: #F0F0F0; /* For elements like Flatpickr month/year */
     --admin-map-overlay-color: rgba(102, 255, 0, 0.3); /* Greenish overlay for map interactions (lime green based) */
     --toast-bg-opacity: 0.3; /* Opacity for the message background */
@@ -22,33 +22,70 @@
     --toast-error-bg: rgba(255, 68, 68, var(--toast-bg-opacity));
     --toast-success-bg: rgba(0, 255, 153, var(--toast-bg-opacity));
     --toast-info-bg: rgba(0, 204, 255, var(--toast-bg-opacity));
+    --fancy-title-shadow: rgba(102, 255, 0, 0.5);
 }
-
 
 body {
     font-family: 'Inter', sans-serif;
     background: var(--admin-bg-color); /* Use dark background variable */
     color: var(--admin-text-color);    /* Use light text color variable */
-    padding: 20px;
+    padding: 0; /* Убрал padding, т.к. теперь есть content-wrapper */
     margin: 0;
     display: flex;
-    justify-content: center;
-    align-items: flex-start; /* Align content to the top (prevents login form from stretching too much) */
+    flex-direction: column; /* Изменил на column для sticky header */
+    justify-content: flex-start; /* Изменил на flex-start */
+    align-items: center; /* Центрирует по горизонтали */
     min-height: 100vh;
     box-sizing: border-box; /* Ensures padding doesn't add to total width/height */
     transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
 }
 
+@font-face {
+    font-family: 'Morfin Sans';
+    src: url('../fonts/MorfinSans-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.sticky-header-content {
+    max-width: 100%;
+    width: 100%;
+}
+.fancy-title {
+    font-family: 'Morfin Sans', sans-serif;
+    font-size: 3.2em;
+    color: #66FF00;
+    text-shadow: 2px 2px 5px var(--fancy-title-shadow);
+    font-weight: 700;
+    line-height: 1;
+    transition: color 0.3s ease;
+    border-bottom: none;
+    margin-top: 30px;
+    margin-bottom: 0px;
+}
+
+.fancy-title a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.fancy-title a:hover {
+    color: #388E3C;
+    text-decoration: none;
+}
+
+
 /* Specific styling for the admin login/panel container */
 .container {
-    max-width: 960px; /* Adjusted to your original general container max-width */
+    max-width: 960px;
     width: 100%;
-    margin: 0 auto; /* Center it horizontally */
     background: var(--admin-container-bg); /* Darker container background */
-    border-radius: 15px; /* Slightly more rounded corners */
+    border-radius: 20px; /* Slightly more rounded corners */
     padding: 30px; /* Generous padding */
     box-shadow: 0 10px 30px var(--admin-shadow-medium); /* Stronger, darker shadow */
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    gap: 25px;
 }
 
 /* Card styling within the admin panel */
@@ -77,6 +114,11 @@ h1, h2 {
 body.admin-login-page h1,
 body.admin-login-page h2 {
     font-size: 1.8em; /* Slightly smaller for login page title */
+}
+
+
+body.admin-login-page .sticky-header-content .fancy-title {
+    font-size: 3.2em !important; /* Принудительно применяем нужный размер */
 }
 
 
@@ -156,6 +198,77 @@ button:hover {
     background: var(--admin-danger-color-hover); /* Darker red */
 }
 
+.table-responsive {
+    overflow-x: auto; /* Для прокрутки таблицы на маленьких экранах */
+}
+
+#walksTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#walksTable th, #walksTable td {
+    border: 1px solid var(--admin-border-color);
+    padding: 12px 15px;
+    text-align: left;
+    color: var(--admin-text-color);
+}
+
+#walksTable th {
+    background-color: var(--admin-primary-color);
+    color: var(--admin-heading-color);
+    font-weight: bold;
+}
+
+#walksTable tbody tr:nth-child(even) {
+    background-color: var(--admin-container-bg); /* Чередование строк */
+}
+
+#walksTable tbody tr:hover {
+    background-color: var(--admin-border-color); /* Ховер эффект для строк */
+}
+
+.edit-button {
+    background: var(--admin-accent-color);
+    color: black;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+}
+.edit-button:hover {
+    background: var(--admin-accent-color-hover);
+}
+
+/* Уже есть в вашем CSS, но убедитесь, что он применяется к кнопкам в таблице */
+.control-button-group.button { /* Используется для Delete */
+    background: var(--admin-danger-color);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+}
+.control-button-group.button:hover {
+    background: var(--admin-danger-color-hover);
+}
+
+/* Стили для кнопки "Добавить" вверху */
+.add-button {
+    background: var(--admin-success-color); /* Зеленый для добавления */
+    color: black;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 8px var(--admin-shadow-light);
+}
+.add-button:hover {
+    background: #00CC88; /* Темнее зеленый на ховер */
+    transform: translateY(-1px);
+}
+
 
 #map {
     height: 500px;
@@ -227,7 +340,7 @@ button:hover {
     h1, h2 {
         font-size: 1.6em;
     }
-    button, .submit-button {
+    button { /* Убрал .submit-button, т.к. его нет */
         padding: 10px 20px;
         font-size: 1em;
     }
@@ -235,6 +348,16 @@ button:hover {
         width: 95%; /* Adjust width for very small screens */
         padding: 10px 15px;
         font-size: 0.9em;
+    }
+    .sticky-header-content {
+        padding: 10px 20px; /* Уменьшаем padding для мобильных */
+    }
+    .fancy-title {
+        font-size: 1.5em; /* Уменьшаем шрифт для мобильных */
+    }
+    .admin-button {
+        font-size: 0.8em;
+        padding: 6px 12px;
     }
 }
 
@@ -248,7 +371,8 @@ button:hover {
 
 .logout-link {
     text-align: center;
-    margin-top: 1px; /* More margin */
+    margin-top: 30px; /* Увеличил отступ сверху */
+    margin-bottom: 20px; /* Добавил отступ снизу */
 }
 .logout-link a {
     color: var(--admin-accent-color); /* Green accent */

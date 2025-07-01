@@ -48,9 +48,13 @@ def add_walk():
 
     try:
         data = request.json
-        name = data['name']
-        description = data['description']
-        coordinates = data['coordinates']  # This can be coordinates from map OR string input
+        name = data.get('name')
+        description = data.get('description')
+        coordinates = data.get('coordinates')
+        if not name or not coordinates:
+            return jsonify({'error': 'Missing name or coordinates'}), 400
+        if not isinstance(coordinates, list) or not all(isinstance(c, list) and len(c) == 2 for c in coordinates):
+            return jsonify({'error': 'Invalid coordinates format. Expected [[lon, lat], ...]'})
 
         date_str = data.get('date', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         try:
@@ -58,42 +62,45 @@ def add_walk():
         except ValueError:
             walk_date = datetime.now()
 
-        if not isinstance(coordinates, list) or not all(isinstance(c, list) and len(c) == 2 for c in coordinates):
-            return jsonify({'error': 'Invalid coordinates format. Expected [[lon, lat], ...]'})
+        walk_distance = 0
+        co2_saved = 0
+        geojson_path = {}
 
-        # Adjust logic to handle single point (type Point) or multiple (LineString)
         if len(coordinates) < 2:
             geojson_path = {
-                "type": "Point",  # If only one point
-                "coordinates": coordinates[0]
+                "type": "Point",
+                "coordinates": coordinates[0] if coordinates else []
             }
-            walk_distance = 0  # No distance for a single point
-            co2_saved = 0
         else:
             geojson_path = {
                 "type": "LineString",
                 "coordinates": coordinates
             }
-            walk_distance = 0
             for i in range(len(coordinates) - 1):
                 p1_lon, p1_lat = coordinates[i]
                 p2_lon, p2_lat = coordinates[i + 1]
                 walk_distance += distance.calculate_distance_km(p1_lat, p1_lon, p2_lat, p2_lon)
-            co2_saved = walk_distance * 0.15  # Example: 150g CO2 per km
+            co2_saved = walk_distance * 0.15
 
         db_interface = get_db_interface()
-        db_interface.add_walk(Walk(id=-1, name=name,
+        walk_id = db_interface.add_walk(Walk(id=-1, name=name,
                                    date=int(walk_date.timestamp()),
                                    description=description,
                                    path_geojson=json.dumps(geojson_path),
                                    distance=walk_distance,
                                    co2_saved=co2_saved))
-        return jsonify({'message': 'Walk added successfully'}), 200
-
-    except KeyError as e:
-        return jsonify({'error': f'Missing data field: {e}'}), 400
+        return jsonify({'message': 'Walk added successfully', 'id': walk_id}), 200
     except Exception as e:
+        current_app.logger.error(f"Error adding walk: {e}", exc_info=True)
         return jsonify({'error': f'An error occurred: {str(e)}'}), 500
+
+
+@bp.route('/walks-manager')
+def walks_manager():
+    if not session.get('is_authenticated'):
+        flash('Доступ запрещен. Пожалуйста, войдите.', 'error')
+        return redirect(url_for('admin.admin_login'))
+    return render_template('admin_walks_manager.html')
 
 
 @bp.route('/upload', methods=['POST'])
@@ -114,4 +121,106 @@ def upload_file():
             len_walk_routes = import_walks_from_json(file)
             return jsonify({'message': f'Successfully processed {len_walk_routes} potential walks.'}), 200
         except Exception as e:
+            current_app.logger.error(f"Error processing uploaded file: {e}", exc_info=True)
             return jsonify({'message': str(e)}), 500
+
+
+@bp.route('/walks/<int:walk_id>', methods=['GET'])
+def get_walk_by_id_admin(walk_id):
+    if not session.get('is_authenticated'):
+        return jsonify({'error': 'Unauthorized'}), 401
+    try:
+        db_interface = get_db_interface()
+        walk = db_interface.get_walk_by_id(walk_id)
+
+        if not walk:
+            return jsonify({'message': 'Walk not found'}), 404
+
+        walk_data = {
+            'id': walk.id,
+            'name': walk.name,
+            'date': walk.date,
+            'description': walk.description,
+            'distance': walk.distance,
+            'co2_saved': walk.co2_saved,
+            'path_geojson': walk.path_geojson
+        }
+        return jsonify(walk_data), 200
+    except Exception as e:
+        current_app.logger.error(f"Error fetching walk {walk_id} for admin: {e}", exc_info=True)
+        return jsonify({'error': f'An error occurred: {str(e)}'}), 500
+
+
+@bp.route('/walks/<int:walk_id>', methods=['PUT'])
+def update_walk(walk_id):
+    if not session.get('is_authenticated'):
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    try:
+        data = request.json
+        db_interface = get_db_interface()
+        existing_walk = db_interface.get_walk_by_id(walk_id)
+
+        if not existing_walk:
+            return jsonify({'message': 'Walk not found'}), 404
+
+        existing_walk.name = data.get('name', existing_walk.name)
+        existing_walk.description = data.get('description', existing_walk.description)
+        date_str = data.get('date')
+        if date_str:
+            try:
+                walk_date = datetime.strptime(date_str, '%Y-%m-%d %H:%M')
+                existing_walk.date = int(walk_date.timestamp())
+            except ValueError:
+                current_app.logger.warning(f"Invalid date format received for walk {walk_id}: {date_str}. Keeping old date.")
+
+        if 'path_geojson' in data:
+            try:
+                new_geojson = json.loads(data['path_geojson'])
+                existing_walk.path_geojson = data['path_geojson']
+                coordinates = []
+                if new_geojson.get("type") == "LineString":
+                    coordinates = new_geojson.get("coordinates", [])
+                elif new_geojson.get("type") == "Point" and new_geojson.get("coordinates"):
+                    coordinates = [new_geojson.get("coordinates")]  # Преобразуем точку в список для обработки
+
+                walk_distance = 0
+                if len(coordinates) > 1:
+                    for i in range(len(coordinates) - 1):
+                        p1_lon, p1_lat = coordinates[i]
+                        p2_lon, p2_lat = coordinates[i + 1]
+                        walk_distance += distance.calculate_distance_km(p1_lat, p1_lon, p2_lat, p2_lon)
+                existing_walk.distance = walk_distance
+                existing_walk.co2_saved = walk_distance * 0.15  # Пример: 150g CO2 per km
+
+            except json.JSONDecodeError:
+                return jsonify({'error': 'Invalid path_geojson format. Must be a valid JSON string.'}), 400
+            except Exception as geo_e:
+                current_app.logger.error(f"Error processing path_geojson for walk {walk_id}: {geo_e}", exc_info=True)
+                return jsonify({'error': f'Error processing map data: {str(geo_e)}'}), 400
+
+        db_interface.update_walk(existing_walk)  # Убедитесь, что у вас есть метод update_walk
+
+        return jsonify({'message': f'Walk {walk_id} updated successfully'}), 200
+
+    except Exception as e:
+        current_app.logger.error(f"Error updating walk {walk_id}: {e}", exc_info=True)
+        return jsonify({'error': f'An error occurred: {str(e)}'}), 500
+
+
+@bp.route('/walks/<int:walk_id>', methods=['DELETE'])
+def delete_walk(walk_id):
+    if not session.get('is_authenticated'):
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    try:
+        db_interface = get_db_interface()
+        success = db_interface.delete_walk(walk_id) # Убедитесь, что у вас есть такой метод
+
+        if success:
+            return jsonify({'message': f'Walk {walk_id} deleted successfully'}), 200
+        else:
+            return jsonify({'message': 'Walk not found or could not be deleted'}), 404
+    except Exception as e:
+        current_app.logger.error(f"Error deleting walk {walk_id}: {e}", exc_info=True)
+        return jsonify({'error': f'An error occurred: {str(e)}'}), 500

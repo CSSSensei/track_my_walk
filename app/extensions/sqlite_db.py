@@ -75,7 +75,7 @@ class SQLiteDB(DBInterface):
             ''',
             (
                 walk.name,
-                walk.date,          # Assuming this is already an integer (timestamp)
+                walk.date,
                 walk.description,
                 walk.path_geojson,
                 walk.distance,
@@ -84,3 +84,72 @@ class SQLiteDB(DBInterface):
         )
         db.commit()
         return cursor.lastrowid
+
+    def update_walk(self, walk: Walk) -> bool:
+        if not walk.id:
+            raise ValueError("Walk ID is required for update")
+
+        db = self.connect()
+        cursor = db.cursor()
+
+        try:
+            path_geojson_str = json.dumps(walk.path_geojson) if walk.path_geojson else None
+
+            cursor.execute(
+                '''
+                UPDATE walks 
+                SET 
+                    name = ?,
+                    date = ?,
+                    description = ?,
+                    path_geojson = ?,
+                    distance = ?,
+                    co2_saved = ?,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+                ''',
+                (
+                    walk.name,
+                    walk.date,
+                    walk.description,
+                    path_geojson_str,
+                    walk.distance,
+                    walk.co2_saved,
+                    walk.id
+                )
+            )
+
+            db.commit()
+            return cursor.rowcount > 0
+
+        except Exception as e:
+            db.rollback()
+            raise RuntimeError(f"Failed to update walk: {str(e)}")
+        finally:
+            cursor.close()
+
+    def delete_walk(self, walk_id: int) -> bool:
+        if not walk_id or not isinstance(walk_id, int):
+            raise ValueError("Invalid walk ID provided")
+
+        db = self.connect()
+        cursor = db.cursor()
+
+        try:
+            cursor.execute("DELETE FROM walks WHERE id = ?", (walk_id,))
+            db.commit()
+            return cursor.rowcount > 0
+
+        except sqlite3.Error as e:
+            db.rollback()
+            raise RuntimeError(f"Failed to delete walk: {str(e)}")
+        finally:
+            cursor.close()
+
+
+if __name__ == '__main__':
+    from config import Config
+    db = sqlite3.connect(Config.DATABASE)
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM walks')
+    print(cursor.fetchall())
