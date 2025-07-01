@@ -5,8 +5,11 @@ let geoJsonLayers = []; // To store Leaflet GeoJSON layers for clearing/updating
 // Function to apply theme based on localStorage
 function applyTheme() {
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
+    if (savedTheme === null || savedTheme === 'dark') {
         document.body.classList.add('dark-mode');
+        if (savedTheme === null) {
+            localStorage.setItem('theme', 'dark');
+        }
     } else {
         document.body.classList.remove('dark-mode');
     }
@@ -154,7 +157,7 @@ async function uploadFile() {
     uploadStatus.style.color = 'blue';
 
     try {
-        const response = await fetch('/upload', {
+        const response = await fetch('/admin/upload', {
             method: 'POST',
             body: formData,
         });
