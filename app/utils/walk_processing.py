@@ -2,10 +2,12 @@ import json
 from datetime import datetime, timedelta
 import re
 from typing import List, Optional, Dict, Any
+
+from app.extensions.database import get_db_interface
 from app.models.route import Route
+from app.models.walk import Walk
 from app.utils import distance
 from app.utils.time_conversion import unix_time_to_readable
-from ..extensions import database
 
 
 def parse_coordinates(coord_str: str) -> Optional[List[float]]:
@@ -123,9 +125,6 @@ def import_walks_from_json(file) -> int:
     segments = data.get('semanticSegments', [])
     walk_routes: List[Route] = process_google_location_history(segments)
 
-    db = database.get_db()
-    cursor = db.cursor()
-
     for route_coords in walk_routes:
         # Create a GeoJSON LineString object
         geojson_path = {
@@ -141,13 +140,14 @@ def import_walks_from_json(file) -> int:
 
         co2_saved = walk_distance * 0.15
 
-        cursor.execute(
-            'INSERT INTO walks (name, date, description, path_geojson, distance, co2_saved) VALUES (?, ?, ?, ?, ?, ?)',
-            (f"Прогулка из Google Timeline ({unix_time_to_readable(route_coords.start_time)})", route_coords.start_time,
-             "Импортировано из Google Location History",
-             json.dumps(geojson_path), walk_distance, co2_saved)
-        )
-    db.commit()
+        db_interface = get_db_interface()
+        db_interface.add_walk(Walk(id=-1, name=f"Прогулка из Google Timeline ({unix_time_to_readable(route_coords.start_time)})",
+                                   date=route_coords.start_time,
+                                   description="Импортировано из Google Location History",
+                                   path_geojson=json.dumps(geojson_path),
+                                   distance=walk_distance,
+                                   co2_saved=co2_saved))
+
     return len(walk_routes)
 
 

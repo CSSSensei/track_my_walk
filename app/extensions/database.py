@@ -1,86 +1,39 @@
-import sqlite3
-from typing import List, Optional
-
-from flask import current_app, g
-from pprint import pprint
-from app.models.walk import Walk
+from app.extensions.db_interface import DBInterface
+from app.extensions.sqlite_db import SQLiteDB
+from flask import g
 
 
-def get_db():
-    if 'db' not in g:
-        db_path = current_app.config['DATABASE']
-        g.db = sqlite3.connect(
-            db_path,
-            detect_types=sqlite3.PARSE_DECLTYPES
-        )
-        g.db.row_factory = sqlite3.Row
-    return g.db
+def get_db_interface() -> DBInterface:
+    """
+    Provides a database interface instance (e.g., SQLiteDB) for the current request.
+    Stores it in Flask's `g` object to reuse within the same request.
+    """
+    if 'db_interface' not in g:
+        g.db_interface = SQLiteDB()
+        g.db_interface.connect()
+    return g.db_interface
 
 
-def close_db(e=None):
-    db = g.pop('db', None)
-    if db is not None:
-        db.close()
+def close_db_interface(e=None):
+    """
+    Closes the database interface connection at the end of a request.
+    """
+    db_interface = g.pop('db_interface', None)
+    if db_interface is not None:
+        db_interface.close()
 
 
-def init_db(app):
-    with app.app_context():
-        db = get_db()
-        cursor = db.cursor()
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS walks (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT,
-                date INTEGER,
-                description TEXT,
-                path_geojson TEXT, -- Storing as GeoJSON LineString string
-                distance REAL,
-                co2_saved REAL
-            )
-        ''')
-        db.commit()
+def init_app(app):
+    app.teardown_appcontext(close_db_interface)
+    app.cli.add_command(app.cli.command('init-db')(init_db_command))
 
 
 def init_db_command(app):
+    """Clear existing data and create new tables."""
     with app.app_context():
-        init_db(app)
+        # Get an instance of the SQLiteDB and initialize it
+        db_interface = SQLiteDB()
+        db_interface.init_db()
+        # No need to explicitly close here as it's a short-lived instance,
+        # could add db_interface.close() if preferred for clarity.
         print('Initialized the database.')
-
-
-def get_walks_from_db() -> List[Walk]:
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute('SELECT * FROM walks ORDER BY date DESC')
-    walks_data = cursor.fetchall()
-    return [Walk.from_db_row(walk) for walk in walks_data]
-
-
-def get_walk_by_id(walk_id: int) -> Optional[Walk]:
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute('SELECT * FROM walks WHERE id = ?', (walk_id,))
-    walk = cursor.fetchone()
-    print(dict(walk))
-    if walk:
-        return Walk.from_db_row(walk)
-    return None
-
-
-if __name__ == '__main__':
-    from config import Config
-    # print(Config.DATABASE)
-    # db = sqlite3.connect(Config.DATABASE)
-    # cursor = db.cursor()
-    # cursor.execute('SELECT * FROM walks ORDER BY date DESC LIMIT 10')
-    # rows = cursor.fetchall()
-    # cursor.execute('PRAGMA table_info(walks)')
-    # columns = [column[1] for column in cursor.fetchall()]
-    # for row in rows:
-    #     pprint(dict(zip(columns, row)))
-    # db.close()
-    db = sqlite3.connect(Config.DATABASE)
-    cursor = db.cursor()
-    cursor.execute('SELECT * FROM walks ORDER BY date DESC LIMIT 2')
-    walks_data = cursor.fetchall()
-    # Преобразуем Row объекты в словари для jsonify
-    print(list(Walk.from_db_row(walk).to_dict() for walk in walks_data))

@@ -1,8 +1,9 @@
 import json
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session, flash, current_app
 from datetime import datetime
-from ..extensions import database
 from app.utils import distance
+from ..extensions.database import get_db_interface
+from ..models.walk import Walk
 from ..utils.walk_processing import import_walks_from_json
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')  # Admin routes prefixed with /admin
@@ -80,13 +81,13 @@ def add_walk():
                 walk_distance += distance.calculate_distance_km(p1_lat, p1_lon, p2_lat, p2_lon)
             co2_saved = walk_distance * 0.15  # Example: 150g CO2 per km
 
-        db = database.get_db()
-        cursor = db.cursor()
-        cursor.execute(
-            'INSERT INTO walks (name, date, description, path_geojson, distance, co2_saved) VALUES (?, ?, ?, ?, ?, ?)',
-            (name, int(walk_date.timestamp()), description, json.dumps(geojson_path), walk_distance, co2_saved)
-        )
-        db.commit()
+        db_interface = get_db_interface()
+        db_interface.add_walk(Walk(id=-1, name=name,
+                                   date=int(walk_date.timestamp()),
+                                   description=description,
+                                   path_geojson=json.dumps(geojson_path),
+                                   distance=walk_distance,
+                                   co2_saved=co2_saved))
         return jsonify({'message': 'Walk added successfully'}), 200
 
     except KeyError as e:

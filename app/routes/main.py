@@ -1,7 +1,6 @@
 from typing import List
-
 from flask import Blueprint, render_template, jsonify, abort
-from ..extensions import database
+from ..extensions.database import get_db_interface
 from ..models.walk import Walk
 
 bp = Blueprint('main', __name__)
@@ -14,7 +13,8 @@ def index():
 
 @bp.route('/walks', methods=['GET'])
 def get_walks():
-    walks: List[Walk] = database.get_walks_from_db()  # Получаем список объектов Walk
+    db_interface = get_db_interface()
+    walks: List[Walk] = db_interface.get_walks()  # Получаем список объектов Walk
     return jsonify([walk.to_dict() for walk in walks])
 
 
@@ -29,7 +29,8 @@ def single_walk(walk_id):
     """
     Отображает страницу с деталями одной прогулки и её картой.
     """
-    walk = database.get_walk_by_id(walk_id)
+    db_interface = get_db_interface()
+    walk = db_interface.get_walk_by_id(walk_id)
 
     if walk is None:
         abort(404, description="Прогулка не найдена")
