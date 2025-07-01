@@ -13,8 +13,10 @@
 <body>
     <div id="sticky-header-container">
         <header class="sticky-header-content">
-            <h1 class="fancy-title">Track my walk</h1>
-            <button id="themeToggle" class="theme-toggle-button">Свап!</button>
+            <h1 class="fancy-title"><a href="{{ url_for('main.index') }}">Track my walk</a></h1>
+            <button id="themeToggle" class="theme-toggle-button">
+                <img id="themeIcon" width="24" height="24" src="" alt="Theme toggle">
+            </button>
         </header>
     </div>
 

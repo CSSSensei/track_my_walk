@@ -3,27 +3,80 @@ let map;
 let geoJsonLayers = []; // To store Leaflet GeoJSON layers for clearing/updating
 
 // Function to apply theme based on localStorage
+function updateIconColor() {
+    const themeIcon = document.getElementById('themeIcon');
+    const isScrolled = window.scrollY > 50;
+
+    if (document.body.classList.contains('dark-mode')) {
+        if (isScrolled) {
+            // Тёмная тема + скролл - белая иконка
+            themeIcon.style.filter = 'invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)';
+        } else {
+            // Тёмная тема без скролла - зелёная иконка
+            themeIcon.style.filter = 'invert(67%) sepia(98%) saturate(354%) hue-rotate(51deg) brightness(97%) contrast(101%)';
+        }
+    } else {
+        // Светлая тема - чёрная иконка
+        themeIcon.style.filter = 'invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%)';
+    }
+}
+
 function applyTheme() {
     const savedTheme = localStorage.getItem('theme');
+    const themeIcon = document.getElementById('themeIcon');
+
     if (savedTheme === null || savedTheme === 'dark') {
         document.body.classList.add('dark-mode');
         if (savedTheme === null) {
             localStorage.setItem('theme', 'dark');
         }
+        themeIcon.src = 'https://img.icons8.com/external-glyph-silhouettes-icons-papa-vector/78/external-Light-Mode-interface-glyph-silhouettes-icons-papa-vector.png';
+        themeIcon.alt = 'Switch to light mode';
     } else {
         document.body.classList.remove('dark-mode');
+        themeIcon.src = 'https://img.icons8.com/ios-filled/50/do-not-disturb-2.png';
+        themeIcon.alt = 'Switch to dark mode';
     }
+
+    updateIconColor();
 }
 
-// Function to handle sticky header blur effect
 function handleStickyHeader() {
     const stickyHeader = document.getElementById('sticky-header-container');
-    // Adjust scroll threshold based on your needs, e.g., 50px
     if (window.scrollY > 50) {
         stickyHeader.classList.add('scrolled');
     } else {
         stickyHeader.classList.remove('scrolled');
     }
+    updateIconColor();
+}
+
+function toggleTheme() {
+    const body = document.body;
+    const themeIcon = document.getElementById('themeIcon');
+
+    themeIcon.classList.add('hide-icon');
+
+    setTimeout(() => {
+        body.classList.toggle('dark-mode');
+        const currentTheme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+        localStorage.setItem('theme', currentTheme);
+
+        if (currentTheme === 'dark') {
+            themeIcon.src = 'https://img.icons8.com/external-glyph-silhouettes-icons-papa-vector/78/external-Light-Mode-interface-glyph-silhouettes-icons-papa-vector.png';
+            themeIcon.alt = 'Switch to light mode';
+            themeIcon.style.width = '30px';
+            themeIcon.style.height = '30px';
+        } else {
+            themeIcon.src = 'https://img.icons8.com/ios-filled/50/do-not-disturb-2.png';
+            themeIcon.alt = 'Switch to dark mode';
+            themeIcon.style.width = '22px';
+            themeIcon.style.height = '22px';
+        }
+
+        themeIcon.classList.remove('hide-icon');
+        updateIconColor();
+    }, 200);
 }
 
 // Initialize the Leaflet Map
@@ -49,14 +102,6 @@ function initMap() {
     // Call it once on load to set initial state if page is already scrolled
     handleStickyHeader();
 }
-
-// Function to toggle theme
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-    localStorage.setItem('theme', currentTheme);
-}
-
 
 // Fetch all walks from the backend and display them on the main map
 async function fetchWalksAndDisplay() {
