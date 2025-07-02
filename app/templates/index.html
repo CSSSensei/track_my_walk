@@ -92,24 +92,80 @@
             <section class="stack-info card">
                 <h2>Используемый стек</h2>
                 <ul>
-                    <li><b>Карты:</b> Leaflet.js с тайлами OpenStreetMap для отрисовки маршрутов GeoJSON.</li>
-                    <li><b>Калькулятор CO₂:</b> Упрощенный расчет на основе пройденного расстояния.</li>
-                    <li><b>Импорт данных:</b> Загрузка файла Google Location History (JSON).</li>
-                    <li><b>Хранение данных:</b> SQLite база данных на бэкенде.</li>
+                    <li><b>Бэкенд:</b> Python с использованием легковесного фреймворка <b>Flask</b>. Для хранения данных о прогулках используется встроенная база данных <b>SQLite</b>.</li>
                     <li><b>Фронтенд:</b> HTML, CSS, JavaScript.</li>
+                    <li><b>Карты:</b> Leaflet.js в связке с бесплатными картографическими данными <b>OpenStreetMap</b>.</li>
+                    <li><b>Данные:</b> Проект работает с геопространственными данными в формате <b>GeoJSON</b> и поддерживает импорт Google Location History (JSON).</li>
+
+<!--                    <li><b>Разработка модульной архитектуры доступа к данным:</b> "Проектирование и реализация абстрактного слоя доступа к данным (DBInterface), позволяющего легко переключаться между различными СУБД (например, SQLite на PostgreSQL) без изменения основной бизнес-логики приложения.</li>-->
+<!--                    <li><b>Оптимизация управления ресурсами:</b> "Внедрение эффективного управления подключениями к базе данных с использованием контекста запросов Flask (g и teardown_appcontext), обеспечивающее повторное использование соединений и их корректное закрытие."</li>-->
+<!--                    <li><b>Построение надежной системы хранения данных:</b> "Разработка и реализация схемы базы данных SQLite для хранения данных о походах, включая геопространственные данные (GeoJSON), с поддержкой операций добавления, обновления, удаления и получения данных."Импорт данных:</b> Загрузка файла Google Location History (JSON).</li>-->
+<!--                    <li><b>Использование паттернов проектирования:</b> "Применение паттерна 'Адаптер' (через DBInterface) для инкапсуляции логики работы с конкретной базой данных, повышая гибкость и тестируемость системы, а также паттерна 'Фабрика приложений' для гибкой инициализации приложения."</li>-->
+<!--                    <li><b>Разработка чистого и поддерживаемого кода:</b> "Написание хорошо структурированного и типизированного кода с использованием подсказок типов (type hints) для повышения читаемости и облегчения совместной разработки."</li>-->
+<!--                    <li><b>Разработка защищенного административного интерфейса:</b> "Создание защищенного административного раздела для управления контентом, включая аутентификацию на основе сессий."</li>-->
+<!--                    <li><b>Реализация API для управления данными:</b> "Разработка RESTful API, обеспечивающего полный цикл управления данными о походах (добавление, просмотр, редактирование, удаление)."</li>-->
+<!--                    <li><b>Интеграция с геопространственными данными:</b> "Эффективная работа с географическими данными маршрутов, представленными в формате GeoJSON, включая расчеты расстояний и управление их хранением."</li>-->
+<!--                    <li><b>Автоматизация импорта данных:</b> "Внедрение функциональности для массового импорта данных о походах из JSON-файлов, упрощающей наполнение базы данных."</li>-->
+<!--                    <li><b>Улучшение пользовательского опыта через сообщения:</b> "Использование Flash-сообщений для информирования пользователей об успешных операциях или ошибках."</li>-->
+<!--                    <li><b>Создание интерактивной карты прогулок:</b> "Интеграция Leaflet.js для визуализации всех пройденных маршрутов на интерактивной карте, с поддержкой GeoJSON и отображением подробной информации о каждой прогулке."</li>-->
+<!--                    <li><b>Разработка динамического пользовательского интерфейса:</b> "Создание отзывчивого и интуитивно понятного пользовательского интерфейса с использованием HTML, CSS и JavaScript, включая переключение тем, динамические статистические данные и анимированные элементы."</li>-->
+<!--                    <li><b>Визуализация данных:</b> "Эффективная визуализация данных о прогулках, включая общую статистику (количество прогулок, километраж) и отображение недавних маршрутов.</li>-->
+<!--                    <li><b>Применение современных веб-технологий:</b> "Использование современных стандартов HTML5, CSS3 и JavaScript для обеспечения кроссбраузерности и высокого качества пользовательского опыта."</li>-->
+<!--                    <li><b>Безопасное управление конфигурацией:</b> "Реализация механизма загрузки конфиденциальных данных (ключи API, учетные данные администратора) из переменных окружения с использованием .env файлов, повышающая безопасность и упрощающая развертывание."</li>-->
+
                 </ul>
-                <p><b>Возможности для будущего развития:</b></p>
-                <ul>
-                    <li>Возможность экспорта данных в CSV/PDF для личного архива.</li>
-                    <li>Добавление тегов к записям, поиск по записям.</li>
-                    <li>Напоминания о прогулках.</li>
-                    <li>Более точный калькулятор CO₂ на основе фактических данных о транспорте.</li>
-                    <li>Автоматическое определение "прогулок" из истории местоположений с помощью машинного обучения.</li>
-                </ul>
+<!--                <p><b>Возможности для будущего развития:</b></p>-->
+<!--                <ul>-->
+<!--                    <li>Возможность экспорта данных в CSV/PDF для личного архива.</li>-->
+<!--                    <li>Добавление тегов к записям, поиск по записям.</li>-->
+<!--                    <li>Автоматическое определение "прогулок" из истории местоположений с помощью машинного обучения.</li>-->
+<!--                </ul>-->
             </section>
         </div>
     </div>
 
+    <div class="sponsors-bar">
+        <div class="sponsors-track">
+            <img src="../static/images/logos/deepseek.svg" alt="Sponsor 1" class="sponsor-logo">
+            <img src="../static/images/logos/openai.svg" alt="Sponsor 2" class="sponsor-logo">
+            <img src="../static/images/logos/leaflet.svg" alt="Sponsor 3" class="sponsor-logo">
+            <img src="../static/images/logos/python.svg" alt="Sponsor 4" class="sponsor-logo">
+            <img src="../static/images/logos/flask.svg" alt="Sponsor 5" class="sponsor-logo">
+            <img src="../static/images/logos/sqlite.svg" alt="Sponsor 7" class="sponsor-logo">
+            <img src="../static/images/logos/git.svg" alt="Sponsor 8" class="sponsor-logo">
+            <img src="../static/images/logos/geojson.svg" alt="Sponsor 9" class="sponsor-logo">
+            <img src="../static/images/logos/rest-api.svg" alt="Sponsor 10" class="sponsor-logo">
+            <img src="../static/images/logos/css.svg" alt="Sponsor 11" class="sponsor-logo">
+            <img src="../static/images/logos/javascript.svg" alt="Sponsor 12" class="sponsor-logo">
+            <img src="../static/images/logos/html.svg" alt="Sponsor 13" class="sponsor-logo">
+            <img src="../static/images/logos/google-maps-2020-icon.svg" alt="Sponsor 14" class="sponsor-logo">
+            <img src="../static/images/logos/json.svg" alt="Sponsor 16" class="sponsor-logo">
+            <img src="../static/images/logos/pycharm.svg" alt="Sponsor 17" class="sponsor-logo">
+            <img src="../static/images/logos/webstorm.svg" alt="Sponsor 18" class="sponsor-logo">
+            <img src="../static/images/logos/toples.png" alt="Sponsor 19" class="sponsor-logo">
+            <img src="../static/images/logos/github.svg" alt="Sponsor 20" class="sponsor-logo">
+
+            <!-- Дублирующий набор для бесшовной анимации -->
+            <img src="../static/images/logos/deepseek.svg" alt="Sponsor 1" class="sponsor-logo">
+            <img src="../static/images/logos/openai.svg" alt="Sponsor 2" class="sponsor-logo">
+            <img src="../static/images/logos/leaflet.svg" alt="Sponsor 3" class="sponsor-logo">
+            <img src="../static/images/logos/python.svg" alt="Sponsor 4" class="sponsor-logo">
+            <img src="../static/images/logos/flask.svg" alt="Sponsor 5" class="sponsor-logo">
+            <img src="../static/images/logos/sqlite.svg" alt="Sponsor 7" class="sponsor-logo">
+            <img src="../static/images/logos/git.svg" alt="Sponsor 8" class="sponsor-logo">
+            <img src="../static/images/logos/geojson.svg" alt="Sponsor 9" class="sponsor-logo">
+            <img src="../static/images/logos/rest-api.svg" alt="Sponsor 10" class="sponsor-logo">
+            <img src="../static/images/logos/css.svg" alt="Sponsor 11" class="sponsor-logo">
+            <img src="../static/images/logos/javascript.svg" alt="Sponsor 12" class="sponsor-logo">
+            <img src="../static/images/logos/html.svg" alt="Sponsor 13" class="sponsor-logo">
+            <img src="../static/images/logos/google-maps-2020-icon.svg" alt="Sponsor 14" class="sponsor-logo">
+            <img src="../static/images/logos/json.svg" alt="Sponsor 16" class="sponsor-logo">
+            <img src="../static/images/logos/pycharm.svg" alt="Sponsor 17" class="sponsor-logo">
+            <img src="../static/images/logos/webstorm.svg" alt="Sponsor 18" class="sponsor-logo">
+            <img src="../static/images/logos/toples.png" alt="Sponsor 19" class="sponsor-logo">
+            <img src="../static/images/logos/github.svg" alt="Sponsor 20" class="sponsor-logo">
+        </div>
+    </div>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </body>
 </html>
