@@ -82,6 +82,7 @@ function toggleTheme() {
 // Initialize the Leaflet Map
 function initMap() {
     applyTheme(); // Apply theme on load
+    setupSecretAdminClick();
 
     // Center map on Moscow
     map = L.map('map').setView([55.751244, 37.618423], 10);
@@ -238,6 +239,29 @@ async function uploadFile() {
     }
 }
 
+function setupSecretAdminClick() {
+    const copyrightElement = document.getElementById('copyrightText');
+    let clickCount = 0;
+    const requiredClicks = 3; // Количество кликов для активации
+    let clickTimeout; // Для сброса счетчика
+
+    if (copyrightElement) {
+        copyrightElement.addEventListener('click', () => {
+            clickCount++;
+            clearTimeout(clickTimeout);
+            clickTimeout = setTimeout(() => {
+                clickCount = 0; // Сбрасываем счетчик, если между кликами прошло более 500 мс
+            }, 500);в
+
+            if (clickCount === requiredClicks) {
+                window.location.href = `/admin/`;
+
+                clickCount = 0; // Сбрасываем счетчик после активации
+                clearTimeout(clickTimeout); // Очищаем таймаут после успешного срабатывания
+            }
+        });
+    }
+}
 
 document.querySelectorAll('.stat-card').forEach(card => {
     const textLayer = card.querySelector('.text-layer');

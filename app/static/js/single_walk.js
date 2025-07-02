@@ -13,6 +13,7 @@ function applyTheme() {
 function initSingleWalkPage() {
     applyTheme(); // Apply theme on load
     initSingleWalkMap();
+    setupSecretAdminClick();
 }
 
 function initSingleWalkMap() {
@@ -107,5 +108,32 @@ function initSingleWalkMap() {
     } else {
         mapContainer.innerHTML = '<p>Данные маршрута отсутствуют для этой прогулки.</p>';
         map.setView([55.751244, 37.618423], 10); // Default view if no geojson
+    }
+}
+
+function setupSecretAdminClick() {
+    const copyrightElement = document.getElementById('copyrightText');
+    let clickCount = 0;
+    const requiredClicks = 3; // Количество кликов для активации
+    let clickTimeout; // Для сброса счетчика
+
+    if (copyrightElement) {
+        copyrightElement.addEventListener('click', () => {
+            clickCount++;
+            clearTimeout(clickTimeout);
+            clickTimeout = setTimeout(() => {
+                clickCount = 0; // Сбрасываем счетчик, если между кликами прошло более 500 мс
+            }, 500);
+            if (clickCount === requiredClicks) {
+                if (walkData && walkData.id) {
+                    window.location.href = `/admin/edit-walk/${walkData.id}`;
+                } else {
+                    console.error('Не удалось получить ID прогулки для перенаправления.');
+                    alert('Ошибка: ID прогулки не найден для перенаправления.');
+                }
+                clickCount = 0; // Сбрасываем счетчик после активации
+                clearTimeout(clickTimeout); // Очищаем таймаут после успешного срабатывания
+            }
+        });
     }
 }

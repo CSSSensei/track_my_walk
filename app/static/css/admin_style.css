@@ -376,10 +376,36 @@ button:hover {
     flex-wrap: wrap; /* Allow wrapping on small screens */
 }
 
+.admin-actions-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 10px 0;
+}
+
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--admin-accent-color);
+    color: black;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: var(--admin-accent-color-hover); /* Темнее синий при наведении */
+}
+
 .logout-link {
-    text-align: center;
-    margin-top: 30px; /* Увеличил отступ сверху */
-    margin-bottom: 20px; /* Добавил отступ снизу */
+    color: #dc3545;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    margin-top: 30px;
 }
 .logout-link a {
     color: var(--admin-accent-color); /* Green accent */

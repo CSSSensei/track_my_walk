@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-M">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Add Walk</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -15,7 +14,12 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 
 </head>
-<body>
+<body class="admin-login-page">
+    <div id="sticky-header-container" class="admin-sticky-header">
+        <header class="sticky-header-content">
+            <h1 class="fancy-title"><a href="{{ url_for('main.index') }}">Track my walk</a></h1>
+            </header>
+    </div>
     <div id="message" class="toast-message"></div>
 
     <div class="container">
@@ -55,10 +59,11 @@
             </div>
 
             <button onclick="submitWalk()" class="submit-button">Добавить прогулку</button>
-            </div>
+        </div>
 
-        <div class="logout-link">
-            <a href="{{ url_for('admin.admin_logout') }}">Выйти</a>
+        <div class="admin-actions-bottom">
+            <a href="{{ url_for('admin.walks_manager') }}" class="button">Управление прогулками</a>
+            <a href="{{ url_for('admin.admin_logout') }}" class="logout-link">Выйти</a>
         </div>
     </div>
 
