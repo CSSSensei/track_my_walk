@@ -75,6 +75,17 @@ body {
     text-decoration: none;
 }
 
+.content-wrapper {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column; /* Новое: вертикальное центрирование */
+    align-items: center;    /* Центрирование по горизонтали */
+    justify-content: center; /* Центрирование по вертикали */
+    flex: 1 0 auto;         /* Растягиваем на всю доступную высоту */
+    min-height: calc(100vh - 120px); /* Учитываем высоту заголовка */
+    padding: 20px 0;        /* Вертикальные отступы */
+}
 
 /* Specific styling for the admin login/panel container */
 .container {
@@ -85,7 +96,6 @@ body {
     padding: 30px; /* Generous padding */
     box-shadow: 0 10px 30px var(--admin-shadow-medium); /* Stronger, darker shadow */
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    gap: 25px;
 }
 
 /* Card styling within the admin panel */
@@ -199,7 +209,8 @@ button:hover {
 }
 
 .table-responsive {
-    overflow-x: auto; /* Для прокрутки таблицы на маленьких экранах */
+    margin-top: 0; /* Удален лишний отступ */
+    width: 100%;
 }
 
 #walksTable {
@@ -330,34 +341,30 @@ button:hover {
     margin-bottom: 1px; /* More margin */
 }
 
-@media (max-width: 768px) { /* Adaptability for mobile */
-    .main-grid {
-        grid-template-columns: 1fr; /* One column for small screens */
+@media (max-width: 768px) {
+    .fancy-title {
+        font-size: 2.5em !important; /* Единый размер для всех страниц */
+        margin-top: 15px;
     }
-    .container {
-        padding: 20px; /* Adjust padding for smaller screens */
+
+    /* Фикс отступов контента */
+    .content-wrapper {
+        padding: 10px 0;
+        min-height: calc(100vh - 80px);
     }
-    h1, h2 {
-        font-size: 1.6em;
-    }
-    button { /* Убрал .submit-button, т.к. его нет */
+
+    /* Исправление для кнопок */
+    button,
+    .submit-button,
+    .add-button {
         padding: 10px 20px;
         font-size: 1em;
     }
-    .toast-message {
-        width: 95%; /* Adjust width for very small screens */
-        padding: 10px 15px;
-        font-size: 0.9em;
-    }
-    .sticky-header-content {
-        padding: 10px 20px; /* Уменьшаем padding для мобильных */
-    }
-    .fancy-title {
-        font-size: 1.5em; /* Уменьшаем шрифт для мобильных */
-    }
-    .admin-button {
-        font-size: 0.8em;
-        padding: 6px 12px;
+
+    /* Уменьшение отступов в таблице */
+    #walksTable th,
+    #walksTable td {
+        padding: 8px 10px;
     }
 }
 

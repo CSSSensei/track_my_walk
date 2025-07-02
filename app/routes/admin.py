@@ -103,6 +103,31 @@ def walks_manager():
     return render_template('admin_walks_manager.html')
 
 
+@bp.route('/edit-walk/<int:walk_id>', methods=['GET'])
+def edit_walk_page(walk_id):
+    if not session.get('is_authenticated'):
+        flash('Доступ запрещен. Пожалуйста, войдите.', 'error')
+        return redirect(url_for('admin.admin_login'))
+    db_interface = get_db_interface()
+    walk = db_interface.get_walk_by_id(walk_id)
+    if not walk:
+        flash('Прогулка не найдена.', 'error')
+        return redirect(url_for('admin.walks_manager'))
+
+    date_obj = datetime.fromtimestamp(walk.date)
+    walk.date = date_obj.strftime('%Y-%m-%dT%H:%M:%S')
+    walk_data = {
+        'id': walk.id,
+        'name': walk.name,
+        'date_formatted': date_obj.strftime('%Y-%m-%dT%H:%M:%S'),
+        'description': walk.description,
+        'path_geojson': walk.path_geojson
+    }
+    walk_data_json = json.dumps(walk_data)
+
+    return render_template('admin_edit_walk.html', walk=walk, walk_data_json=walk_data_json)
+
+
 @bp.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -169,7 +194,7 @@ def update_walk(walk_id):
         date_str = data.get('date')
         if date_str:
             try:
-                walk_date = datetime.strptime(date_str, '%Y-%m-%d %H:%M')
+                walk_date = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
                 existing_walk.date = int(walk_date.timestamp())
             except ValueError:
                 current_app.logger.warning(f"Invalid date format received for walk {walk_id}: {date_str}. Keeping old date.")
@@ -183,6 +208,11 @@ def update_walk(walk_id):
                     coordinates = new_geojson.get("coordinates", [])
                 elif new_geojson.get("type") == "Point" and new_geojson.get("coordinates"):
                     coordinates = [new_geojson.get("coordinates")]  # Преобразуем точку в список для обработки
+                elif new_geojson.get("type") == "Feature":
+                    geometry = new_geojson.get("geometry", {})
+                    if geometry.get("type") == "LineString" and geometry.get('coordinates'):
+                        coordinates = geometry.get("coordinates", [])
+                        existing_walk.path_geojson = geometry
 
                 walk_distance = 0
                 if len(coordinates) > 1:
@@ -191,15 +221,14 @@ def update_walk(walk_id):
                         p2_lon, p2_lat = coordinates[i + 1]
                         walk_distance += distance.calculate_distance_km(p1_lat, p1_lon, p2_lat, p2_lon)
                 existing_walk.distance = walk_distance
-                existing_walk.co2_saved = walk_distance * 0.15  # Пример: 150g CO2 per km
+                existing_walk.co2_saved = walk_distance * 0.15
 
             except json.JSONDecodeError:
                 return jsonify({'error': 'Invalid path_geojson format. Must be a valid JSON string.'}), 400
             except Exception as geo_e:
                 current_app.logger.error(f"Error processing path_geojson for walk {walk_id}: {geo_e}", exc_info=True)
                 return jsonify({'error': f'Error processing map data: {str(geo_e)}'}), 400
-
-        db_interface.update_walk(existing_walk)  # Убедитесь, что у вас есть метод update_walk
+        db_interface.update_walk(existing_walk)
 
         return jsonify({'message': f'Walk {walk_id} updated successfully'}), 200
 

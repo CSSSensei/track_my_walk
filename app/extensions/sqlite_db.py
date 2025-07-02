@@ -104,8 +104,7 @@ class SQLiteDB(DBInterface):
                     description = ?,
                     path_geojson = ?,
                     distance = ?,
-                    co2_saved = ?,
-                    updated_at = CURRENT_TIMESTAMP
+                    co2_saved = ?
                 WHERE id = ?
                 ''',
                 (

@@ -272,7 +272,7 @@ async function deleteWalk(walkId) {
     }
 
     try {
-        const response = await fetch(`/walks/${walkId}`, {
+        const response = await fetch(`/admin/walks/${walkId}`, {
             method: 'DELETE'
         });
 
@@ -316,7 +316,9 @@ function renderWalksTable(walks) {
         const editBtn = document.createElement('button');
         editBtn.textContent = 'Редактировать';
         editBtn.classList.add('edit-button');
-        editBtn.addEventListener('click', () => showWalkForm(walk));
+        editBtn.addEventListener('click', () => {
+            window.location.href = `/admin/edit-walk/${walk.id}`;
+        });
         actionsCell.appendChild(editBtn);
 
         const deleteBtn = document.createElement('button');

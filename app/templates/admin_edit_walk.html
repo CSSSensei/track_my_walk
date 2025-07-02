@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактировать прогулку #{{ walk.id }} - Admin</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+</head>
+<body class="admin-edit-walk-page">
+    <div id="sticky-header-container" class="admin-sticky-header">
+        <header class="sticky-header-content">
+            <h1 class="fancy-title"><a href="{{ url_for('main.index') }}">Track my walk</a></h1>
+        </header>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="container">
+            <h1 id="formTitle">{{ 'Редактировать прогулку #' + walk.id|string  if walk else 'Добавить новую прогулку' }}</h1>
+            <div class="card">
+                <form id="walkForm">
+                    <input type="hidden" id="walkId" name="walkId" value="{{ walk.id if walk else '' }}">
+
+                    <div class="form-group">
+                        <label for="name">Название:</label>
+                        <input type="text" id="name" name="name" value="{{ walk.name if walk else '' }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date">Дата и время:</label>
+                        <input type="datetime-local" id="date" name="date" value="{{ walk.date if walk else '' }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Описание:</label>
+                        <textarea id="description" name="description" rows="3">{{ walk.description if walk else '' }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Маршрут на карте:</label>
+                        <div id="map" style="height: 500px; width: 100%; border-radius: 10px; box-shadow: inset 0 0 10px rgba(0,0,0,0.6); background-color: #334433;"></div>
+                    </div>
+
+                    <div class="control-button-group">
+                        <button type="submit" class="submit-button">Сохранить прогулку</button>
+                        <button type="button" id="clearMapBtn" class="control-button-group">Очистить карту</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="logout-link">
+                <a href="{{ url_for('admin.walks_manager') }}">Вернуться к списку прогулок</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastMessage" class="toast-message"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+    <script>
+        const initialWalkData = {{ walk_data_json | safe }}; // Передаем данные маршрута из Flask
+    </script>
+    <script src="{{ url_for('static', filename='js/admin_edit_walk.js') }}"></script>
+</body>
+</html>
