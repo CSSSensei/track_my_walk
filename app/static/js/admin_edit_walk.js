@@ -184,7 +184,7 @@ async function saveWalk(event) {
         showToast(`Прогулка успешно ${walkId ? 'обновлена' : 'добавлена'}!`, 'success');
 
         setTimeout(() => {
-            window.location.href = '/admin/walks-manager';
+            window.location.href = `/walk/${walkId}`;
         }, 1500);
     } catch (error) {
         console.error('Error saving walk:', error);
