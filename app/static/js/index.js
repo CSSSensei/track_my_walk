@@ -54,6 +54,8 @@ function handleStickyHeader() {
 function toggleTheme() {
     const body = document.body;
     const themeIcon = document.getElementById('themeIcon');
+    const themeSwitchSound = document.getElementById('themeSwitchSound');
+
 
     themeIcon.classList.add('hide-icon');
 
@@ -76,6 +78,12 @@ function toggleTheme() {
 
         themeIcon.classList.remove('hide-icon');
         updateIconColor();
+
+        if (themeSwitchSound) {
+            themeSwitchSound.currentTime = 0; // Сбрасываем звук в начало, чтобы можно было быстро кликать
+            themeSwitchSound.play().catch(e => console.error("Error playing sound:", e)); // Добавляем catch для обработки ошибок (например, если пользователь еще не взаимодействовал со страницей)
+        }
+
     }, 200);
 }
 
@@ -102,6 +110,36 @@ function initMap() {
     window.addEventListener('scroll', handleStickyHeader);
     // Call it once on load to set initial state if page is already scrolled
     handleStickyHeader();
+}
+
+function animateCounter(elementId, endValue, duration, isDistance = false) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+
+    let startTimestamp = null;
+    const startValue = 0;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        let currentValue;
+
+        if (isDistance) {
+            // For distance, use toFixed(2)
+            currentValue = (startValue + progress * (endValue - startValue)).toFixed(2);
+            element.textContent = currentValue + ' км';
+        } else {
+            // For counts, round to integer
+            currentValue = Math.floor(startValue + progress * (endValue - startValue));
+            element.textContent = currentValue;
+        }
+
+
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        }
+    };
+
+    window.requestAnimationFrame(step);
 }
 
 // Fetch all walks from the backend and display them on the main map
@@ -132,6 +170,22 @@ async function fetchWalksAndDisplay() {
                     onEachFeature: function (feature, layer) {
                         layer.walkId = walk.id;
 
+                        layer.on('mouseover', function () {
+                            layer.setStyle({
+                                color: '#00FF00',
+                                weight: 5,       // Slightly thicker on hover
+                                opacity: 1.0     // Fully opaque on hover
+                            });
+                        });
+
+                        layer.on('mouseout', function () {
+                            layer.setStyle({
+                                color: '#FF0000', // Revert to red on mouse out
+                                weight: 4,
+                                opacity: 0.8
+                            });
+                        });
+
                         layer.on('click', function (e) {
                             window.location.href = `/walk/${e.target.walkId}`;
                         });
@@ -155,9 +209,8 @@ async function fetchWalksAndDisplay() {
             }
         });
 
-        // Update stats
-        document.getElementById('totalWalks').textContent = walks.length;
-        document.getElementById('totalDistance').textContent = totalDistanceKm.toFixed(2) + ' км'; // Format to 2 decimal places
+        animateCounter('totalWalks', walks.length, 750);
+        animateCounter('totalDistance', totalDistanceKm, 750, true);
 
     } catch (error) {
         console.error('Error fetching walks:', error);
@@ -251,7 +304,7 @@ function setupSecretAdminClick() {
             clearTimeout(clickTimeout);
             clickTimeout = setTimeout(() => {
                 clickCount = 0; // Сбрасываем счетчик, если между кликами прошло более 500 мс
-            }, 500);в
+            }, 500);
 
             if (clickCount === requiredClicks) {
                 window.location.href = `/admin/`;

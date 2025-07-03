@@ -462,3 +462,7 @@ button:hover {
 .flatpickr-months .flatpickr-next-month {
     color: var(--admin-text-color) !important; /* Arrows color */
 }
+
+.leaflet-control-attribution {
+    display: none !important;
+}

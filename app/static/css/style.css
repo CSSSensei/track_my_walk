@@ -563,7 +563,7 @@ body.dark-mode .stat-card:hover .text-layer {
 
 .sponsors-track {
     display: inline-block;
-    animation: scroll 80s linear infinite;
+    animation: scroll 100s linear infinite;
 }
 
 .sponsor-logo {
@@ -669,4 +669,17 @@ body.dark-mode .stat-card:hover .text-layer {
         padding-bottom: 0px;
         padding-top: 0px;
     }
+}
+
+.leaflet-control-attribution {
+    display: none !important;
+}
+
+.leaflet-container a:focus {
+    outline: none !important;
+}
+
+/* Дополнительно, если это не сработает, можно попробовать для SVG-путей */
+.leaflet-container path:focus {
+    outline: none !important;
 }
