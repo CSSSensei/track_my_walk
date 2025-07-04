@@ -52,9 +52,8 @@ function initSingleWalkMap() {
 
     if (walkData.path_geojson) {
         try {
-            const geojsonData = JSON.parse(walkData.path_geojson);
 
-            const geoJsonLayer = L.geoJSON(geojsonData, {
+            const geoJsonLayer = L.geoJSON(walkData.path_geojson, {
                 style: function (feature) {
                     return {
                         color: '#4CAF50', // Green color for single walk path - consistent accent

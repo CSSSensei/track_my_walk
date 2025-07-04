@@ -86,7 +86,7 @@ def add_walk():
         walk_id = db_interface.add_walk(Walk(id=-1, name=name,
                                    date=int(walk_date.timestamp()),
                                    description=description,
-                                   path_geojson=json.dumps(geojson_path),
+                                   path_geojson=geojson_path,
                                    distance=walk_distance,
                                    co2_saved=co2_saved))
         return jsonify({'message': 'Walk added successfully', 'id': walk_id}), 200

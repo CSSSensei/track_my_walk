@@ -156,7 +156,7 @@ async function fetchWalksAndDisplay() {
 
         walks.forEach(walk => {
             if (walk.path_geojson) {
-                const geojsonData = JSON.parse(walk.path_geojson);
+                const geojsonData = walk.path_geojson;
 
                 // Add GeoJSON LineString to map
                 const geoJsonLayer = L.geoJSON(geojsonData, {

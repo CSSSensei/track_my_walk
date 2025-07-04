@@ -141,10 +141,10 @@ def import_walks_from_json(file) -> int:
         co2_saved = walk_distance * 0.15
 
         db_interface = get_db_interface()
-        db_interface.add_walk(Walk(id=-1, name=f"Прогулка из Google Timeline ({unix_time_to_readable(route_coords.start_time)})",
+        walk_id = db_interface.add_walk(Walk(id=-1, name=f"Прогулка из Google Timeline ({unix_time_to_readable(route_coords.start_time)})",
                                    date=route_coords.start_time,
                                    description="Импортировано из Google Location History",
-                                   path_geojson=json.dumps(geojson_path),
+                                   path_geojson=geojson_path,
                                    distance=walk_distance,
                                    co2_saved=co2_saved))
 

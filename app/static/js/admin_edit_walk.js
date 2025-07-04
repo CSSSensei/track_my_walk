@@ -43,8 +43,7 @@ function initMap(initialGeoJson = null) {
 
     if (initialGeoJson) {
         try {
-            const geoJsonObj = JSON.parse(initialGeoJson);
-            const geoJsonLayer = L.geoJSON(geoJsonObj, {
+            const geoJsonLayer = L.geoJSON(initialGeoJson, {
                 style: function() {
                     return {
                         color: '#FF0000',
@@ -159,8 +158,7 @@ async function saveWalk(event) {
                 body: JSON.stringify(walkData)
             });
         } else {
-            const geojsonObj = JSON.parse(path_geojson);
-            const coordinatesToSend = geojsonObj.type === "LineString" ? geojsonObj.coordinates : (geojsonObj.type === "Point" ? [geojsonObj.coordinates] : []);
+            const coordinatesToSend = path_geojson.type === "LineString" ? geojsonObj.coordinates : (geojsonObj.type === "Point" ? [geojsonObj.coordinates] : []);
 
             response = await fetch('/admin/add_walk', {
                 method: 'POST',

@@ -15,7 +15,7 @@ class SQLiteDB(DBInterface):
 
     def connect(self):
         if self._db is None:
-            db_path = self._db_path if self._db_path else current_app.config['DATABASE']
+            db_path = self._db_path if self._db_path else current_app.config['SQLITE_DATABASE']
             self._db = sqlite3.connect(
                 db_path,
                 detect_types=sqlite3.PARSE_DECLTYPES
@@ -64,8 +64,7 @@ class SQLiteDB(DBInterface):
     def add_walk(self, walk: Walk) -> int:
         db = self.connect()
         cursor = db.cursor()
-        # Assuming Walk object has attributes like name, date, description, path_geojson, distance, co2_saved
-        # For path_geojson, we convert the dict to a JSON string for storage.
+        # convert the dict to a JSON string for storage
         path_geojson_str = json.dumps(walk.path_geojson) if walk.path_geojson else None
 
         cursor.execute(
@@ -77,7 +76,7 @@ class SQLiteDB(DBInterface):
                 walk.name,
                 walk.date,
                 walk.description,
-                walk.path_geojson,
+                path_geojson_str,
                 walk.distance,
                 walk.co2_saved
             )
@@ -148,7 +147,7 @@ class SQLiteDB(DBInterface):
 
 if __name__ == '__main__':
     from config import Config
-    db = sqlite3.connect(Config.DATABASE)
+    db = sqlite3.connect(Config.SQLITE_DATABASE)
     cursor = db.cursor()
     cursor.execute('SELECT * FROM walks')
     print(cursor.fetchall())

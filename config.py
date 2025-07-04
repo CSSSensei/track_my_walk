@@ -12,6 +12,12 @@ INSTANCE_DIR.mkdir(exist_ok=True)  # Создаем папку, если нет 
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret_key')
     API_KEY = os.getenv('API_KEY')
-    DATABASE = str(INSTANCE_DIR / 'walks.db')
+    SQLITE_DATABASE = str(INSTANCE_DIR / 'walks.db')
+    POSTGRES_DATABASE = {
+        'dbname': os.getenv('POSTGRESQL_DB_NAME'),
+        'user': os.getenv('POSTGRESQL_USER'),
+        'password': os.getenv('POSTGRESQL_PASSWORD'),
+        'host': os.getenv('POSTGRESQL_HOST'),
+    }
     ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
     ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
