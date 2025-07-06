@@ -25,14 +25,6 @@ function updateRoute() {
         // Therefore, we convert [lon, lat] back to L.LatLng(lat, lon)
         const latLngs = drawnRoute.map(coord => L.latLng(coord[1], coord[0]));
         polyline = L.polyline(latLngs, {color: '#e94560', weight: 4, opacity: 0.8}).addTo(map);
-
-        // Autoscaling if the route is large enough (more than 1 point)
-        if (drawnRoute.length > 1) {
-            map.fitBounds(polyline.getBounds());
-        } else {
-            // If there is only one point, center on it and set an adequate zoom.
-            map.setView(latLngs[0], 15);
-        }
     }
 }
 
