@@ -1,6 +1,6 @@
 from app.extensions.db_interface import DBInterface
-from app.extensions.postgres_db import PostgreSQLDB
 from app.extensions.sqlite_db import SQLiteDB
+from app.extensions.posgres import PostgresDB
 from flask import g
 
 
@@ -10,7 +10,7 @@ def get_db_interface() -> DBInterface:
     Stores it in Flask's `g` object to reuse within the same request.
     """
     if 'db_interface' not in g:
-        g.db_interface = PostgreSQLDB()
+        g.db_interface = PostgresDB()
         g.db_interface.connect()
     return g.db_interface
 
@@ -33,7 +33,7 @@ def init_db_command(app):
     """Clear existing data and create new tables."""
     with app.app_context():
         # Get an instance of the SQLiteDB and initialize it
-        db_interface = PostgreSQLDB()
+        db_interface = PostgresDB()
         db_interface.init_db()
         # No need to explicitly close here as it's a short-lived instance,
         # could add db_interface.close() if preferred for clarity.
