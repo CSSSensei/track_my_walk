@@ -683,3 +683,299 @@ body.dark-mode .stat-card:hover .text-layer {
 .leaflet-container path:focus {
     outline: none !important;
 }
+
+/* Стили для фотографий на карте и галереи */
+.photo-marker {
+    background: none !important; /* Убираем фон по умолчанию у L.divIcon */
+    border: none !important;
+}
+
+.photo-marker-inner {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+.photo-marker-inner img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+    line-height: 0 !important;
+}
+
+
+/* Этот класс применяется к контейнеру содержимого попапа Leaflet */
+.leaflet-popup-content-wrapper {
+    max-width: 350px;
+    background-color: var(--container-bg);
+    border-radius: 12px;
+    padding: 0;
+    box-shadow: 0 5px 25px var(--shadow-medium);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    overflow: hidden;
+}
+
+body.dark-mode .leaflet-popup-content-wrapper {
+    background-color: rgba(30, 40, 30, 0.55);
+    border-color: var(--accent-primary);
+}
+
+.leaflet-popup-content {
+    padding: 15px;
+    text-align: center;
+}
+
+
+.photo-popup img {
+    max-width: 250px !important;
+    max-height: 100% !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+    margin: 0 auto;
+    display: block;
+}
+
+.photo-popup .photo-time, .photo-popup .photo-description {
+    text-align: center;
+    color: var(--text-color);
+}
+
+body.dark-mode .photo-popup .photo-time {
+    color: var(--accent-secondary);
+    opacity: 0.7;
+}
+
+.leaflet-popup-content-wrapper {
+    animation: popupFadeIn 0.3s ease-out;
+}
+
+@keyframes popupFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.photo-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.photo-thumbnail {
+    cursor: pointer;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.photo-thumbnail:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.photo-thumbnail img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+}
+
+
+/* Photo Gallery Styles */
+.photo-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.photo-thumbnail {
+    position: relative;
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: 0 3px 10px var(--shadow-light);
+    transition: all 0.3s ease;
+}
+
+.photo-thumbnail:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px var(--shadow-medium);
+    border-color: var(--link-color);
+}
+
+.photo-thumbnail img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.photo-thumbnail:hover img {
+    transform: scale(1.05);
+}
+
+.photo-thumbnail-description {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 8px;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    color: white;
+    font-size: 0.8em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Fullscreen Photo Viewer Styles */
+.fullscreen-photo-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+.fullscreen-photo-container {
+    max-width: 90%;
+    max-height: 90%;
+    position: relative;
+}
+
+.fullscreen-photo {
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+}
+
+.photo-description-fullscreen {
+    color: var(--text-color);
+    text-align: center;
+    margin-top: 15px;
+    padding: 0 20px;
+    max-width: 800px;
+    font-size: 1.1em;
+}
+
+body.dark-mode .photo-description-fullscreen {
+    color: #e0e0e0;
+}
+
+.photo-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    z-index: 1001;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.photo-close-btn:hover {
+    opacity: 1;
+}
+
+.photo-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    z-index: 1001;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+.photo-nav-btn:hover {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+body.dark-mode .photo-nav-btn {
+    color: var(--accent-primary);
+}
+
+.photo-nav-btn.prev {
+    left: 20px;
+}
+
+.photo-nav-btn.next {
+    right: 20px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .photo-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    .photo-thumbnail img {
+        height: 120px;
+    }
+
+    .photo-nav-btn {
+        font-size: 24px;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .photo-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+    }
+
+    .photo-thumbnail img {
+        height: 100px;
+    }
+
+    .photo-description-fullscreen {
+        font-size: 0.9em;
+    }
+}

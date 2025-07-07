@@ -2,6 +2,8 @@ import json
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session, flash, current_app
 from datetime import datetime
 from app.utils import distance
+from werkzeug.utils import secure_filename
+import os
 from ..extensions.database import get_db_interface
 from ..models.walk import Walk
 from ..utils.walk_processing import import_walks_from_json
@@ -253,3 +255,48 @@ def delete_walk(walk_id):
     except Exception as e:
         current_app.logger.error(f"Error deleting walk {walk_id}: {e}", exc_info=True)
         return jsonify({'error': f'An error occurred: {str(e)}'}), 500
+
+
+@bp.route('/upload_photo', methods=['POST'])
+def upload_photo():
+    if not session.get('is_authenticated'):
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    if 'photo' not in request.files:
+        return jsonify({'error': 'No photo file provided'}), 400
+
+    photo = request.files['photo']
+    walk_id = request.form.get('walk_id')
+    latitude = request.form.get('latitude')
+    longitude = request.form.get('longitude')
+    description = request.form.get('description', '')
+
+    if not walk_id or not latitude or not longitude:
+        return jsonify({'error': 'Missing walk_id, latitude, or longitude'}), 400
+
+    try:
+        walk_id = int(walk_id)
+        latitude = float(latitude)
+        longitude = float(longitude)
+    except ValueError:
+        return jsonify({'error': 'Invalid walk_id, latitude, or longitude format'}), 400
+
+    if photo.filename == '':
+        return jsonify({'error': 'No selected photo file'}), 400
+
+    upload_folder = current_app.config.get('UPLOAD_FOLDER', 'app/static/uploads/photos')
+    if not os.path.exists(upload_folder):
+        os.makedirs(upload_folder)
+
+    filename = secure_filename(photo.filename)
+    filepath = os.path.join(upload_folder, filename)
+    photo_url = f'/static/uploads/photos/{filename}'
+
+    try:
+        photo.save(filepath)
+        db_interface = get_db_interface()
+        photo_id = db_interface.add_photo(walk_id, photo_url, description, latitude, longitude)
+        return jsonify({'message': 'Photo uploaded successfully', 'photo_id': photo_id, 'url': photo_url}), 200
+    except Exception as e:
+        current_app.logger.error(f"Error uploading photo: {e}", exc_info=True)
+        return jsonify({'error': f'An error occurred during photo upload: {str(e)}'}), 500

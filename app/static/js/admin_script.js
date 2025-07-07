@@ -78,6 +78,9 @@ async function submitWalk() {
         if (response.ok) {
             showMessage(result.message, 'success');
             clearForm();
+            setTimeout(() => {
+                    window.location.href = `/walk/${result.id}`;
+                }, 1500);
         } else {
             // The server should return hresult.error in case of an error
             showMessage(result.error || 'Произошла ошибка на сервере.', 'error');

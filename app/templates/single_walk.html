@@ -6,7 +6,10 @@
     <title>Прогулка: {{ walk.name }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 </head>
@@ -36,6 +39,22 @@
             <h2>Маршрут прогулки</h2>
             <div id="singleWalkMap" class="single-walk-map"></div>
         </section>
+
+        {% if walk.photos %}
+        <section class="walk-photos-section card">
+            <h2>Фотографии</h2>
+            <div id="photoGallery" class="photo-gallery">
+                {% for photo in walk.photos %}
+                <div class="photo-thumbnail" data-lat="{{ photo.latitude }}" data-lng="{{ photo.longitude }}" data-src="{{ photo.url }}">
+                    <img src="{{ photo.thumbnail_url or photo.url }}" alt="Фото с прогулки" loading="lazy">
+                    {% if photo.description %}
+                    <div class="photo-thumbnail-description">{{ photo.description }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
     </div>
 
     <script>

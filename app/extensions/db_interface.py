@@ -1,6 +1,7 @@
 import abc
 from typing import List, Optional
 from app.models.walk import Walk
+from app.models.photo import Photo
 
 
 class DBInterface(abc.ABC):
@@ -43,4 +44,19 @@ class DBInterface(abc.ABC):
     @abc.abstractmethod
     def delete_walk(self, walk_id: int) -> bool:
         """Deletes a walk from the database by its ID."""
+        pass
+
+    @abc.abstractmethod
+    def add_photo(self, walk_id: int, url: str, description: Optional[str], latitude: float, longitude: float) -> int:
+        """Adds a new photo to the database and returns its ID."""
+        pass
+
+    @abc.abstractmethod
+    def get_photos_by_walk_id(self, walk_id: int) -> List[Photo]:
+        """Retrieves all photos associated with a specific walk ID."""
+        pass
+
+    @abc.abstractmethod
+    def delete_photo(self, photo_id: int) -> bool:
+        """Deletes a photo from the database by its ID."""
         pass

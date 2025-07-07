@@ -466,3 +466,88 @@ button:hover {
 .leaflet-control-attribution {
     display: none !important;
 }
+
+.secondary-button {
+    background: #6c757d !important;
+    color: white !important;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.secondary-button:hover {
+    background: #5a6268 !important;
+    transform: translateY(-1px);
+    color: white !important;
+}
+
+.photos-section {
+    display: none; /* Изначально скрыто */
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid var(--admin-border-color);
+    border-radius: 8px;
+}
+.photos-section h2 {
+    margin-top: 0;
+}
+.photo-upload-section {
+    background: var(--admin-primary-color);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+.photo-upload-section .form-group {
+    margin-bottom: 0;
+}
+.photo-upload-section button {
+    grid-column: span 2;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 10px 20px;
+    font-size: 1em;
+}
+.uploaded-photos-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+    border-top: 1px dashed var(--admin-border-color);
+    padding-top: 15px;
+}
+.photo-thumbnail-container {
+    border: 1px solid var(--admin-border-color);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+}
+.photo-thumbnail-container img {
+    max-width: 120px;
+    height: auto;
+    display: block;
+    margin-bottom: 8px;
+    border-radius: 3px;
+}
+.photo-thumbnail-container p {
+    font-size: 0.8em;
+    margin-bottom: 8px;
+}
+.delete-photo-btn {
+    background: var(--admin-danger-color);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: background-color 0.3s ease;
+}
+.delete-photo-btn:hover {
+    background: var(--admin-danger-color-hover);
+}

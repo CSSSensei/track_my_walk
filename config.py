@@ -8,6 +8,9 @@ load_dotenv(env_path)
 INSTANCE_DIR = BASE_DIR / 'instance'
 INSTANCE_DIR.mkdir(exist_ok=True)  # Создаем папку, если нет папки instance
 
+project_root = os.path.abspath(os.path.dirname(__file__))
+UPLOAD_FOLDER = os.path.join(project_root, 'app', 'static', 'uploads', 'photos')
+
 
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret_key')
@@ -19,5 +22,6 @@ class Config:
         'password': os.getenv('POSTGRESQL_PASSWORD'),
         'host': os.getenv('POSTGRESQL_HOST'),
     }
+    UPLOAD_FOLDER = UPLOAD_FOLDER
     ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
     ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')

@@ -2,6 +2,7 @@ let map;
 let editableLayers;
 let drawControl;
 let flatpickrInstance;
+let photoMarker = null;
 
 // --- Utility Functions ---
 
@@ -10,8 +11,12 @@ function showToast(message, type = 'info', duration = 3000) {
     toast.textContent = message;
     toast.className = `toast-message visible ${type}`;
 
-    setTimeout(() => {
+    if (toast.timeoutId) {
+        clearTimeout(toast.timeoutId);
+    }
+    toast.timeoutId = setTimeout(() => {
         toast.classList.remove('visible');
+        toast.textContent = ''; // Очищаем текст после скрытия
     }, duration);
 }
 
@@ -52,11 +57,9 @@ function initMap(initialGeoJson = null) {
                     };
                 }
             }).addTo(editableLayers);
-            // Если есть геометрия, центрируем карту на ней
             if (geoJsonLayer.getBounds().isValid()) {
                  map.fitBounds(geoJsonLayer.getBounds());
             } else {
-                // Если нет валидных границ (например, пустой GeoJSON), центрируем на дефолтных
                 map.setView([55.751244, 37.618423], 10);
             }
         } catch (e) {
@@ -93,12 +96,25 @@ function initMap(initialGeoJson = null) {
         editableLayers.addLayer(event.layer);
     });
     map.on(L.Draw.Event.EDITED, function (event) {
-        // Данные уже обновлены в editableLayers
         showToast('Маршрут на карте изменен.', 'info');
     });
     map.on(L.Draw.Event.DELETED, function (event) {
-        // Данные уже удалены из editableLayers
         showToast('Маршрут на карте удален.', 'info');
+    });
+
+    // Обработчик клика для установки координат фото
+    map.on('click', function(e) {
+        const photosSection = document.getElementById('photosSection');
+        // Только если секция фото видна и поля фото активны
+        if (photosSection && photosSection.style.display === 'block') {
+            if (photoMarker) {
+                map.removeLayer(photoMarker);
+            }
+            photoMarker = L.marker(e.latlng).addTo(map);
+            document.getElementById('photoLat').value = e.latlng.lat.toFixed(6);
+            document.getElementById('photoLon').value = e.latlng.lng.toFixed(6);
+            showToast('Координаты для фото выбраны.', 'info');
+        }
     });
 }
 
@@ -121,6 +137,13 @@ function clearMapLayers() {
         editableLayers.clearLayers();
         showToast('Карта очищена.', 'info');
     }
+    // Также очищаем маркер фото и его поля
+    if (photoMarker) {
+        map.removeLayer(photoMarker);
+        photoMarker = null;
+    }
+    document.getElementById('photoLat').value = '';
+    document.getElementById('photoLon').value = '';
 }
 
 // --- API Interactions ---
@@ -132,10 +155,14 @@ async function saveWalk(event) {
     const name = document.getElementById('name').value;
     const dateInput = document.getElementById('date').value;
     const description = document.getElementById('description').value;
-    const path_geojson = getGeoJsonFromMap();
+    const path_geojson = getGeoJsonFromMap();  // строка
 
-    if (!name || !dateInput || !path_geojson) {
-        showToast('Пожалуйста, заполните все обязательные поля (Название, Дата, Маршрут на карте).', 'error');
+    if (!name || !dateInput) {
+        showToast('Пожалуйста, заполните Название и Дату.', 'error');
+        return;
+    }
+    if (!walkId && !path_geojson) {
+        showToast('Для новой прогулки необходимо нарисовать маршрут на карте.', 'error');
         return;
     }
 
@@ -158,7 +185,8 @@ async function saveWalk(event) {
                 body: JSON.stringify(walkData)
             });
         } else {
-            const coordinatesToSend = path_geojson.type === "LineString" ? geojsonObj.coordinates : (geojsonObj.type === "Point" ? [geojsonObj.coordinates] : []);
+            const geojsonObj = JSON.parse(path_geojson); // Парсим GeoJSON строку в объект
+            const coordinatesToSend = geojsonObj.type === "LineString" ? geojsonObj.coordinates : (geojsonObj.type === "Point" ? [geojsonObj.coordinates] : []);
 
             response = await fetch('/admin/add_walk', {
                 method: 'POST',
@@ -179,6 +207,9 @@ async function saveWalk(event) {
             throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
         }
 
+        const result = await response.json();
+        const newWalkId = walkId || result.id; // Получаем ID новой прогулки, если она была добавлена
+
         showToast(`Прогулка успешно ${walkId ? 'обновлена' : 'добавлена'}!`, 'success');
 
         setTimeout(() => {
@@ -187,6 +218,179 @@ async function saveWalk(event) {
     } catch (error) {
         console.error('Error saving walk:', error);
         showToast(`Ошибка при сохранении прогулки: ${error.message}`, 'error');
+    }
+}
+
+// --- Photo Management Logic ---
+
+// Функция для переключения видимости секции фото
+function togglePhotosSection() {
+    const photosSection = document.getElementById('photosSection');
+    const toggleBtn = document.getElementById('togglePhotosBtn');
+    if (photosSection.style.display === 'none' || photosSection.style.display === '') {
+        photosSection.style.display = 'block';
+        toggleBtn.textContent = 'Скрыть управление фото';
+        if (currentWalkId) {
+            loadPhotosForWalk(currentWalkId);
+        }
+    } else {
+        photosSection.style.display = 'none';
+        toggleBtn.textContent = `Управление фото (${currentWalkId})`;
+        if (photoMarker) {
+            map.removeLayer(photoMarker);
+            photoMarker = null;
+        }
+        document.getElementById('photoLat').value = '';
+        document.getElementById('photoLon').value = '';
+    }
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 10);
+}
+
+
+async function uploadPhoto() {
+    const walkId = currentWalkId; // Берем ID прогулки из глобальной переменной
+    const photoFile = document.getElementById('photoUploadInput').files[0];
+    const description = document.getElementById('photoDescription').value.trim();
+    const latitude = document.getElementById('photoLat').value;
+    const longitude = document.getElementById('photoLon').value;
+
+    if (!walkId) {
+        showToast('Ошибка: ID прогулки не найден. Пожалуйста, сохраните прогулку сначала.', 'error');
+        return;
+    }
+    if (!photoFile) {
+        showToast('Выберите файл фотографии.', 'error');
+        return;
+    }
+    if (!latitude || !longitude) {
+        showToast('Укажите координаты для фотографии, кликнув на карту.', 'error');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('photo', photoFile);
+    formData.append('walk_id', walkId);
+    formData.append('description', description);
+    formData.append('latitude', latitude);
+    formData.append('longitude', longitude);
+
+    try {
+        const response = await fetch('/admin/upload_photo', {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json();
+
+        if (response.ok) {
+            showToast(result.message, 'success');
+            // Очистка полей формы фото после загрузки
+            document.getElementById('photoUploadInput').value = '';
+            document.getElementById('photoDescription').value = '';
+            document.getElementById('photoLat').value = '';
+            document.getElementById('photoLon').value = '';
+            if (photoMarker) {
+                map.removeLayer(photoMarker);
+                photoMarker = null;
+            }
+            await loadPhotosForWalk(walkId);
+        } else {
+            showToast(result.error || 'Ошибка загрузки фото.', 'error');
+        }
+    } catch (error) {
+        showToast('Ошибка сети при загрузке фото: ' + error.message, 'error');
+        console.error('Fetch error:', error);
+    }
+}
+
+async function loadPhotosForWalk(walkId) {
+    const photosDiv = document.getElementById('uploadedPhotos');
+    photosDiv.innerHTML = '<h3>Загруженные фото для этой прогулки:</h3>';
+
+    if (!walkId) {
+        photosDiv.innerHTML += '<p>Невозможно загрузить фотографии без ID прогулки.</p>';
+        return;
+    }
+
+    map.eachLayer(function(layer) {
+        if (layer instanceof L.Marker && layer !== photoMarker) {
+            if (layer._icon && layer._icon.classList.contains('photo-marker')) {
+                map.removeLayer(layer);
+            }
+        }
+    });
+
+
+    try {
+        const response = await fetch(`/walk/${walkId}/photos`);
+        if (!response.ok) {
+            const errorResult = await response.json();
+            throw new Error(errorResult.error || `HTTP error! Status: ${response.status}`);
+        }
+        const photos = await response.json();
+
+        if (photos && photos.length > 0) {
+            photos.forEach(photo => {
+                const existingPhotoMarker = L.marker([photo.latitude, photo.longitude]).addTo(map);
+                existingPhotoMarker._icon.classList.add('photo-marker');
+                existingPhotoMarker.bindPopup(`<b>${photo.description || 'Фотография'}</b><br><img src="${photo.url}" style="width:150px; height:auto;">`);
+
+                // Добавляем миниатюру в секцию uploadedPhotos
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'photo-thumbnail-container';
+
+                const img = document.createElement('img');
+                img.src = photo.url;
+                img.alt = photo.description || 'Фотография';
+                imgContainer.appendChild(img);
+
+                const p = document.createElement('p');
+                p.textContent = photo.description || 'Без описания';
+                imgContainer.appendChild(p);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Удалить';
+                deleteBtn.className = 'delete-photo-btn';
+                deleteBtn.onclick = async () => {
+                    if (confirm('Вы уверены, что хотите удалить эту фотографию?')) {
+                        await deletePhoto(photo.id);
+                    }
+                };
+                imgContainer.appendChild(deleteBtn);
+
+                photosDiv.appendChild(imgContainer);
+            });
+        } else {
+            photosDiv.innerHTML += '<p>Пока нет загруженных фотографий.</p>';
+        }
+    } catch (error) {
+        showToast(`Ошибка загрузки фото: ${error.message}`, 'error');
+        console.error('Error loading photos:', error);
+    }
+}
+
+async function deletePhoto(photoId) {
+    try {
+        const response = await fetch(`/admin/photos/${photoId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            showToast('Фотография успешно удалена!', 'success');
+            await loadPhotosForWalk(currentWalkId);
+            return true;
+        } else {
+            const errorResult = await response.json();
+            showToast(errorResult.error || 'Ошибка при удалении фотографии.', 'error');
+            return false;
+        }
+    } catch (error) {
+        showToast('Ошибка сети при удалении фото: ' + error.message, 'error');
+        console.error('Delete photo error:', error);
+        return false;
     }
 }
 
@@ -209,4 +413,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('walkForm').addEventListener('submit', saveWalk);
     document.getElementById('clearMapBtn').addEventListener('click', clearMapLayers);
+
+    const togglePhotosBtn = document.getElementById('togglePhotosBtn');
+    if (togglePhotosBtn) {
+        togglePhotosBtn.addEventListener('click', togglePhotosSection);
+    }
+
+    if (!currentWalkId) {
+        if (togglePhotosBtn) {
+            togglePhotosBtn.style.display = 'none';
+        }
+    }
 });
