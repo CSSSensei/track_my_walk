@@ -47,7 +47,7 @@ class DBInterface(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def add_photo(self, walk_id: int, url: str, description: Optional[str], latitude: float, longitude: float) -> int:
+    def add_photo(self, walk_id: int, url: str, description: Optional[str], latitude: float, longitude: float, thumbnail_url: str) -> int:
         """Adds a new photo to the database and returns its ID."""
         pass
 

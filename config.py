@@ -25,3 +25,34 @@ class Config:
     UPLOAD_FOLDER = UPLOAD_FOLDER
     ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
     ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
+    THUMBNAIL_PROFILES = {
+        'micro': {
+            'size': (50, 50),       # Для иконок в списках
+            'prefix': 'micro_',
+            'quality': 70,
+            'format': 'JPEG',
+            'suffix': '_50x50'      # Можно использовать для генерации URL
+        },
+        'small': {
+            'size': (150, 150),     # Для миниатюр на карте
+            'prefix': 'small_',
+            'quality': 80,
+            'format': 'JPEG',
+            'suffix': '_150x150'
+        },
+        'medium': {
+            'size': (300, 300),     # Для предпросмотра
+            'prefix': 'medium_',
+            'quality': 85,
+            'format': 'JPEG',
+            'suffix': '_300x300'
+        },
+        'large': {
+            'size': (800, 800),     # Для модальных окон
+            'prefix': 'large_',
+            'quality': 90,
+            'format': 'JPEG',
+            'suffix': '_800x800'
+        }
+    }
+    DEFAULT_THUMBNAIL_PROFILE = 'small'

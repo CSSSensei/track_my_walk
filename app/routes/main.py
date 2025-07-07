@@ -45,7 +45,7 @@ def single_walk(walk_id):
         'distance': walk.distance,
         'co2_saved': walk.co2_saved,
         'path_geojson': walk.path_geojson,
-        'photos': [{'id': p.id, 'url': p.url, 'description': p.description, 'latitude': p.latitude, 'longitude': p.longitude} for p in photos]
+        'photos': [{'id': p.id, 'url': p.url, 'description': p.description, 'latitude': p.latitude, 'longitude': p.longitude, 'thumbnail_url': p.thumbnail_url} for p in photos]
     }
     return render_template('single_walk.html', walk=walk_data)
 
@@ -66,6 +66,7 @@ def get_walk_photos(walk_id):
                 'description': p.description,
                 'latitude': p.latitude,
                 'longitude': p.longitude,
+                'thumbnail_url': p.thumbnail_url
             } for p in photos
         ]
         return jsonify(photos_data), 200

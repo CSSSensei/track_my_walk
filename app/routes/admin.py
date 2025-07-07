@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 import os
 from ..extensions.database import get_db_interface
 from ..models.walk import Walk
+from ..utils.image_utils import create_thumbnail
 from ..utils.walk_processing import import_walks_from_json
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')  # Admin routes prefixed with /admin
@@ -294,9 +295,42 @@ def upload_photo():
 
     try:
         photo.save(filepath)
+
+        _, thumb_url = create_thumbnail(filepath, upload_folder, filename)
+
         db_interface = get_db_interface()
-        photo_id = db_interface.add_photo(walk_id, photo_url, description, latitude, longitude)
-        return jsonify({'message': 'Photo uploaded successfully', 'photo_id': photo_id, 'url': photo_url}), 200
+        photo_id = db_interface.add_photo(
+            walk_id=walk_id,
+            url=photo_url,
+            description=description,
+            latitude=latitude,
+            longitude=longitude,
+            thumbnail_url=thumb_url
+        )
+
+        return jsonify({
+            'message': 'Photo uploaded successfully',
+            'photo_id': photo_id,
+            'url': photo_url,
+            'thumbnail_url': thumb_url
+        }), 200
     except Exception as e:
         current_app.logger.error(f"Error uploading photo: {e}", exc_info=True)
         return jsonify({'error': f'An error occurred during photo upload: {str(e)}'}), 500
+
+
+@bp.route('/photos/<int:photo_id>', methods=['DELETE'])
+def delete_photo(photo_id):
+    if not session.get('is_authenticated'):
+        return jsonify({'error': 'Unauthorized'}), 401
+    try:
+        db_interface = get_db_interface()
+        success = db_interface.delete_photo(photo_id)
+
+        if success:
+            return jsonify({'message': f'Photo {photo_id} deleted successfully'}), 200
+        else:
+            return jsonify({'message': 'Photo not found or could not be deleted'}), 404
+    except Exception as e:
+        current_app.logger.error(f"Error deleting photo {photo_id}: {e}", exc_info=True)
+        return jsonify({'error': f'An error occurred: {str(e)}'}), 500

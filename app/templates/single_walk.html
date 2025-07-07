@@ -46,7 +46,7 @@
             <div id="photoGallery" class="photo-gallery">
                 {% for photo in walk.photos %}
                 <div class="photo-thumbnail" data-lat="{{ photo.latitude }}" data-lng="{{ photo.longitude }}" data-src="{{ photo.url }}">
-                    <img src="{{ photo.thumbnail_url or photo.url }}" alt="Фото с прогулки" loading="lazy">
+                    <img src="{{ photo.url }}" alt="Фото с прогулки" loading="lazy">
                     {% if photo.description %}
                     <div class="photo-thumbnail-description">{{ photo.description }}</div>
                     {% endif %}
