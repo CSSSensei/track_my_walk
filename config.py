@@ -25,6 +25,7 @@ class Config:
     UPLOAD_FOLDER = UPLOAD_FOLDER
     ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
     ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
+    DATABASE_TYPE = os.getenv('DATABASE_TYPE', 'postgres')  # 'sqlite' или 'postgres'
     THUMBNAIL_PROFILES = {
         'micro': {
             'size': (50, 50),       # Для иконок в списках
