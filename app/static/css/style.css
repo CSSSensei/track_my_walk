@@ -24,29 +24,31 @@
 }
 
 body.dark-mode {
-    /* Dark Theme Colors (Green Neo-style) */
-    --bg-color: #0A140A; /* Very dark green */
-    --container-bg: #152015; /* Darker green */
-    --text-color: #E0E0E0; /* Light grey for text */
+    /* Dark Theme Colors (Refined - No Shadows, Pure Black BG, Specific Green Accent) */
+    --bg-color: #000000; /* Pure black for the main background */
+    --container-bg: #1A1A1A; /* Slightly lighter black for containers */
+    --text-color: #E0E0E0; /* Light grey for general text */
     --heading-color: #F0F0F0; /* Lighter grey for headings */
-    --card-bg: #202B20; /* Dark green for cards */
-    --card-border: #334433; /* Darker green border */
-    --shadow-light: rgba(0, 0, 0, 0);
-    --shadow-medium: rgba(0, 0, 0, 0);
-    --stat-card-bg: #004D00; /* Even darker green for stat cards */
-    --stat-card-shadow: rgba(0, 0, 0, 0);
-    --swap-button-color: #152015;
-    --link-color: #66FF00; /* Bright lime green for links */
-    --link-hover-color: #99FF33; /* Even lighter lime green on hover */
-    --fancy-title-shadow: rgba(102, 255, 0, 0.5); /* Stronger shadow for fancy title */
-    --quote-border: #334433; /* Dark green border for quote */
-    --accent-primary: #66FF00; /* Primary accent for general elements */
-    --accent-secondary: #00FF99; /* Secondary accent for specific elements */
+    --card-bg: #222222; /* Dark grey for cards */
+    --card-border: #383838; /* Slightly lighter grey for card borders */
+    --shadow-light: transparent; /* No shadow */
+    --shadow-medium: transparent; /* No shadow */
+    --stat-card-bg: #111111; /* Very dark grey for stat cards */
+    --stat-card-shadow: transparent; /* No shadow */
+    --swap-button-color: #1A1A1A; /* Matches container background for consistency */
+
+    /* Accent Green (from image example) */
+    --link-color: #3bea62; /* The pleasant green from your example image */
+    --link-hover-color: #33FFB2; /* Slightly brighter for hover */
+    --fancy-title-shadow: transparent; /* No shadow */
+    --quote-border: #383838; /* Matches card border for consistency */
+    --accent-primary: #3bea62; /* Primary accent for general elements (the new green) */
+    --accent-secondary: #00C28A; /* A slightly darker shade of the accent green for secondary elements */
 
     /* Sticky header specific dark theme colors */
     --sticky-header-bg-initial: transparent;
-    --sticky-header-bg-scrolled: rgba(10, 20, 10, 0.9); /* Slightly less opaque dark green */
-    --sticky-header-text-scrolled: #E0E0E0;
+    --sticky-header-bg-scrolled: rgba(0, 0, 0, 0.9); /* Pure black with slight opacity when scrolled */
+    --sticky-header-text-scrolled: #E0E0E0; /* Text remains light grey */
 }
 
 /* Font Import */
