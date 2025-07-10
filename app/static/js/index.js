@@ -1,6 +1,23 @@
-// app/static/js/index.js
 let map;
-let geoJsonLayers = []; // To store Leaflet GeoJSON layers for clearing/updating
+let geoJsonLayers = [];
+
+const creatureContainer = document.querySelector('.dolboeb');
+const randomWalkSection = document.querySelector('.random-walk-section');
+const goGopherSvg = document.querySelector('.dolboeb-svg');
+
+const animatedPupilLeft = document.querySelector('#pupil-left .animated-pupil');
+const animatedPupilRight = document.querySelector('#pupil-right .animated-pupil');
+const eyeballLeft = document.getElementById('eyeball-left');
+const eyeballRight = document.getElementById('eyeball-right');
+const pupilsGroup = document.getElementById('pupils');
+const eyeballsGroup = document.getElementById('eyeballs');
+const eyelidsClosedGroup = document.getElementById('eyelids-closed');
+const eyelidsPart2Group = document.getElementById('eyelids-part-2');
+const callToActionButton = document.querySelector('.button-go-walk');
+
+let creatureVisible = false;
+let eyesBounced = false;
+let isSquinting = false;
 
 // Function to apply theme based on localStorage
 function updateIconColor() {
@@ -9,14 +26,11 @@ function updateIconColor() {
 
     if (document.body.classList.contains('dark-mode')) {
         if (isScrolled) {
-            // Тёмная тема + скролл - белая иконка
             themeIcon.style.filter = 'invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)';
         } else {
-            // Тёмная тема без скролла - зелёная иконка
             themeIcon.style.filter = 'invert(67%) sepia(98%) saturate(354%) hue-rotate(51deg) brightness(97%) contrast(101%)';
         }
     } else {
-        // Светлая тема - чёрная иконка
         themeIcon.style.filter = 'invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%)';
     }
 }
@@ -87,29 +101,97 @@ function toggleTheme() {
     }, 200);
 }
 
+function isElementInViewport(el) {
+    if (!el) return false;
+    const rect = el.getBoundingClientRect();
+    return (
+        rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.bottom >= 0 &&
+        rect.left <= (window.innerWidth || document.documentElement.clientWidth) &&
+        rect.right >= 0
+    );
+}
+
+function handleCreatureScroll() {
+    if (!randomWalkSection || !creatureContainer || !goGopherSvg || !animatedPupilLeft || !animatedPupilRight) {
+        return;
+    }
+
+    if (isElementInViewport(randomWalkSection) && !creatureVisible) {
+        creatureVisible = true;
+        creatureContainer.classList.add('visible');
+
+        setTimeout(() => {
+            if (!eyesBounced) {
+                goGopherSvg.classList.add('landed');
+                eyesBounced = true;
+
+                setTimeout(() => {
+                    goGopherSvg.classList.remove('landed');
+                }, 500);
+            }
+        }, 800);
+    }
+}
+
+// Обработчик движения мыши для следования зрачков
+function handleCreatureMouseMove(e) {
+    if (creatureVisible && goGopherSvg && animatedPupilLeft && animatedPupilRight && eyeballLeft && eyeballRight && pupilsGroup && eyeballsGroup) {
+        const svgRect = goGopherSvg.getBoundingClientRect();
+        const mouseX = e.clientX - svgRect.left;
+        const mouseY = e.clientY - svgRect.top;
+
+        function getSvgElementCenter(element) {
+            const bbox = element.getBBox();
+            const ctm = element.getCTM();
+
+            const svgPoint = goGopherSvg.createSVGPoint();
+            svgPoint.x = bbox.x + bbox.width / 2;
+            svgPoint.y = bbox.y + bbox.height / 2;
+
+            const transformedPoint = svgPoint.matrixTransform(ctm);
+            return { x: transformedPoint.x, y: transformedPoint.y };
+        }
+
+        const centerLeftEye = getSvgElementCenter(eyeballLeft);
+        const centerRightEye = getSvgElementCenter(eyeballRight);
+
+        const maxMove = 30; // Максимальное смещение зрачка в пикселях (в координатах SVG)
+
+        function calculatePupilOffset(pupilElement, centerX, centerY) {
+            const deltaX = mouseX - centerX;
+            const deltaY = mouseY - centerY;
+
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            let offsetX = 0;
+            let offsetY = 0;
+
+            if (distance > 0) {
+                offsetX = (deltaX / distance) * Math.min(distance, maxMove);
+                offsetY = (deltaY / distance) * Math.min(distance, maxMove);
+            }
+
+            pupilElement.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+        }
+
+        calculatePupilOffset(animatedPupilLeft, centerLeftEye.x, centerLeftEye.y);
+        calculatePupilOffset(animatedPupilRight, centerRightEye.x, centerRightEye.y);
+    }
+}
+
+
 // Initialize the Leaflet Map
 function initMap() {
-    applyTheme(); // Apply theme on load
-    setupSecretAdminClick();
-
     // Center map on Moscow
     map = L.map('map').setView([55.751244, 37.618423], 10);
 
-    // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
     fetchWalksAndDisplay();
     fetchRecentWalks();
-
-    // event listener for theme toggle button
-    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-
-    // Add scroll event listener for sticky header
-    window.addEventListener('scroll', handleStickyHeader);
-    // Call it once on load to set initial state if page is already scrolled
-    handleStickyHeader();
 }
 
 function animateCounter(elementId, endValue, duration, isDistance = false) {
@@ -221,16 +303,15 @@ async function fetchWalksAndDisplay() {
 // New function to fetch and display the 4 most recent walks
 async function fetchRecentWalks() {
     try {
-        const response = await fetch('/walks'); // Fetch all walks (sorted by date DESC from backend)
+        const response = await fetch('/walks');
         const walks = await response.json();
         const recentWalksContainer = document.getElementById('recent-walks-list');
-        recentWalksContainer.innerHTML = ''; // Clear previous content
+        recentWalksContainer.innerHTML = '';
 
-        // Display up to 4 most recent walks
         walks.slice(0, 3).forEach(walk => {
             const walkCard = document.createElement('div');
             walkCard.classList.add('recent-walk-card');
-            walkCard.dataset.walkId = walk.id; // Store walk ID for navigation
+            walkCard.dataset.walkId = walk.id;
 
             const walkDate = new Date(walk.date * 1000).toLocaleDateString('ru-RU'); // Convert timestamp to date string
 
@@ -357,4 +438,36 @@ document.querySelectorAll('.stat-card').forEach(card => {
     });
 });
 
-document.addEventListener('DOMContentLoaded', initMap);
+
+// Main DOMContentLoaded listener
+document.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('scroll', handleCreatureScroll);
+    document.addEventListener('mousemove', handleCreatureMouseMove);
+    handleCreatureScroll();
+    initMap();
+
+    applyTheme();
+    setupSecretAdminClick();
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    window.addEventListener('scroll', handleStickyHeader);
+    handleStickyHeader();
+
+    function startSquint() {
+        if (!isSquinting) {
+            isSquinting = true;
+            goGopherSvg.classList.add('squinted');
+        }
+    }
+
+    function stopSquint() {
+        if (isSquinting) {
+            isSquinting = false;
+            goGopherSvg.classList.remove('squinted');
+        }
+    }
+
+    if (callToActionButton) {
+        callToActionButton.addEventListener('mouseenter', startSquint);
+        callToActionButton.addEventListener('mouseleave', stopSquint);
+    }
+});
