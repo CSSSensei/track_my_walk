@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рекомендация прогулки</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="fancy-title">Generate Walk</h1>
+            <nav>
+                <a href="{{ url_for('main.index') }}" class="back-link">&larr; На главную</a>
+            </nav>
+        </header>
+
+        <section class="recommend-section card">
+            <form id="recommendation-form" class="two-column-form">
+                <div class="form-group">
+                    <label for="start-point-mode">Начальная точка:</label>
+                    <select id="start-point-mode" class="form-input">
+                        <option value="none">Случайная</option>
+                        <option value="current">Моё текущее местоположение</option>
+                        <option value="map">Выбрать на карте</option>
+                    </select>
+                    <div id="start-point-coords" class="coord-inputs" style="display: none;">
+                        <div>
+                            <label for="start-lon">Долгота:</label>
+                            <input type="number" id="start-lon" class="form-input" step="0.000001" placeholder="Долгота" disabled>
+                        </div>
+                        <div>
+                            <label for="start-lat">Широта:</label>
+                            <input type="number" id="start-lat" class="form-input" step="0.000001" placeholder="Широта" disabled>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="time-minutes">Длительность (минуты):</label>
+                    <input type="number" id="time-minutes" class="form-input" value="60" min="10" max="360" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="angle">Угол поворотов:</label>
+                    <input type="number" id="angle" class="form-input" value="60" min="0" max="180">
+                </div>
+
+                <div class="form-group">
+                    <label for="segments">Количество сегментов:</label>
+                    <input type="number" id="segments" class="form-input" value="5" min="1" max="50">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="submit-button">Подобрать маршрут</button>
+                </div>
+            </form>
+
+            <div id="map-container" class="map-container">
+                <div id="map"></div>
+                <div id="loading-overlay">
+                    <div class="spinner"></div>
+                    <p>Продумываем вылазку...</p>
+                </div>
+            </div>
+
+            <div class="route-info card" style="display: none;">
+                <h3>Информация о маршруте</h3>
+                <p>Прогулка займёт: <span id="route-duration" class="highlight">0</span> мин</p>
+                <p>Длина маршрута: <span id="route-distance" class="highlight">0</span> км</p>
+                <button id="copy-route-coords" class="action-button">Копировать координаты</button>
+                <textarea id="route-geojson" style="display:none;"></textarea>
+            </div>
+
+            <div id="error-message" class="error-message" style="display: none;"></div>
+        </section>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="{{ url_for('static', filename='js/recommend.js') }}"></script>
+</body>
+</html>

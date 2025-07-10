@@ -57,3 +57,4 @@ class Config:
         }
     }
     DEFAULT_THUMBNAIL_PROFILE = 'small'
+    ORS_API_KEY = os.getenv('ORS_API_KEY')
