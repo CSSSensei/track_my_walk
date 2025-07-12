@@ -32,10 +32,12 @@ def get_zigzag_route(api_key, coords):
         response.raise_for_status()
         route_data = response.json()
         time = 0
+        distance = 0
         for segment in route_data['features'][0]['properties']['segments']:
             time += segment['duration']
-        return Route(time, route_data['features'][0]['properties']['segments'][0]['distance'],
-                     route_data["features"][0]["geometry"]["coordinates"])
+        for segment in route_data['features'][0]['properties']['segments']:
+            distance += segment['distance']
+        return Route(time, distance, route_data["features"][0]["geometry"]["coordinates"])
     except requests.exceptions.RequestException as e:
         print(f"Ошибка при запросе маршрута: {e}")
         return None
