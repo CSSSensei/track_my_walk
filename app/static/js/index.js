@@ -136,7 +136,7 @@ function handleCreatureScroll() {
 
 // Обработчик движения мыши для следования зрачков
 function handleCreatureMouseMove(e) {
-    if (creatureVisible && goGopherSvg && animatedPupilLeft && animatedPupilRight && eyeballLeft && eyeballRight && pupilsGroup && eyeballsGroup) {
+    if (eyesBounced && creatureVisible && goGopherSvg && animatedPupilLeft && animatedPupilRight && eyeballLeft && eyeballRight && pupilsGroup && eyeballsGroup) {
         const svgRect = goGopherSvg.getBoundingClientRect();
         const mouseX = e.clientX - svgRect.left;
         const mouseY = e.clientY - svgRect.top;
@@ -156,7 +156,7 @@ function handleCreatureMouseMove(e) {
         const centerLeftEye = getSvgElementCenter(eyeballLeft);
         const centerRightEye = getSvgElementCenter(eyeballRight);
 
-        const maxMove = 30; // Максимальное смещение зрачка в пикселях (в координатах SVG)
+        const maxMove = 26; // Максимальное смещение зрачка в пикселях (в координатах SVG)
 
         function calculatePupilOffset(pupilElement, centerX, centerY) {
             const deltaX = mouseX - centerX;
