@@ -94,8 +94,8 @@ function toggleTheme() {
         updateIconColor();
 
         if (themeSwitchSound) {
-            themeSwitchSound.currentTime = 0; // Сбрасываем звук в начало, чтобы можно было быстро кликать
-            themeSwitchSound.play().catch(e => console.error("Error playing sound:", e)); // Добавляем catch для обработки ошибок (например, если пользователь еще не взаимодействовал со страницей)
+            themeSwitchSound.currentTime = 0;
+            themeSwitchSound.play().catch(e => console.error("Error playing sound:", e));
         }
 
     }, 200);
@@ -134,7 +134,6 @@ function handleCreatureScroll() {
     }
 }
 
-// Обработчик движения мыши для следования зрачков
 function handleCreatureMouseMove(e) {
     if (eyesBounced && creatureVisible && goGopherSvg && animatedPupilLeft && animatedPupilRight && eyeballLeft && eyeballRight && pupilsGroup && eyeballsGroup) {
         const svgRect = goGopherSvg.getBoundingClientRect();
@@ -206,11 +205,9 @@ function animateCounter(elementId, endValue, duration, isDistance = false) {
         let currentValue;
 
         if (isDistance) {
-            // For distance, use toFixed(2)
             currentValue = (startValue + progress * (endValue - startValue)).toFixed(2);
             element.textContent = currentValue + ' км';
         } else {
-            // For counts, round to integer
             currentValue = Math.floor(startValue + progress * (endValue - startValue));
             element.textContent = currentValue;
         }
@@ -226,7 +223,6 @@ function animateCounter(elementId, endValue, duration, isDistance = false) {
 
 // Fetch all walks from the backend and display them on the main map
 async function fetchWalksAndDisplay() {
-    // Clear existing GeoJSON layers before drawing new ones
     geoJsonLayers.forEach(layer => map.removeLayer(layer));
     geoJsonLayers = [];
 
@@ -240,11 +236,10 @@ async function fetchWalksAndDisplay() {
             if (walk.path_geojson) {
                 const geojsonData = walk.path_geojson;
 
-                // Add GeoJSON LineString to map
                 const geoJsonLayer = L.geoJSON(geojsonData, {
                     style: function (feature) {
                         return {
-                            color: '#FF0000', // Red color for walk paths
+                            color: '#FF0000',
                             weight: 4,
                             opacity: 0.8
                         };
@@ -255,14 +250,14 @@ async function fetchWalksAndDisplay() {
                         layer.on('mouseover', function () {
                             layer.setStyle({
                                 color: '#00FF00',
-                                weight: 5,       // Slightly thicker on hover
-                                opacity: 1.0     // Fully opaque on hover
+                                weight: 5,
+                                opacity: 1.0
                             });
                         });
 
                         layer.on('mouseout', function () {
                             layer.setStyle({
-                                color: '#FF0000', // Revert to red on mouse out
+                                color: '#FF0000',
                                 weight: 4,
                                 opacity: 0.8
                             });
@@ -272,14 +267,13 @@ async function fetchWalksAndDisplay() {
                             window.location.href = `/walk/${e.target.walkId}`;
                         });
 
-                        // ПОДСКАЗКА ПРИ НАВЕДЕНИИ
                         const walkDate = new Date(walk.date * 1000).toLocaleDateString('ru-RU');
                         const tooltipContent = `<b>${walk.name || 'Без названия'}</b><br>${walkDate} — ${walk.distance.toFixed(2)} км`;
 
                         layer.bindTooltip(tooltipContent, {
-                            permanent: false, // Подсказка исчезает, когда курсор уходит
+                            permanent: false,
                             direction: 'auto',
-                            className: 'walk-tooltip' // Класс для стилизации подсказки
+                            className: 'walk-tooltip'
                         });
                     }
                 }).addTo(map);
@@ -313,14 +307,14 @@ async function fetchRecentWalks() {
             walkCard.classList.add('recent-walk-card');
             walkCard.dataset.walkId = walk.id;
 
-            const walkDate = new Date(walk.date * 1000).toLocaleDateString('ru-RU'); // Convert timestamp to date string
+            const walkDate = new Date(walk.date * 1000).toLocaleDateString('ru-RU');
 
             walkCard.innerHTML = `
                 <h4>${walk.name || 'Без названия'}</h4>
                 <p>${walkDate} — ${walk.distance.toFixed(2)} км</p>
             `;
             walkCard.addEventListener('click', () => {
-                window.location.href = `/walk/${walk.id}`; // Navigate to single walk page
+                window.location.href = `/walk/${walk.id}`;
             });
             recentWalksContainer.appendChild(walkCard);
         });
@@ -359,7 +353,7 @@ async function uploadFile() {
         if (response.ok) {
             uploadStatus.textContent = result.message;
             uploadStatus.style.color = 'green';
-            // Refresh map and recent walks after successful upload
+
             fetchWalksAndDisplay();
             fetchRecentWalks();
         } else {
@@ -377,21 +371,21 @@ function setupSecretAdminClick() {
     const copyrightElement = document.getElementById('copyrightText');
     let clickCount = 0;
     const requiredClicks = 3; // Количество кликов для активации
-    let clickTimeout; // Для сброса счетчика
+    let clickTimeout;
 
     if (copyrightElement) {
         copyrightElement.addEventListener('click', () => {
             clickCount++;
             clearTimeout(clickTimeout);
             clickTimeout = setTimeout(() => {
-                clickCount = 0; // Сбрасываем счетчик, если между кликами прошло более 500 мс
+                clickCount = 0;
             }, 500);
 
             if (clickCount === requiredClicks) {
                 window.location.href = `/admin/`;
 
-                clickCount = 0; // Сбрасываем счетчик после активации
-                clearTimeout(clickTimeout); // Очищаем таймаут после успешного срабатывания
+                clickCount = 0
+                clearTimeout(clickTimeout);
             }
         });
     }
@@ -405,32 +399,26 @@ document.querySelectorAll('.stat-card').forEach(card => {
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        // Обновление позиции свечения
         this.style.setProperty('--mouse-x', `${x}px`);
         this.style.setProperty('--mouse-y', `${y}px`);
 
-        // Параллакс-эффект (разная глубина)
         const normalizedX = (x / rect.width - 0.5) * 2;
         const normalizedY = (y / rect.height - 0.5) * 2;
 
-        // Разная сила вращения для слоев
         const glassRotateY = normalizedX * 35;
         const glassRotateX = -normalizedY * 35;
 
-        const textRotateY = normalizedX; // Текст вращается слабее
+        const textRotateY = normalizedX;
         const textRotateX = -normalizedY;
 
-        // Применяем вращение
         this.style.transform = `scale(1.05) rotateX(${glassRotateX}deg) rotateY(${glassRotateY}deg)`;
         textLayer.style.transform = `translateZ(30px) scale(1.10) rotateX(${textRotateX}deg) rotateY(${textRotateY}deg)`;
     });
 
     card.addEventListener('mouseleave', function() {
-        // Плавный возврат в исходное состояние
         this.style.transform = 'scale(1) rotateX(0) rotateY(0)';
         textLayer.style.transform = 'translateZ(30px) scale(1) rotateX(0) rotateY(0)';
 
-        // Плавное исчезновение свечения
         setTimeout(() => {
             this.style.removeProperty('--mouse-x');
             this.style.removeProperty('--mouse-y');
