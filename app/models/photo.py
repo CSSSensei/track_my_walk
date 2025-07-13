@@ -23,3 +23,15 @@ class Photo:
             longitude=float(Decimal(row[5])),     # longitude
             thumbnail_url=row[6]                  # thumbnail_url
         )
+
+    @classmethod
+    def from_sqlite_row(cls, row):
+        return cls(
+            id=row[0],                            # id
+            walk_id=row[1],                       # walk_id
+            url=row[2],                           # url
+            description=row[3],                   # description
+            latitude=row[4],                      # latitude
+            longitude=row[5],                     # longitude
+            thumbnail_url=row[6]                  # thumbnail_url
+        )

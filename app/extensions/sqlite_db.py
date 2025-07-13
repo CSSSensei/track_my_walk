@@ -2,6 +2,8 @@ import json
 import sqlite3
 from typing import List, Optional
 from flask import current_app, g
+
+from app.models.photo import Photo
 from app.models.walk import Walk
 from app.extensions.db_interface import DBInterface
 
@@ -41,6 +43,17 @@ class SQLiteDB(DBInterface):
                     path_geojson TEXT, -- Storing as GeoJSON LineString string
                     distance REAL,
                     co2_saved REAL
+                )
+            ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS photos (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    walk_id INTEGER,
+                    url TEXT,
+                    description TEXT,
+                    latitude REAL,
+                    longitude REAL,
+                    thumbnail_url TEXT
                 )
             ''')
             db.commit()
@@ -141,6 +154,56 @@ class SQLiteDB(DBInterface):
         except sqlite3.Error as e:
             db.rollback()
             raise RuntimeError(f"Failed to delete walk: {str(e)}")
+        finally:
+            cursor.close()
+
+    def get_photos_by_walk_id(self, walk_id: int) -> List[Photo]:
+        db = self.connect()
+        cursor = db.cursor()
+        cursor.execute('''
+            SELECT * FROM photos 
+            WHERE walk_id = ?
+            ORDER BY id
+        ''', (walk_id,))
+        photos_data = cursor.fetchall()
+        return [Photo.from_sqlite_row(photo) for photo in photos_data]
+
+    def add_photo(self, walk_id: int, url: str, description: Optional[str],
+                 latitude: float, longitude: float, thumbnail_url: str) -> int:
+        db = self.connect()
+        cursor = db.cursor()
+        cursor.execute(
+            '''
+            INSERT INTO photos (walk_id, url, description, latitude, longitude, thumbnail_url)
+            VALUES (?, ?, ?, ?, ?, ?)
+            ''',
+            (
+                walk_id,
+                url,
+                description,
+                latitude,
+                longitude,
+                thumbnail_url
+            )
+        )
+        db.commit()
+        return cursor.lastrowid
+
+    def delete_photo(self, photo_id: int) -> bool:
+        if not photo_id or not isinstance(photo_id, int):
+            raise ValueError("Invalid photo ID provided")
+
+        db = self.connect()
+        cursor = db.cursor()
+
+        try:
+            cursor.execute("DELETE FROM photos WHERE id = ?", (photo_id,))
+            db.commit()
+            return cursor.rowcount > 0
+
+        except sqlite3.Error as e:
+            db.rollback()
+            raise RuntimeError(f"Failed to delete photo: {str(e)}")
         finally:
             cursor.close()
 
