@@ -8,7 +8,7 @@ from flask import current_app
 
 from app.extensions.db_interface import DBInterface
 from app.models.walk import Walk
-from app.models.photo import Photo  # Предполагаем, что у вас есть этот класс
+from app.models.photo import Photo
 from config import Config
 
 Base = declarative_base()
