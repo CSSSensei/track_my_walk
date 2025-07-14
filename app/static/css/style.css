@@ -610,93 +610,6 @@ body.dark-mode .stat-card:hover .text-layer {
     100% { transform: translateX(-50%); }
 }
 
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .container {
-        padding: 20px;
-        gap: 20px;
-    }
-
-    .fancy-title {
-        font-size: 2em;
-    }
-
-    h2 {
-        font-size: 1.5em;
-    }
-
-    .stats-section, .recent-walks-grid, .all-walks-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    }
-
-    .stat-card p {
-        font-size: 1.8em;
-    }
-
-    .upload-section input[type="file"], .upload-section button {
-        max-width: 100%;
-    }
-    #sticky-header-container {
-        padding: 10px;
-    }
-    .content-wrapper {
-        padding-top: 70px;
-    }
-    .sponsor-logo {
-        height: 30px;
-        margin: 0 15px;
-    }
-
-    .sponsors-track {
-        animation-duration: 60s;
-    }
-}
-
-@media (max-width: 480px) {
-    .container {
-        padding: 15px;
-        gap: 15px;
-    }
-
-    .fancy-title {
-        font-size: 1.8em;
-    }
-
-    h2 {
-        font-size: 1.3em;
-    }
-
-    .stats-section, .recent-walks-grid, .all-walks-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .stat-card p {
-        font-size: 1.5em;
-    }
-
-    .theme-toggle-button {
-        position: static;
-        margin-top: 15px;
-        transform: translateY(0);
-    }
-    .sticky-header-content {
-        flex-direction: column;
-    }
-    #sticky-header-container {
-        padding: 10px;
-    }
-    .content-wrapper {
-        padding-top: 120px;
-    }
-
-    .sticky-header-content {
-        flex-direction: column;
-        padding-bottom: 0px;
-        padding-top: 0px;
-    }
-}
-
 .leaflet-control-attribution {
     display: none !important;
 }
@@ -705,7 +618,6 @@ body.dark-mode .stat-card:hover .text-layer {
     outline: none !important;
 }
 
-/* Дополнительно, если это не сработает, можно попробовать для SVG-путей */
 .leaflet-container path:focus {
     outline: none !important;
 }
@@ -1391,4 +1303,106 @@ body.dark-mode .random-walk-content .button-go-walk {
 
 .telegram-icon:hover {
     transform: scale(1.05) translateY(-1px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+        gap: 20px;
+    }
+
+    .fancy-title {
+        font-size: 2em;
+    }
+
+    h2 {
+        font-size: 1.5em;
+    }
+
+    .stats-section, .recent-walks-grid, .all-walks-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .stat-card p {
+        font-size: 1.8em;
+    }
+
+    .upload-section input[type="file"], .upload-section button {
+        max-width: 100%;
+    }
+    #sticky-header-container {
+        padding: 10px;
+    }
+    .content-wrapper {
+        padding-top: 70px;
+    }
+    .sponsor-logo {
+        height: 30px;
+        margin: 0 15px;
+    }
+
+    .sponsors-track {
+        animation-duration: 60s;
+    }
+    .dolboeb {
+        height: 80%;
+        transform: translateX(45%) translateY(100%);
+    }
+
+    .dolboeb.visible {
+        transform: translateX(45%) translateY(-40%);
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .fancy-title {
+        font-size: 1.8em;
+    }
+
+    h2 {
+        font-size: 1.3em;
+    }
+
+    .stats-section, .recent-walks-grid, .all-walks-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-card p {
+        font-size: 1.5em;
+    }
+
+    .theme-toggle-button {
+        position: static;
+        margin-top: 15px;
+        transform: translateY(0);
+    }
+    .sticky-header-content {
+        flex-direction: column;
+    }
+    #sticky-header-container {
+        padding: 10px;
+    }
+    .content-wrapper {
+        padding-top: 120px;
+    }
+
+    .sticky-header-content {
+        flex-direction: column;
+        padding-bottom: 0px;
+        padding-top: 0px;
+    }
+    .dolboeb {
+        height: 80%;
+        transform: translateX(45%) translateY(100%);
+    }
+
+    .dolboeb.visible {
+        transform: translateX(45%) translateY(-40%);
+    }
 }

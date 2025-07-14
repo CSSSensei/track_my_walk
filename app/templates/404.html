@@ -77,10 +77,11 @@
 
         /* Дополнительные стили для зверька на 404, если нужно */
         .dolboeb-404 {
-            right: 150px;
-            transform: translateX(-30%) translateY(100%);
-            opacity: 0;
             position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-45%) translateY(100%);
+            opacity: 0;
             bottom: 0;
             height: 70%;
             display: flex;
@@ -88,10 +89,11 @@
             z-index: 0;
             transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.8s ease-out;
             pointer-events: none;
+            filter: brightness(1.2) drop-shadow(0 0 20px #9733FF);
         }
 
         .dolboeb-404.visible {
-            transform: translateX(-30%) translateY(-30%);
+            transform: translateX(-45%) translateY(-60%);
             opacity: 1;
             pointer-events: auto;
         }
@@ -106,6 +108,49 @@
         .dolboeb-404-svg .animated-pupil {
             transform-origin: center center;
             transition: transform 0.05s linear;
+        }
+
+        @media (max-width: 768px) {
+            .error-container h1 {
+                font-size: 2em;
+            }
+
+            .error-container p {
+                font-size: 0.9em;
+            }
+
+            .dolboeb-404 {
+                height: 40vh;
+                transform: translateX(-45%) translateY(100%);
+            }
+
+            .dolboeb-404.visible {
+                transform: translateX(-45%) translateY(-70%);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .error-container {
+                padding: 15px;
+            }
+
+            .error-container h1 {
+                font-size: 1.8em;
+            }
+
+            .dolboeb-404 {
+                height: 30vh;
+                transform: translateX(-45%) translateY(100%);
+            }
+
+            .dolboeb-404.visible {
+                transform: translateX(-45%) translateY(-90%);
+            }
+
+            .home-button {
+                padding: 8px 16px;
+                font-size: 0.9em;
+            }
         }
 
     </style>
