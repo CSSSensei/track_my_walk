@@ -22,7 +22,6 @@ function initSingleWalkMap() {
         return;
     }
 
-    // Display the formatted date
     const dateElement = document.getElementById('walkDate');
     if (dateElement) {
         const date = new Date(walkData.date * 1000);
@@ -41,28 +40,24 @@ function initSingleWalkMap() {
         return;
     }
 
-    // Initialize map
     map = L.map(mapContainer).setView([0, 0], 2);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // Create a marker cluster group for photos
     const photoMarkers = L.markerClusterGroup();
 
-    // Add photos to map if they exist
     if (walkData.photos && walkData.photos.length > 0) {
         walkData.photos.forEach(photo => {
             if (photo.latitude && photo.longitude) {
-                // Использовать photo.thumbnail_url если доступно, иначе photo.url
                 const imageUrl = photo.thumbnail_url || photo.url;
 
                 const photoIcon = L.divIcon({
-                    className: 'photo-marker', // Класс для общего стиля маркера
+                    className: 'photo-marker',
                     html: `<div class="photo-marker-inner"><img src="${imageUrl}" alt="Фото"></div>`,
-                    iconSize: [50, 50], // Увеличиваем размер иконки для лучшей видимости
-                    iconAnchor: [25, 50] // Центрируем иконку
+                    iconSize: [50, 50],
+                    iconAnchor: [25, 50]
                 });
 
                 const marker = L.marker([photo.latitude, photo.longitude], {
@@ -83,59 +78,49 @@ function initSingleWalkMap() {
 
     if (walkData.path_geojson) {
         try {
-            const geoJsonLayer = L.geoJSON(walkData.path_geojson, {
-                style: function (feature) {
-                    return {
-                        color: '#4CAF50',
-                        weight: 5,
-                        opacity: 0.9
-                    };
-                },
-                pointToLayer: function (feature, latlng) {
-                    if (feature.properties && feature.properties.isStart) {
-                        return L.circleMarker(latlng, {
-                            radius: 8,
-                            fillColor: "#007bff",
-                            color: "#000",
-                            weight: 1,
-                            opacity: 1,
-                            fillOpacity: 0.8
-                        }).bindPopup("Начало маршрута");
-                    }
-                    if (feature.properties && feature.properties.isEnd) {
-                        return L.circleMarker(latlng, {
-                            radius: 8,
-                            fillColor: "#dc3545",
-                            color: "#000",
-                            weight: 1,
-                            opacity: 1,
-                            fillOpacity: 0.8
-                        }).bindPopup("Конец маршрута");
-                    }
-                    return null;
-                }
+            const routeGroup = L.layerGroup({
+                snakingPause: 200
             }).addTo(map);
 
-            // Fit map to show both route and photos
-            const bounds = geoJsonLayer.getBounds();
-            if (walkData.photos && walkData.photos.length > 0) {
-                bounds.extend(photoMarkers.getBounds());
+            let bounds = L.latLngBounds();
+
+            if (walkData.path_geojson.type === "LineString" && walkData.path_geojson.coordinates) {
+                const lineCoordinates = walkData.path_geojson.coordinates.map(coord => [coord[1], coord[0]]);
+
+                const animatedLine = L.polyline([], {
+                    color: '#4CAF50',
+                    weight: 5,
+                    opacity: 0.9,
+                    snakingSpeed: 500 // (пикселей в секунду)
+                }).addTo(routeGroup);
+
+                routeGroup.addLayer(animatedLine);
+
+                animatedLine.setLatLngs(lineCoordinates);
+
+                lineCoordinates.forEach(latlng => bounds.extend(latlng));
+
+                setTimeout(() => {
+                    if (typeof routeGroup.snakeIn === 'function') {
+                        routeGroup.snakeIn();
+                        animatedLine.snakeIn();
+                    } else {
+                        console.warn('SnakeAnim plugin not loaded, showing static route');
+                    }
+                }, 500);
             }
 
             if (bounds.isValid()) {
                 map.fitBounds(bounds, { padding: [50, 50] });
-            } else {
-                console.warn("Bounds are invalid, using default view");
-                map.setView([55.751244, 37.618423], 10);
             }
 
         } catch (e) {
-            console.error('Error parsing GeoJSON data:', e);
-            mapContainer.innerHTML = '<p>Не удалось отобразить маршрут на карте.</p>';
+            console.error('Error:', e);
+            mapContainer.innerHTML = '<p>Ошибка отображения маршрута</p>';
             map.setView([55.751244, 37.618423], 10);
         }
     } else {
-        mapContainer.innerHTML = '<p>Данные маршрута отсутствуют для этой прогулки.</p>';
+        mapContainer.innerHTML = '<p>Маршрут отсутствует</p>';
         map.setView([55.751244, 37.618423], 10);
     }
 }
@@ -144,7 +129,6 @@ function setupPhotoGallery() {
     const photoThumbnails = document.querySelectorAll('.photo-thumbnail');
     let currentPhotoIndex = 0;
 
-    // Создаем элементы для полноэкранного просмотра
     const overlay = document.createElement('div');
     overlay.className = 'fullscreen-photo-overlay';
     overlay.style.display = 'none';
@@ -178,7 +162,6 @@ function setupPhotoGallery() {
     overlay.appendChild(container);
     document.body.appendChild(overlay);
 
-    // Функция для показа фото в полноэкранном режиме
     function showFullscreenPhoto(index) {
         if (index >= 0 && index < photoThumbnails.length) {
             currentPhotoIndex = index;
@@ -191,7 +174,6 @@ function setupPhotoGallery() {
         }
     }
 
-    // Обработчики событий
     closeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         overlay.style.display = 'none';
@@ -229,13 +211,11 @@ function setupPhotoGallery() {
         }
     });
 
-    // Добавляем обработчики для миниатюр
     photoThumbnails.forEach((thumbnail, index) => {
         thumbnail.addEventListener('click', function(e) {
             e.preventDefault();
             showFullscreenPhoto(index);
 
-            // Оригинальная логика для карты (если нужно)
             const lat = parseFloat(this.dataset.lat);
             const lng = parseFloat(this.dataset.lng);
             const mapInstance = L.DomUtil.get('singleWalkMap')._leaflet_map;
@@ -263,24 +243,24 @@ function setupSecretAdminClick() {
     const copyrightElement = document.getElementById('copyrightText');
     let clickCount = 0;
     const requiredClicks = 3; // Количество кликов для активации
-    let clickTimeout; // Для сброса счетчика
+    let clickTimeout;
 
     if (copyrightElement) {
         copyrightElement.addEventListener('click', () => {
             clickCount++;
             clearTimeout(clickTimeout);
             clickTimeout = setTimeout(() => {
-                clickCount = 0; // Сбрасываем счетчик, если между кликами прошло более 500 мс
+                clickCount = 0;
             }, 500);
             if (clickCount === requiredClicks) {
                 if (walkData && walkData.id) {
-                    window.location.href = `/admin/edit-walk/${walkData.id}`; // Исправлено на admin/edit_walk
+                    window.location.href = `/admin/edit-walk/${walkData.id}`;
                 } else {
                     console.error('Не удалось получить ID прогулки для перенаправления.');
                     alert('Ошибка: ID прогулки не найден для перенаправления.');
                 }
-                clickCount = 0; // Сбрасываем счетчик после активации
-                clearTimeout(clickTimeout); // Очищаем таймаут после успешного срабатывания
+                clickCount = 0;
+                clearTimeout(clickTimeout);
             }
         });
     }

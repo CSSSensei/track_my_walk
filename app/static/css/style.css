@@ -1305,6 +1305,10 @@ body.dark-mode .random-walk-content .button-go-walk {
     transform: scale(1.05) translateY(-1px);
 }
 
+.leaflet-overlay-pane path.leaflet-interactive {
+    transition: stroke-opacity 0.3s;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .container {

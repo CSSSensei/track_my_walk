@@ -12,6 +12,7 @@
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/gh/IvanSanchez/Leaflet.Polyline.SnakeAnim@latest/L.Polyline.SnakeAnim.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -58,7 +59,6 @@
     </div>
 
     <script>
-        // Передаем данные прогулки из Flask в JavaScript
         const walkData = {{ walk | tojson }};
     </script>
     <script src="{{ url_for('static', filename='js/single_walk.js') }}"></script>
