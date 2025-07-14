@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from app.extensions.database import close_db_interface, init_db_command
 from config import Config
 from app.extensions import database
@@ -17,5 +17,9 @@ def create_app():
     app.register_blueprint(main.bp)
     app.register_blueprint(admin.bp)
     app.register_blueprint(api.bp)
+
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('404.html'), 404
 
     return app
