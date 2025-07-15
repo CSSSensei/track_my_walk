@@ -133,9 +133,16 @@ function setupPhotoGallery() {
     overlay.className = 'fullscreen-photo-overlay';
     overlay.style.display = 'none';
 
-    const container = document.createElement('div');
-    container.className = 'fullscreen-photo-container';
+    const contentWrapper = document.createElement('div');
+    contentWrapper.className = 'fullscreen-content-wrapper';
+    const img = document.createElement('img');
+    img.className = 'fullscreen-photo';
 
+    const description = document.createElement('div');
+    description.className = 'photo-description-fullscreen';
+    contentWrapper.appendChild(img);
+    contentWrapper.appendChild(description);
+    overlay.appendChild(contentWrapper);
     const closeBtn = document.createElement('button');
     closeBtn.className = 'photo-close-btn';
     closeBtn.innerHTML = '&times;';
@@ -148,18 +155,9 @@ function setupPhotoGallery() {
     nextBtn.className = 'photo-nav-btn next';
     nextBtn.innerHTML = '&rarr;';
 
-    const img = document.createElement('img');
-    img.className = 'fullscreen-photo';
-
-    const description = document.createElement('div');
-    description.className = 'photo-description-fullscreen';
-
-    container.appendChild(closeBtn);
-    container.appendChild(prevBtn);
-    container.appendChild(nextBtn);
-    container.appendChild(img);
-    container.appendChild(description);
-    overlay.appendChild(container);
+    overlay.appendChild(closeBtn);
+    overlay.appendChild(prevBtn);
+    overlay.appendChild(nextBtn);
     document.body.appendChild(overlay);
 
     function showFullscreenPhoto(index) {
