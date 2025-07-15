@@ -169,7 +169,6 @@ body {
     margin-bottom: 0;
     font-weight: 700;
     line-height: 1;
-    transition: color 0.3s ease;
     transform: translateY(-8px);
 }
 
