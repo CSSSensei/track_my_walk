@@ -22,7 +22,7 @@ let isSquinting = false;
 // Function to apply theme based on localStorage
 function updateIconColor() {
     const themeIcon = document.getElementById('themeIcon');
-    const isScrolled = window.scrollY > 50;
+    const isScrolled = window.scrollY > 30;
 
     if (document.body.classList.contains('dark-mode')) {
         if (isScrolled) {
@@ -57,7 +57,7 @@ function applyTheme() {
 
 function handleStickyHeader() {
     const stickyHeader = document.getElementById('sticky-header-container');
-    if (window.scrollY > 50) {
+    if (window.scrollY > 30) {
         stickyHeader.classList.add('scrolled');
     } else {
         stickyHeader.classList.remove('scrolled');
