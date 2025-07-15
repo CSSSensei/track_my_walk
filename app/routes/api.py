@@ -35,9 +35,9 @@ def upload_location_history():
 def api_recommend_route():
     data = request.get_json()
 
-    time_minutes = data.get('time_minutes', 30)
+    time_minutes = data.get('time_minutes', 60)
     angle = data.get('angle', 60)
-    segments = data.get('segments', 10)
+    segments = data.get('segments', 1)
     start_point = data.get('start_point')
 
     if not isinstance(time_minutes, int) or time_minutes <= 0:

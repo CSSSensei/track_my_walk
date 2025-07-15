@@ -3,12 +3,11 @@ import random
 from typing import List, Optional
 
 from flask import Flask
-from collections import defaultdict
 from shapely.geometry import Polygon, Point
 
 from app.extensions.postgres import PostgresDB
 from app.models.route import Route
-from app.utils.ors_requests import get_route, get_zigzag_route
+from app.utils.ors_requests import get_zigzag_route
 
 MIN_LON = 37.3687
 MAX_LON = 37.8426
@@ -174,11 +173,17 @@ def is_inside_mkad(point: list) -> bool:
 
 def create_grid(cell_size_km: float = 1.0) -> dict:
     """Создает сетку квадратов 1x1 км внутри МКАД."""
-    grid = defaultdict(int)
     cell_size_deg = cell_size_km / 111.32  # 1° ≈ 111.32 км
 
     lon_steps = int((MAX_LON - MIN_LON) / cell_size_deg)
     lat_steps = int((MAX_LAT - MIN_LAT) / cell_size_deg)
+    grid = {(x, y): 0
+            for x in range(lon_steps)
+            for y in range(lat_steps)
+            if is_inside_mkad([
+                MIN_LON + (x + 0.5) * cell_size_deg,
+                MIN_LAT + (y + 0.5) * cell_size_deg
+            ])}
 
     return {
         "cell_size_deg": cell_size_deg,
@@ -194,9 +199,10 @@ def update_grid_with_walks(grid_data: dict, walks: list) -> dict:
     grid = grid_data["grid"]
     for walk in walks:
         for lon, lat in walk.path_geojson['coordinates']:
-            x = int((lon - MIN_LON) / cell_size)
-            y = int((lat - MIN_LAT) / cell_size)
-            grid[(x, y)] += 1
+            if is_inside_mkad([lon, lat]):
+                x = int((lon - MIN_LON) / cell_size)
+                y = int((lat - MIN_LAT) / cell_size)
+                grid[(x, y)] += 1
 
     return grid_data
 
@@ -205,8 +211,10 @@ def find_least_visited_cells(grid_data: dict, top_n: int = 10) -> list:
     """Возвращает центры наименее посещенных квадратов ВНУТРИ полигона МКАДа."""
     grid = grid_data["grid"]
     cell_size = grid_data["cell_size_deg"]
-
-    sorted_cells = sorted(grid.items(), key=lambda x: x[1])
+    items = list(grid.items())
+    random.shuffle(items)
+    sorted_cells = sorted(items, key=lambda point: point[1])
+    print(sorted_cells)
 
     least_visited = []
     for (x, y), _ in sorted_cells:
@@ -231,27 +239,6 @@ def find_least_visited_cells(grid_data: dict, top_n: int = 10) -> list:
     return least_visited
 
 
-def generate_route_from_cell(api_key: str,
-                             cell_center: list,
-                             time_minutes: int) -> Route:
-    """Генерирует маршрут из центра квадрата."""
-    target_distance = 1.4 * time_minutes * 60  # 1.4 м/с * время
-
-    angle = random.uniform(0, 2 * math.pi)
-    distance_deg = target_distance / 111320  # 1° ≈ 111.32 км
-
-    end_point = [
-        cell_center[0] + distance_deg * math.cos(angle),
-        cell_center[1] + distance_deg * math.sin(angle)
-    ]
-
-    # Проверка, что конечная точка внутри МКАД
-    if not (MIN_LON <= end_point[0] <= MAX_LON and MIN_LAT <= end_point[1] <= MAX_LAT):
-        return None
-
-    return get_route(api_key, cell_center, end_point)
-
-
 def get_recommended_route(api_key: str,
                           time_minutes: int,
                           walks: list,
@@ -260,27 +247,36 @@ def get_recommended_route(api_key: str,
                           start_point: Optional[List[float]] = None) -> Optional[Route]:
     """Главная функция для получения рекомендации."""
     if start_point:
-        route = generate_zigzag_route(api_key, start_point, time_minutes, angle, segments)
-        if route:
-            return route
+        route_generated = generate_zigzag_route(api_key, start_point, time_minutes, angle, segments)
+        if route_generated:
+            return route_generated
     grid_data = create_grid()
     grid_data = update_grid_with_walks(grid_data, walks)
 
-    target_cells = find_least_visited_cells(grid_data, top_n=5)
+    target_cells = find_least_visited_cells(grid_data)
 
     for cell in target_cells:
         # route = generate_route_from_cell(api_key, cell, time_minutes)
-        route = generate_zigzag_route(api_key, cell, time_minutes, angle, segments)
-        if route:
-            return route
+        route_generated = generate_zigzag_route(api_key, cell, time_minutes, angle, segments)
+        if route_generated:
+            return route_generated
 
     return None
+
+
+def meters_to_degrees(lat, meters):
+    """Конвертирует метры в градусы с учетом широты."""
+    # Длина 1 градуса широты (всегда ~111 км)
+    lat_deg = meters / 111320
+    # Длина 1 градуса долготы на текущей широте
+    lon_deg = meters / (111320 * math.cos(math.radians(lat)))
+    return lon_deg, lat_deg
 
 
 def generate_zigzag_route(api_key: str,
                           start_point: List[float],
                           time_minutes: int,
-                          anlge: int = 60,
+                          angle: int = 60,
                           segments: int = 5) -> Route:
     """
     Генерирует извилистый маршрут с случайными поворотами.
@@ -289,40 +285,40 @@ def generate_zigzag_route(api_key: str,
         api_key: API ключ OpenRouteService
         start_point: Начальная точка [lon, lat]
         time_minutes: Желаемое время прогулки
+        angle: Максимальный угол поворота (градусы)
         segments: Количество сегментов маршрута
 
     Возвращает:
         Route объект или None при ошибке
     """
-    total_distance = 1.11 * time_minutes * 60
+    WALKING_SPEED = 1.11
+    total_distance = WALKING_SPEED * time_minutes * 60
     segment_distance = total_distance / segments
-    distance_deg = segment_distance / 111320  # Переводим в градусы
 
     current_point = start_point
-    all_points = [start_point]
+    all_points = [start_point.copy()]
+    current_angle = random.uniform(0, 360)
 
-    for i in range(segments):
-        # Генерируем случайный азимут (от -60° до +60° от предыдущего направления)
-        if i == 0:
-            angle = random.uniform(0, 2 * math.pi)  # Первое направление
-        else:
-            angle += math.radians(random.uniform(-anlge, anlge))
+    for _ in range(segments):
+        lon_deg, lat_deg = meters_to_degrees(current_point[1], segment_distance)
 
+        rad_angle = math.radians(current_angle)
         next_point = [
-            current_point[0] + distance_deg * math.cos(angle),
-            current_point[1] + distance_deg * math.sin(angle)
+            current_point[0] + lon_deg * math.cos(rad_angle),
+            current_point[1] + lat_deg * math.sin(rad_angle)
         ]
 
-        if not mkad_polygon.contains(Point(next_point[0], next_point[1])):
-            # Если вышли за границы, отражаем угол
-            angle += math.radians(180 + random.uniform(-30, 30))
+        if not mkad_polygon.contains(Point(next_point)):
+            current_angle = (current_angle + 180 + random.uniform(-30, 30)) % 360
+            rad_angle = math.radians(current_angle)
             next_point = [
-                current_point[0] + distance_deg * math.cos(angle),
-                current_point[1] + distance_deg * math.sin(angle)
+                current_point[0] + lon_deg * math.cos(rad_angle),
+                current_point[1] + lat_deg * math.sin(rad_angle)
             ]
 
         all_points.append(next_point)
         current_point = next_point
+        current_angle += random.uniform(-angle, angle)
 
     return get_zigzag_route(api_key, all_points)
 
@@ -332,9 +328,9 @@ if __name__ == '__main__':
     with app.app_context():
         db = PostgresDB()
         db.init_db()
-        walks = db.get_walks()
+        walks_data = db.get_walks()
         route = get_recommended_route(
             'api=',
             30,
-            walks)
+            walks_data)
         print(route.path_geojson, route.duration / 60, sep='\n')
