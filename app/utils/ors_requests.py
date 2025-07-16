@@ -1,3 +1,5 @@
+from typing import List
+
 import requests
 from app.models.route import Route
 
@@ -37,10 +39,20 @@ def get_zigzag_route(api_key, coords):
             time += segment['duration']
         for segment in route_data['features'][0]['properties']['segments']:
             distance += segment['distance']
-        return Route(time, distance, route_data["features"][0]["geometry"]["coordinates"])
+        return Route(time, distance, route_data["features"][0]["geometry"]["coordinates"], generate_yandex_link(coords))
     except requests.exceptions.RequestException as e:
         print(f"Ошибка при запросе маршрута: {e}")
         return None
+
+
+def generate_yandex_link(coords: List[List[float]]) -> str:
+    if not coords:
+        return 'https://yan-toples.ru'
+    link = 'https://yandex.com/maps?rtext='
+    for point in coords:
+        link += f'{point[1]}%2C{point[0]}~'
+    link = link[:-1] + '&rtt=pd'
+    return link
 
 
 if __name__ == "__main__":

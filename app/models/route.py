@@ -7,6 +7,7 @@ class Route:
     duration: float
     distance: float
     path_geojson: List[List[float]]
+    link: str
 
     def to_dict(self):
         return asdict(self)

@@ -214,7 +214,6 @@ def find_least_visited_cells(grid_data: dict, top_n: int = 10) -> list:
     items = list(grid.items())
     random.shuffle(items)
     sorted_cells = sorted(items, key=lambda point: point[1])
-    print(sorted_cells)
 
     least_visited = []
     for (x, y), _ in sorted_cells:
