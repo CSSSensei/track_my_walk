@@ -1,0 +1,30 @@
+.description ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-bottom: 15px;
+}
+
+.description ul li {
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+
+.description p b, .description ul li b {
+    color: var(--link-color);
+}
+
+.description .quote {
+    font-style: italic;
+    text-align: right;
+    margin-top: 20px;
+    font-size: 1.1em;
+    color: var(--text-color);
+    border-top: 1px solid var(--quote-border);
+    padding-top: 10px;
+}
+
+@media (max-width: 480px) {
+    .description .quote {
+        font-size: 0.9em;
+    }
+}

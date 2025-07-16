@@ -1,0 +1,36 @@
+.recent-walks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.recent-walk-card, .all-walk-card {
+    background-color: var(--container-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 8px var(--shadow-light);
+    transition: all 0.2s ease-in-out, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.recent-walk-card:hover, .all-walk-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px var(--shadow-medium);
+    border-color: var(--link-color);
+}
+
+.recent-walk-card h4, .all-walk-card h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--heading-color);
+    font-size: 1.1em;
+    transition: color 0.3s ease;
+}
+
+.recent-walk-card p, .all-walk-card p {
+    margin: 5px 0;
+    font-size: 0.95em;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}

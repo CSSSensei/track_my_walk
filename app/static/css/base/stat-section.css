@@ -1,0 +1,111 @@
+.stats-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    text-align: center;
+}
+
+.stat-card {
+    background-color: var(--stat-card-bg);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px var(--stat-card-shadow);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    --mouse-x: 0px;
+    --mouse-y: 0px;
+    transition: transform 0.2s ease-in-out, background-color 0.3s ease, box-shadow 0.3s ease;
+    transform-style: preserve-3d; /* Required for 3D transforms */
+    perspective: 1000px; /* Required for 3D transforms */
+}
+
+/* Glass Layer for Interactive Glow */
+.glass-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: radial-gradient(
+            circle at var(--mouse-x) var(--mouse-y),
+            rgba(102, 255, 0, 0.2) 0%,
+            transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.stat-card:hover .glass-layer {
+    opacity: 1;
+}
+
+/* Text Layer for Parallax Effect */
+.text-layer {
+    position: relative;
+    z-index: 2;
+    transform: translateZ(30px);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    will-change: transform;
+}
+
+/* Stat Card Hover Effects */
+.stat-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px var(--shadow-medium);
+}
+
+body.dark-mode .stat-card {
+    background: rgba(40, 80, 40, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.5),
+            inset 0 0 20px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .stat-card:hover {
+    box-shadow:
+            0 12px 40px rgba(0, 0, 0, 0.7),
+            inset 0 0 30px rgba(255, 255, 255, 0.1),
+            0 0 40px rgba(100, 255, 100, 0.5);
+}
+
+body.dark-mode .stat-card:hover .text-layer {
+    text-shadow: 0 0 10px rgba(100, 255, 100, 0.7);
+}
+
+.stat-card h3 {
+    color: var(--heading-color);
+    font-weight: 900;
+    margin-top: 0;
+    font-size: 1.2em;
+    transition: color 0.3s ease;
+}
+
+.stat-card p {
+    font-size: 2.3em;
+    font-weight: 900;
+    color: var(--link-color);
+    margin: 10px 0 0;
+}
+@media (max-width: 768px) {
+    .stats-section, .recent-walks-grid, .all-walks-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .stat-card p {
+        font-size: 1.8em;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-section, .recent-walks-grid, .all-walks-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-card p {
+        font-size: 1.5em;
+    }
+}

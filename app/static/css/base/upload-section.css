@@ -1,0 +1,61 @@
+.upload-section {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.upload-section input[type="file"] {
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 10px 15px;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    width: 100%;
+    max-width: 400px;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.upload-section input[type="file"]::file-selector-button {
+    background-color: var(--link-color);
+    color: black;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.upload-section input[type="file"]::file-selector-button:hover {
+    background-color: var(--link-hover-color);
+}
+
+.upload-section button {
+    background-color: var(--link-color);
+    color: black;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 25px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.upload-section button:hover {
+    background-color: var(--link-hover-color);
+    transform: translateY(-2px);
+}
+
+#uploadStatus {
+    color: var(--text-color);
+    font-size: 0.9em;
+    transition: color 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .upload-section input[type="file"], .upload-section button {
+        max-width: 100%;
+    }
+}

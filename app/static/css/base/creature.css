@@ -1,0 +1,102 @@
+.dolboeb {
+    right: 70px;
+    transform: translateX(-30%) translateY(50%);
+    opacity: 0;
+    position: absolute;
+    bottom: 0;
+    height: 120%;
+    display: flex;
+    align-items: flex-end;
+    z-index: 0;
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.8s ease-out;
+}
+
+
+.dolboeb.visible {
+    transform: translateX(-30%) translateY(0);
+    opacity: 1;
+}
+
+@keyframes eyeBounce {
+    0% { transform: translateY(0); }
+    25% { transform: translateY(-15px); }
+    50% { transform: translateY(0); }
+    75% { transform: translateY(-5px); }
+    100% { transform: translateY(0); }
+}
+
+.animated-pupil {
+    transform-origin: center center;
+    transition: transform 0.1s ease-out;
+}
+
+.dolboeb-svg.landed .animated-pupil {
+    animation: eyeBounce 0.5s ease-out forwards;
+}
+
+.dolboeb-svg {
+    height: 100%;
+    width: auto;
+    transform: translatey(-5%);
+    filter: brightness(1.2) drop-shadow(0 0 20px #9733FF);
+}
+
+body.dark-mode .dolboeb-svg {
+    filter: brightness(1.2) drop-shadow(0 0 20px #9733FF);
+}
+
+#eyelids-closed, /* Верхние веки */
+#eyelids-part-2 { /* Нижние веки */
+    opacity: 0;
+    transition: opacity 0.3s ease-out, clip-path 0.3s ease-out;
+    pointer-events: none;
+}
+
+#eyelids-closed {
+    clip-path: inset(100% 0 0 0);
+}
+
+#eyelids-part-2 {
+    clip-path: inset(0 0 100% 0);
+}
+
+.dolboeb-svg.squinted #eyelids-closed,
+.dolboeb-svg.squinted #eyelids-part-2 {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+}
+
+#ear-left,
+#ear-right,
+#left-hand,
+#right-hand {
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.dolboeb-svg.squinted #ear-left {
+    transform: translateY(85px) rotate(-15deg);
+}
+
+.dolboeb-svg.squinted #ear-right {
+    transform: translateY(35px) rotate(10deg);
+}
+
+.dolboeb-svg.squinted #left-hand {
+    transform: translateY(40px);
+}
+
+.dolboeb-svg.squinted #right-hand {
+    transform: translateY(40px);
+}
+
+@media (max-width: 768px) {
+    .dolboeb {
+        height: 80%;
+        transform: translateX(45%) translateY(100%);
+    }
+
+    .dolboeb.visible {
+        transform: translateX(45%) translateY(-40%);
+    }
+
+}

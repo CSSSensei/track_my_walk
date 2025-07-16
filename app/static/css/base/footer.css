@@ -1,0 +1,33 @@
+.linktree {
+    text-align: center;
+    margin-top: 20px;
+    padding-bottom: 20px;
+}
+
+.copyright-container {
+    font-size: 0.9em;
+    color: #888;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.copyright-text {
+    cursor: pointer;
+}
+
+.telega {
+    transform: scale(2.5);
+    display: inline-flex;
+}
+
+.telegram-icon {
+    height: 1em;
+    width: auto;
+    transition: all 0.2s ease;
+}
+
+.telegram-icon:hover {
+    transform: scale(1.05) translateY(-1px);
+}

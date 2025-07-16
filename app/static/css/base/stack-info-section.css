@@ -1,0 +1,13 @@
+.stack-info ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.stack-info ul li {
+    margin-bottom: 10px;
+    color: var(--text-color);
+}
+
+.stack-info ul li b {
+    color: var(--link-color);
+}

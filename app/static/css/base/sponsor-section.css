@@ -1,0 +1,36 @@
+.sponsors-bar {
+    margin-top: 25px;
+    overflow: hidden;
+    width: 100%;
+    white-space: nowrap;
+    padding: 20px 0;
+}
+
+.sponsors-track {
+    display: inline-block;
+    animation: scroll 100s linear infinite;
+}
+
+.sponsor-logo {
+    height: 40px;
+    width: auto;
+    margin: 0 30px;
+    vertical-align: middle;
+    filter: saturate(0%) brightness(80%) sepia(100%) hue-rotate(90deg) contrast(150%);
+    transition: filter 0.3s ease;
+}
+
+.sponsor-logo:hover {
+    filter: none;
+}
+
+@media (max-width: 768px) {
+    .sponsor-logo {
+        height: 30px;
+        margin: 0 15px;
+    }
+
+    .sponsors-track {
+        animation-duration: 60s;
+    }
+}
