@@ -9,6 +9,9 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="sticky-header-container">
@@ -170,14 +173,14 @@
                 <div class="random-walk-content card">
                     <h2>Время гулять!</h2>
                     <p>Не знаешь, куда пойти гулять? Заскучал на одних и тех же улицах? Я создам для тебя идеальный маршрут! Выбери начальную точку, укажи длительность — или доверься случаю.</p>
-                    <a href="/recommend" class="button-go-walk">Пойдем гулять!</a>
+                    <a href="/walk_generator" class="button-go-walk">Пойдем гулять!</a>
                 </div>
             </section>
 
             <section class="description card"><h2>О проекте</h2>
                 <p>Этот сайт — мой способ заново открыть Москву. Не через окно машины или мелькание станций метро, а через ритм шагов. Я решил
                     пройти город пешком: не спеша, двор за двором, переулок за переулком. Не для галочки, а чтобы почувствовать его пульс.</p>
-                <p>Здесь нет туристических маршрутов. Есть потёртые ступени сталинских подъездов, хруст гравия на окраинных парковках,
+                <p>Здесь нет туристических маршрутов. Только потёртые ступени сталинских подъездов, хруст гравия на окраинных парковках,
                     неожиданные запахи то ли сирени, то ли шаурмы из соседней лавки. И цифры — сколько километров осталось до условной границы
                     «исхожено», сколько граммов CO₂ <i>не</i> улетело в воздух просто потому, что я выбрал ноги вместо колес.</p>
 
@@ -221,7 +224,7 @@
             <section class="stack-info card">
                 <h2>Используемый стек</h2>
                 <ul>
-                    <li><b>Бэкенд:</b> Python с использованием фреймворка <b>Flask</b>. Для хранения данных о прогулках используется встроенная база данных <b>PostgreSQL</b>.</li>
+                    <li><b>Бэкенд:</b> Python с использованием фреймворка <b>Flask</b>. Для хранения данных используется автономная база данных <b>PostgreSQL</b>.</li>
                     <li><b>Фронтенд:</b> HTML, CSS, JavaScript.</li>
                     <li><b>Карты:</b> Leaflet.js в связке с бесплатными картографическими данными <b>OpenStreetMap</b>.</li>
                     <li><b>Данные:</b> Проект работает с геопространственными данными в формате <b>GeoJSON</b> и поддерживает импорт Google Location History (JSON).</li>

@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -18,7 +21,7 @@
             </nav>
         </header>
 
-        <section class="recommend-section card">
+        <section class="walk-generator-section card">
             <form id="recommendation-form" class="two-column-form">
                 <div class="form-group">
                     <label for="start-point-mode">Начальная точка:</label>
@@ -67,12 +70,15 @@
                 </div>
             </div>
 
-            <div class="route-info card" style="display: none;">
+            <div class="route-info card">
                 <h3>Информация о маршруте</h3>
                 <p>Прогулка займёт: <span id="route-duration" class="highlight">0</span> мин</p>
                 <p>Длина маршрута: <span id="route-distance" class="highlight">0</span> км</p>
-                <button id="copy-route-coords" class="action-button">Копировать координаты</button>
-                <textarea id="route-geojson" style="display:none;"></textarea>
+                <div class="route-actions">
+                    <button id="copy-route-coords" class="action-button">Копировать координаты</button>
+                    <a id="share-route-link" class="action-button" target="_blank">Маршрут в Яндекс Картах</a>
+                </div>
+                <input type="hidden" id="route-link">
             </div>
 
             <div id="error-message" class="error-message" style="display: none;"></div>
@@ -81,5 +87,11 @@
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="{{ url_for('static', filename='js/recommend.js') }}"></script>
+    <div id="copy-notification" class="copy-notification">
+        <svg class="notification-icon" viewBox="0 0 24 24" width="20" height="20">
+            <path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+        </svg>
+        Маршрут скопирован в буфер обмена!
+    </div>
 </body>
 </html>
