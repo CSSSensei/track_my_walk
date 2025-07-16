@@ -12,7 +12,6 @@ bp = Blueprint('api', __name__, url_prefix='/api')  # API routes prefixed with /
 
 @bp.route('/upload_location_history', methods=['POST'])
 def upload_location_history():
-    # Check API-key from config
     auth_header = request.headers.get('X-API-Key')
     if not auth_header or auth_header != current_app.config['API_KEY']:
         return jsonify({'error': 'Unauthorized: Invalid or missing API Key'}), 401
@@ -31,7 +30,7 @@ def upload_location_history():
             return jsonify({'error': str(e)}), 500
 
 
-@bp.route('/recommend_route', methods=['POST'])
+@bp.route('/generate_route', methods=['POST'])
 def api_recommend_route():
     data = request.get_json()
 

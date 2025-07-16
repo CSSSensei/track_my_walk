@@ -106,7 +106,6 @@ document.getElementById('start-point-mode').addEventListener('change', function(
     }
 });
 
-// Обработка отправки формы
 document.getElementById('recommendation-form').addEventListener('submit', async function(event) {
     event.preventDefault();
 
@@ -135,7 +134,7 @@ document.getElementById('recommendation-form').addEventListener('submit', async 
     showLoading();
 
     try {
-        const response = await fetch('/api/recommend_route', {
+        const response = await fetch('/api/generate_route', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -159,6 +158,12 @@ document.getElementById('recommendation-form').addEventListener('submit', async 
             document.getElementById('route-duration').textContent = durationMinutes;
             document.getElementById('route-distance').textContent = distanceKm;
             document.querySelector('.route-info').style.display = 'block';
+
+            if (data.link) {
+                const shareLink = document.getElementById('share-route-link');
+                shareLink.href = data.link;
+                document.getElementById('route-link').value = data.link;
+            }
 
             if (routeLayer) {
                 map.removeLayer(routeLayer);
@@ -193,21 +198,30 @@ function showError(message) {
 
 document.getElementById('copy-route-coords').addEventListener('click', function() {
     if (currentRouteCoords) {
-        // Формируем GeoJSON LineString вручную для копирования
         const geoJsonOutput = {
             "type": "LineString",
             "coordinates": currentRouteCoords
         };
         const geoJsonString = JSON.stringify(geoJsonOutput, null, 2);
 
-        const routeTextarea = document.getElementById('route-geojson');
-        routeTextarea.value = geoJsonString;
-        routeTextarea.style.display = 'block';
-        routeTextarea.select();
-        document.execCommand('copy');
-        routeTextarea.style.display = 'none';
-        alert("Координаты маршрута скопированы в буфер обмена!");
+        navigator.clipboard.writeText(geoJsonString)
+            .then(() => {
+                showCopyNotification();
+            })
+            .catch(err => {
+                console.error("Ошибка при копировании:", err);
+                alert("Не удалось скопировать маршрут");
+            });
     } else {
         alert("Нет маршрута для копирования.");
     }
 });
+
+function showCopyNotification() {
+    const notification = document.getElementById('copy-notification');
+    notification.classList.add('show');
+
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 2000);
+}

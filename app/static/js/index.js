@@ -268,7 +268,7 @@ async function fetchWalksAndDisplay() {
                         });
 
                         const walkDate = new Date(walk.date * 1000).toLocaleDateString('ru-RU');
-                        const tooltipContent = `<b>${walk.name || 'Без названия'}</b><br>${walkDate} — ${walk.distance.toFixed(2)} км`;
+                        const tooltipContent = `<b style="font-weight: 650;">${walk.name || 'Без названия'}</b><br>${walkDate} — ${walk.distance.toFixed(2)} км`;
 
                         layer.bindTooltip(tooltipContent, {
                             permanent: false,
@@ -294,7 +294,6 @@ async function fetchWalksAndDisplay() {
 }
 
 
-// New function to fetch and display the 4 most recent walks
 async function fetchRecentWalks() {
     try {
         const response = await fetch('/walks');

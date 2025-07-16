@@ -16,7 +16,7 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')  # Admin routes prefixed 
 def admin_page():
     if not session.get('is_authenticated'):
         flash('Доступ запрещен. Пожалуйста, войдите.', 'error')
-        return redirect(url_for('admin.admin_login'))  # Use blueprint name
+        return redirect(url_for('admin.admin_login'))
     return render_template('admin.html')
 
 
@@ -26,7 +26,6 @@ def admin_login():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        # Use app.config to get admin credentials
         ADMIN_USERNAME = current_app.config['ADMIN_USERNAME']
         ADMIN_PASSWORD = current_app.config['ADMIN_PASSWORD']
 
@@ -41,7 +40,7 @@ def admin_login():
 @bp.route('/logout')  # /admin/logout
 def admin_logout():
     session.pop('is_authenticated', None)
-    return redirect(url_for('main.index'))  # Redirect to main index after logout
+    return redirect(url_for('main.index'))
 
 
 @bp.route('/add_walk', methods=['POST'])  # /admin/add_walk
@@ -98,7 +97,7 @@ def add_walk():
         return jsonify({'error': f'An error occurred: {str(e)}'}), 500
 
 
-@bp.route('/walks-manager')
+@bp.route('/walks-manager')  # /admin/walks-manager
 def walks_manager():
     if not session.get('is_authenticated'):
         flash('Доступ запрещен. Пожалуйста, войдите.', 'error')
@@ -106,7 +105,7 @@ def walks_manager():
     return render_template('admin_walks_manager.html')
 
 
-@bp.route('/edit-walk/<int:walk_id>', methods=['GET'])
+@bp.route('/edit-walk/<int:walk_id>', methods=['GET'])  # /admin/edit-walk/<int:walk_id>
 def edit_walk_page(walk_id):
     if not session.get('is_authenticated'):
         flash('Доступ запрещен. Пожалуйста, войдите.', 'error')
@@ -210,7 +209,7 @@ def update_walk(walk_id):
                 if new_geojson.get("type") == "LineString":
                     coordinates = new_geojson.get("coordinates", [])
                 elif new_geojson.get("type") == "Point" and new_geojson.get("coordinates"):
-                    coordinates = [new_geojson.get("coordinates")]  # Преобразуем точку в список для обработки
+                    coordinates = [new_geojson.get("coordinates")]
                 elif new_geojson.get("type") == "Feature":
                     geometry = new_geojson.get("geometry", {})
                     if geometry.get("type") == "LineString" and geometry.get('coordinates'):
@@ -247,7 +246,7 @@ def delete_walk(walk_id):
 
     try:
         db_interface = get_db_interface()
-        success = db_interface.delete_walk(walk_id) # Убедитесь, что у вас есть такой метод
+        success = db_interface.delete_walk(walk_id)
 
         if success:
             return jsonify({'message': f'Walk {walk_id} deleted successfully'}), 200

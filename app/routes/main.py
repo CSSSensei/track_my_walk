@@ -24,9 +24,9 @@ def all_walks():
     return render_template('all_walks.html')
 
 
-@bp.route('/recommend', methods=['GET'])
-def recommend_page():
-    return render_template('recommend.html')
+@bp.route('/walk_generator', methods=['GET'])
+def walk_generator_page():
+    return render_template('walk-generator.html')
 
 
 @bp.route('/walk/<int:walk_id>')
