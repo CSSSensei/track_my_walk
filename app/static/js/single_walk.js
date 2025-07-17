@@ -111,7 +111,7 @@ function initSingleWalkMap() {
             }
 
             if (bounds.isValid()) {
-                map.fitBounds(bounds, { padding: [50, 50] });
+                map.fitBounds(bounds, { padding: [0, 0] });
             }
 
         } catch (e) {
@@ -128,6 +128,10 @@ function initSingleWalkMap() {
 function setupPhotoGallery() {
     const photoThumbnails = document.querySelectorAll('.photo-thumbnail');
     let currentPhotoIndex = 0;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
 
     const overlay = document.createElement('div');
     overlay.className = 'fullscreen-photo-overlay';
@@ -135,12 +139,14 @@ function setupPhotoGallery() {
 
     const contentWrapper = document.createElement('div');
     contentWrapper.className = 'fullscreen-content-wrapper';
-    const img = document.createElement('img');
-    img.className = 'fullscreen-photo';
+
+    const carouselContainer = document.createElement('div');
+    carouselContainer.className = 'carousel-container';
 
     const description = document.createElement('div');
     description.className = 'photo-description-fullscreen';
-    contentWrapper.appendChild(img);
+
+    contentWrapper.appendChild(carouselContainer);
     contentWrapper.appendChild(description);
     overlay.appendChild(contentWrapper);
     const closeBtn = document.createElement('button');
@@ -160,15 +166,82 @@ function setupPhotoGallery() {
     overlay.appendChild(nextBtn);
     document.body.appendChild(overlay);
 
-    function showFullscreenPhoto(index) {
-        if (index >= 0 && index < photoThumbnails.length) {
-            currentPhotoIndex = index;
-            const photo = walkData.photos[index];
+    function createCarouselItems() {
+        carouselContainer.innerHTML = '';
+        walkData.photos.forEach((photo, index) => {
+            const item = document.createElement('div');
+            item.className = `carousel-item ${index === currentPhotoIndex ? 'active' : ''}`;
+            item.dataset.index = index;
+
+            const img = document.createElement('img');
             img.src = photo.url;
+            img.className = 'fullscreen-photo';
             img.alt = photo.description || 'Фото с прогулки';
-            description.textContent = photo.description || '';
-            overlay.style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Блокируем прокрутку страницы
+
+            item.appendChild(img);
+            carouselContainer.appendChild(item);
+        });
+    }
+
+    function updateDescription(index) {
+        const photo = walkData.photos[index];
+        description.textContent = photo.description || '';
+    }
+
+    function showFullscreenPhoto(index) {
+        currentPhotoIndex = index;
+        createCarouselItems();
+        updateDescription(index);
+        overlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function goToPhoto(newIndex, direction) {
+        if (newIndex < 0 || newIndex >= walkData.photos.length) return;
+
+        const items = carouselContainer.querySelectorAll('.carousel-item');
+        items.forEach(item => {
+            item.classList.remove('prev', 'next', 'active');
+        });
+
+        items[currentPhotoIndex].classList.add(direction === 'left' ? 'prev' : 'next');
+        items[newIndex].classList.add('active', direction === 'left' ? 'next' : 'prev');
+
+        carouselContainer.classList.add(`swipe-${direction}`);
+
+        setTimeout(() => {
+            currentPhotoIndex = newIndex;
+            updateDescription(newIndex);
+
+            carouselContainer.classList.remove('swipe-left', 'swipe-right');
+            items.forEach(item => {
+                item.classList.remove('prev', 'next');
+                item.classList.toggle('active', parseInt(item.dataset.index) === newIndex);
+            });
+        }, 500);
+    }
+
+    carouselContainer.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    });
+
+    carouselContainer.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const diffX = touchStartX - touchEndX;
+        const diffY = touchStartY - touchEndY;
+
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+            if (diffX > 50) {
+                goToPhoto((currentPhotoIndex + 1) % walkData.photos.length, 'left');
+            } else if (diffX < -50) {
+                goToPhoto((currentPhotoIndex - 1 + walkData.photos.length) % walkData.photos.length, 'right');
+            }
         }
     }
 
@@ -187,24 +260,20 @@ function setupPhotoGallery() {
 
     prevBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        showFullscreenPhoto((currentPhotoIndex - 1 + photoThumbnails.length) % photoThumbnails.length);
+        goToPhoto((currentPhotoIndex - 1 + walkData.photos.length) % walkData.photos.length, 'right');
     });
 
     nextBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        showFullscreenPhoto((currentPhotoIndex + 1) % photoThumbnails.length);
+        goToPhoto((currentPhotoIndex + 1) % walkData.photos.length, 'left');
     });
 
-    // Обработка нажатий клавиш
     document.addEventListener('keydown', (e) => {
         if (overlay.style.display === 'flex') {
-            if (e.key === 'Escape') {
-                overlay.style.display = 'none';
-                document.body.style.overflow = '';
-            } else if (e.key === 'ArrowLeft') {
-                showFullscreenPhoto((currentPhotoIndex - 1 + photoThumbnails.length) % photoThumbnails.length);
+            if (e.key === 'ArrowLeft') {
+                goToPhoto((currentPhotoIndex - 1 + walkData.photos.length) % walkData.photos.length, 'right');
             } else if (e.key === 'ArrowRight') {
-                showFullscreenPhoto((currentPhotoIndex + 1) % photoThumbnails.length);
+                goToPhoto((currentPhotoIndex + 1) % walkData.photos.length, 'left');
             }
         }
     });
