@@ -161,7 +161,7 @@ function handleCreatureMouseMove(e) {
             const deltaX = mouseX - centerX;
             const deltaY = mouseY - centerY;
 
-            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);  // ТЕОРЕМА ПИФАГОРА
 
             let offsetX = 0;
             let offsetY = 0;
