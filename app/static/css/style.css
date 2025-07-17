@@ -18,14 +18,14 @@
     /* Light Theme Colors */
     --bg-color: #f0f2f5;
     --container-bg: #ffffff;
-    --text-color: #333;
-    --heading-color: #555;
+    --text-color: #333333;
+    --heading-color: #222222;
     --card-bg: #f9f9f9;
     --card-border: #ddd;
-    --shadow-light: rgba(0, 0, 0, 0);
-    --shadow-medium: rgba(0, 0, 0, 0);
+    --shadow-light: rgba(0, 0, 0, 0.08);
+    --shadow-medium: rgba(0, 0, 0, 0.08);
     --stat-card-bg: #e8f5e9;
-    --stat-card-shadow: rgba(0, 0, 0, 0);
+    --stat-card-shadow: rgba(0, 0, 0, 0.2);
     --link-color: #4CAF50;
     --link-hover-color: #388E3C;
     --fancy-title-shadow: rgba(0, 0, 0, 0.1);
@@ -35,12 +35,11 @@
     --sticky-header-bg-scrolled: rgba(255, 255, 255, 0.5);
     --sticky-header-text-scrolled: #333;
 
-    --loading-overlay-bg: rgba(0, 0, 0, 0.1);
+    --loading-overlay-bg: rgba(0, 0, 0, 0.2);
 
-    --random-walk-bg: #f9f9f9;
     --random-walk-card-bg: rgba(249, 249, 249, 0.7);
     --random-walk-card-border: rgba(221, 221, 221, 0.5);
-    --random-walk-card-shadow: rgba(0, 0, 0, 0.1);
+    --random-walk-card-shadow: rgba(0, 0, 0, 0.2);
     --random-walk-text-color: #333;
     --random-walk-button-bg: #4CAF50;
     --random-walk-button-hover-bg: #388E3C;
@@ -71,9 +70,8 @@ body.dark-mode {
     --sticky-header-bg-initial: transparent;
     --sticky-header-bg-scrolled: rgba(0, 0, 0, 0.9);
     --sticky-header-text-scrolled: #E0E0E0;
-    --loading-overlay-bg: rgba(0, 0, 0, 0.1);
+    --loading-overlay-bg: rgba(0, 0, 0, 0.2);
 
-    --random-walk-bg: #1A1A1A;
     --random-walk-card-bg: rgba(34, 34, 34, 0.6);
     --random-walk-card-border: rgba(56, 56, 56, 0.5);
     --random-walk-card-shadow: rgba(0, 0, 0, 0.7);
