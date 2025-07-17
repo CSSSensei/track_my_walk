@@ -1,7 +1,7 @@
 .random-walk-section {
     position: relative;
     display: flex;
-    background-color: var(--random-walk-bg);
+    background-color: transparent;
     padding-top: 60px;
 }
 
@@ -16,11 +16,11 @@
 }
 
 .random-walk-section .random-walk-content {
+    box-shadow: 0 8px 32px var(--random-walk-card-shadow) ;
     background-color: var(--random-walk-card-bg);
 }
 
 body.dark-mode .random-walk-content {
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
     border: 1px solid rgba(56, 56, 56, 0.5);
 }
 
