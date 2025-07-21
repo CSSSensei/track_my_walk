@@ -13,21 +13,34 @@
 
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1 class="fancy-title">Все мои прогулки</h1>
+<div class="container">
+    <header>
+        <h1 class="fancy-title">Все мои прогулки</h1>
+        <div class="header-controls">
             <nav>
-                <a href="{{ url_for('main.index') }}" class="back-link">&larr; На главную</a>
+                <a href="{{ url_for('main.index') }}" class="back-link">← Ко всем прогулкам</a>
             </nav>
-        </header>
-
-        <section class="all-walks-section card">
-            <div id="all-walks-grid" class="all-walks-grid">
-                <!-- All walks will be loaded here by JavaScript -->
+            <div class="sort-dropdown">
+                <button id="sort-dropdown-btn" class="sort-dropdown-btn">
+                    <span id="sort-selected-text">Сначала новые</span>
+                    <span class="sort-arrow">↓</span>
+                </button>
+                <div id="sort-dropdown-content" class="sort-dropdown-content">
+                    <div data-sort="distance_desc" class="sort-option">По убыванию дистанции</div>
+                    <div data-sort="distance_asc" class="sort-option">По возрастанию дистанции</div>
+                    <div data-sort="date_desc" class="sort-option">Сначала новые</div>
+                    <div data-sort="date_asc" class="sort-option">Сначала старые</div>
+                </div>
             </div>
-        </section>
-    </div>
+        </div>
+    </header>
 
-    <script src="{{ url_for('static', filename='js/all_walks.js') }}"></script>
+    <section class="all-walks-section card">
+        <div id="all-walks-grid" class="all-walks-grid">
+        </div>
+    </section>
+</div>
+
+<script src="{{ url_for('static', filename='js/all_walks.js') }}"></script>
 </body>
 </html>
