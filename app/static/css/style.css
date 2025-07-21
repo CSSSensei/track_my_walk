@@ -4,9 +4,9 @@
 @import url("base/stat-section.css");
 @import url("base/map-section.css");
 @import url("base/recent-walks-section.css");
-@import url("base/single-walk.css");
-@import url("base/all-walks.css");
-@import url("base/walk-generator-section.css");
+@import url("pages/single-walk.css");
+@import url("pages/all-walks.css");
+@import url("pages/walk-generator.css");
 @import url("base/random-walk-section.css");
 @import url("base/creature.css");
 @import url("base/upload-section.css");
