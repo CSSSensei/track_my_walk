@@ -80,10 +80,19 @@ function displayWalks(walks) {
 
         const walkDate = new Date(walk.date * 1000).toLocaleDateString('ru-RU');
 
+        let descriptionHTML = '';
+        if (walk.description) {
+            if (walk.description.length > 100) {
+                descriptionHTML = `<p>${walk.description.substring(0, 100)}...</p>`;
+            } else {
+                descriptionHTML = `<p>${walk.description}</p>`;
+            }
+        }
+
         walkCard.innerHTML = `
             <h4>${walk.name || 'Без названия'}</h4>
             <p>${walkDate} — ${walk.distance.toFixed(2)} км</p>
-            ${walk.description ? `<p>${walk.description.substring(0, 100)}...</p>` : ''}
+            ${descriptionHTML}
         `;
 
         walkCard.addEventListener('click', () => {
