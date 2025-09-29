@@ -7,14 +7,11 @@
 
 <p>
   <a href="https://github.com/CSSSensei">
-    <img src="https://img.shields.io/badge/made%20by-CSSSensei-388E3C">
-  </a>
+    <img src="https://img.shields.io/badge/made%20by-CSSSensei-c8a00"></a>
   <a href="https://walks.yan-toples.ru">
-    <img src="https://img.shields.io/badge/🌐_website-9733FF">
-  </a>
+    <img src="https://img.shields.io/badge/🌐_Check_website-388E3C" ></a>
   <a href="https://walks.yan-toples.ru">
-    <img src="https://img.shields.io/badge/version-v1.8.1-4CAF50">
-  </a>
+    <img src="https://img.shields.io/badge/version-v1.8.1-2e4600"></a>
 </p>
 
 <br>
