@@ -41,7 +41,14 @@ def _normalize_for_web(img: Image.Image) -> Image.Image:
     return img
 
 
-def convert_image_to_webp(source_path: str, upload_folder: str, filename: str, quality: int = 82):
+def convert_image_to_webp(source_path: str, upload_folder: str, filename: str, quality: int | None = None):
+    fmt = current_app.config.get('PHOTO_FORMAT', 'WEBP').upper()
+    if fmt != 'WEBP':
+        raise ValueError(f"PHOTO_FORMAT must be WEBP, got {fmt}")
+
+    if quality is None:
+        quality = int(current_app.config.get('PHOTO_QUALITY', 82))
+
     name, _ext = os.path.splitext(filename)
     webp_filename = f"{name}.webp"
     webp_path = os.path.join(upload_folder, webp_filename)
@@ -49,7 +56,7 @@ def convert_image_to_webp(source_path: str, upload_folder: str, filename: str, q
     img = Image.open(source_path)
     img = _normalize_for_web(img)
 
-    img.save(webp_path, "WEBP", quality=quality, method=6)
+    img.save(webp_path, fmt, quality=quality, method=6)
 
     if os.path.abspath(webp_path) != os.path.abspath(source_path) and os.path.exists(source_path):
         os.remove(source_path)
@@ -64,9 +71,12 @@ def create_thumbnail(source_path, upload_folder, filename, profile=None):
             profile = current_app.config['DEFAULT_THUMBNAIL_PROFILE']
 
         config_photo = current_app.config['THUMBNAIL_PROFILES'][profile]
+        fmt = str(config_photo.get('format', 'WEBP')).upper()
 
+        ext = ".webp" if fmt == "WEBP" else ".jpg"
         name, _ext = os.path.splitext(filename)
-        thumb_filename = f"{config_photo['prefix']}{name}{config_photo.get('suffix', '')}.webp"
+
+        thumb_filename = f"{config_photo['prefix']}{name}{config_photo.get('suffix', '')}{ext}"
         thumb_path = os.path.join(upload_folder, thumb_filename)
 
         img = Image.open(source_path)
@@ -74,12 +84,11 @@ def create_thumbnail(source_path, upload_folder, filename, profile=None):
 
         img.thumbnail(config_photo['size'], Image.Resampling.LANCZOS)
 
-        img.save(
-            thumb_path,
-            "WEBP",
-            quality=config_photo['quality'],
-            method=6,
-        )
+        save_kwargs = {"quality": config_photo['quality']}
+        if fmt == "WEBP":
+            save_kwargs["method"] = 6
+
+        img.save(thumb_path, fmt, **save_kwargs)
 
         thumb_url = f"/static/uploads/photos/{thumb_filename}"
         return thumb_path, thumb_url
