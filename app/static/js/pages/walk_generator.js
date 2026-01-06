@@ -42,13 +42,7 @@ function showError(message) {
   if (!errorDiv) return;
 
   errorDiv.textContent = message;
-  errorDiv.style.display = 'block';
-  errorDiv.style.color = '#dc3545';
-  errorDiv.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
-  errorDiv.style.borderLeft = '4px solid #dc3545';
-  errorDiv.style.borderRadius = '8px';
-  errorDiv.style.padding = '15px';
-  errorDiv.style.marginTop = '20px';
+  errorDiv.classList.add('is-visible');
 }
 
 function showCopyNotification() {
@@ -153,7 +147,7 @@ function setupFormSubmit() {
     const routeInfo = document.querySelector('.route-info');
     if (routeInfo) routeInfo.style.display = 'none';
     const errorMessage = document.getElementById('error-message');
-    if (errorMessage) errorMessage.style.display = 'none';
+    if (errorMessage) errorMessage.classList.remove('is-visible');
 
     if (routeLayer) map.removeLayer(routeLayer);
 

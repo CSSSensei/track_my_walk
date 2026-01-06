@@ -155,12 +155,17 @@
 }
 
 .error-message {
+    display: none;
     padding: 15px;
     background-color: rgba(220, 53, 69, 0.1);
     color: #dc3545;
     border-radius: 8px;
     margin-top: 20px;
     border-left: 4px solid #dc3545;
+}
+
+.error-message.is-visible {
+    display: block;
 }
 
 /* Loading Overlay Styles */
