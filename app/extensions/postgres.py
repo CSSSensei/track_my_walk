@@ -1,16 +1,18 @@
+import logging
 import os
-from datetime import datetime
 from typing import List, Optional
-from sqlalchemy import create_engine, text, Column, Integer, String, Float, JSON, ForeignKey
-from sqlalchemy.orm import sessionmaker, declarative_base, relationship
-from sqlalchemy.exc import SQLAlchemyError
+
 from flask import current_app
+from sqlalchemy import Column, Float, ForeignKey, Integer, JSON, String, create_engine, text
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 
 from app.extensions.db_interface import DBInterface
 from app.models.walk import Walk
 from app.models.photo import Photo
 from config import Config
 
+logger = logging.getLogger(__name__)
 Base = declarative_base()
 
 
@@ -60,11 +62,13 @@ class PostgresDB(DBInterface):
     def connect(self):
         try:
             db_config = {k: v for k, v in Config.POSTGRES_DATABASE.items() if v is not None}
-            connection_string = f"postgresql+pg8000://{db_config['user']}:{db_config['password']}@{db_config['host']}/{db_config['dbname']}"
+            connection_string = (
+                f"postgresql+pg8000://{db_config['user']}:{db_config['password']}@{db_config['host']}/{db_config['dbname']}"
+            )
             self.engine = create_engine(connection_string)
             self.Session = sessionmaker(bind=self.engine)
-        except SQLAlchemyError as e:
-            print(f"Ошибка подключения к базе данных: {e}")
+        except SQLAlchemyError:
+            logger.exception("Failed to connect to Postgres")
             raise
 
     def close(self):
@@ -76,20 +80,21 @@ class PostgresDB(DBInterface):
     def init_db(self):
         try:
             Base.metadata.create_all(self.engine)
-        except SQLAlchemyError as e:
-            print(f"Ошибка инициализации базы данных: {e}")
+        except SQLAlchemyError:
+            logger.exception("Failed to init DB schema")
             raise
 
     def get_walks(self) -> List[Walk]:
         session = self.Session()
         try:
             walks = session.query(WalkModel).order_by(WalkModel.date.desc()).all()
-            return [Walk.from_postgres_row(
-                (w.id, w.name, w.date, w.description, w.path_geojson, w.distance, w.co2_saved)
-            ) for w in walks]
-        except SQLAlchemyError as e:
+            return [
+                Walk.from_postgres_row((w.id, w.name, w.date, w.description, w.path_geojson, w.distance, w.co2_saved))
+                for w in walks
+            ]
+        except SQLAlchemyError:
             session.rollback()
-            print(f"Ошибка получения прогулок: {e}")
+            logger.exception("Failed to get walks")
             raise
         finally:
             session.close()
@@ -100,13 +105,12 @@ class PostgresDB(DBInterface):
             walk = session.query(WalkModel).filter_by(id=walk_id).first()
             if walk:
                 return Walk.from_postgres_row(
-                    (walk.id, walk.name, walk.date, walk.description,
-                     walk.path_geojson, walk.distance, walk.co2_saved)
+                    (walk.id, walk.name, walk.date, walk.description, walk.path_geojson, walk.distance, walk.co2_saved)
                 )
             return None
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             session.rollback()
-            print(f"Ошибка получения прогулки: {e}")
+            logger.exception("Failed to get walk by id=%s", walk_id)
             raise
         finally:
             session.close()
@@ -120,14 +124,14 @@ class PostgresDB(DBInterface):
                 description=walk.description,
                 path_geojson=walk.path_geojson,
                 distance=walk.distance,
-                co2_saved=walk.co2_saved
+                co2_saved=walk.co2_saved,
             )
             session.add(new_walk)
             session.commit()
             return new_walk.id
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             session.rollback()
-            print(f"Ошибка добавления прогулки: {e}")
+            logger.exception("Failed to add walk")
             raise
         finally:
             session.close()
@@ -147,9 +151,9 @@ class PostgresDB(DBInterface):
                 db_walk.distance = walk.distance
                 db_walk.co2_saved = walk.co2_saved
                 session.commit()
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             session.rollback()
-            print(f"Ошибка обновления прогулки: {e}")
+            logger.exception("Failed to update walk id=%s", walk.id)
             raise
         finally:
             session.close()
@@ -161,40 +165,42 @@ class PostgresDB(DBInterface):
             if walk:
                 photos_to_delete = session.query(PhotoModel).filter_by(walk_id=walk.id).all()
                 for photo in photos_to_delete:
-                    # Удаляем основной файл фотографии
                     if photo.url:
                         photo_path = self._get_full_path_from_url(photo.url)
                         if os.path.exists(photo_path):
                             try:
                                 os.remove(photo_path)
                             except OSError as e:
-                                print(f"Ошибка удаления файла {photo_path}: {e}")
-                    # Удаляем файл миниатюры, если он есть
+                                logger.warning("Failed to delete file %s: %s", photo_path, e)
+
                     if photo.thumbnail_url:
                         thumb_path = self._get_full_path_from_url(photo.thumbnail_url)
                         if os.path.exists(thumb_path):
                             try:
                                 os.remove(thumb_path)
                             except OSError as e:
-                                print(f"Ошибка удаления файла миниатюры {thumb_path}: {e}")
+                                logger.warning("Failed to delete thumbnail %s: %s", thumb_path, e)
+
                     session.delete(photo)
 
                 session.delete(walk)
                 session.commit()
                 return True
             return False
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             session.rollback()
-            print(f"Ошибка удаления прогулки и связанных фото: {e}")
+            logger.exception("Failed to delete walk id=%s", walk_id)
             raise
-        except Exception as e:  # Общая ошибка, если что-то пошло не так с файлами
+        except Exception:
             session.rollback()
-            print(f"Непредвиденная ошибка при удалении прогулки и связанных фото: {e}")
+            logger.exception("Unexpected error deleting walk id=%s", walk_id)
             raise
         finally:
             session.close()
 
-    def add_photo(self, walk_id: int, url: str, description: Optional[str], latitude: float, longitude: float, thumbnail_url: str) -> int:
+    def add_photo(
+        self, walk_id: int, url: str, description: Optional[str], latitude: float, longitude: float, thumbnail_url: str
+    ) -> int:
         session = self.Session()
         try:
             new_photo: Photo = PhotoModel(
@@ -203,14 +209,14 @@ class PostgresDB(DBInterface):
                 description=description,
                 latitude=latitude,
                 longitude=longitude,
-                thumbnail_url=thumbnail_url
+                thumbnail_url=thumbnail_url,
             )
             session.add(new_photo)
             session.commit()
             return new_photo.id
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             session.rollback()
-            print(f"Ошибка добавления фотографии: {e}")
+            logger.exception("Failed to add photo for walk_id=%s", walk_id)
             raise
         finally:
             session.close()
@@ -219,12 +225,13 @@ class PostgresDB(DBInterface):
         session = self.Session()
         try:
             photos = session.query(PhotoModel).filter_by(walk_id=walk_id).order_by(PhotoModel.walk_id).all()
-            return [Photo.from_postgres_row(
-                (p.id, p.walk_id, p.url, p.description, p.latitude, p.longitude, p.thumbnail_url)
-            ) for p in photos]
-        except SQLAlchemyError as e:
+            return [
+                Photo.from_postgres_row((p.id, p.walk_id, p.url, p.description, p.latitude, p.longitude, p.thumbnail_url))
+                for p in photos
+            ]
+        except SQLAlchemyError:
             session.rollback()
-            print(f"Ошибка получения фотографий для прогулки {walk_id}: {e}")
+            logger.exception("Failed to get photos for walk_id=%s", walk_id)
             raise
         finally:
             session.close()
@@ -240,27 +247,27 @@ class PostgresDB(DBInterface):
                         try:
                             os.remove(photo_path)
                         except OSError as e:
-                            print(f"Ошибка удаления файла {photo_path}: {e}")
-                # Удаляем файл миниатюры, если он есть
+                            logger.warning("Failed to delete file %s: %s", photo_path, e)
+
                 if photo.thumbnail_url:
                     thumb_path = self._get_full_path_from_url(photo.thumbnail_url)
                     if os.path.exists(thumb_path):
                         try:
                             os.remove(thumb_path)
                         except OSError as e:
-                            print(f"Ошибка удаления файла миниатюры {thumb_path}: {e}")
+                            logger.warning("Failed to delete thumbnail %s: %s", thumb_path, e)
 
                 session.delete(photo)
                 session.commit()
                 return True
             return False
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             session.rollback()
-            print(f"Ошибка удаления фотографии: {e}")
+            logger.exception("Failed to delete photo id=%s", photo_id)
             raise
-        except Exception as e:  # Общая ошибка, если что-то пошло не так с файлами
+        except Exception:
             session.rollback()
-            print(f"Непредвиденная ошибка при удалении файла фотографии: {e}")
+            logger.exception("Unexpected error deleting photo id=%s", photo_id)
             raise
         finally:
             session.close()
