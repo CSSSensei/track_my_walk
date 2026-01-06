@@ -4,8 +4,6 @@ let drawControl;
 let flatpickrInstance;
 let photoMarker = null;
 
-// --- Utility Functions ---
-
 function showToast(message, type = 'info', duration = 3000) {
     const toast = document.getElementById('toastMessage');
     toast.textContent = message;
@@ -16,7 +14,7 @@ function showToast(message, type = 'info', duration = 3000) {
     }
     toast.timeoutId = setTimeout(() => {
         toast.classList.remove('visible');
-        toast.textContent = ''; // Очищаем текст после скрытия
+        toast.textContent = '';
     }, duration);
 }
 
@@ -31,8 +29,6 @@ function convertUnixToDateTimeLocal(timestamp) {
     const seconds = date.getSeconds().toString().padStart(2, '0');
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 }
-
-// --- Map Initialization and Drawing Logic ---
 
 function initMap(initialGeoJson = null) {
     if (map) {
@@ -105,7 +101,6 @@ function initMap(initialGeoJson = null) {
     // Обработчик клика для установки координат фото
     map.on('click', function(e) {
         const photosSection = document.getElementById('photosSection');
-        // Только если секция фото видна и поля фото активны
         if (photosSection && photosSection.style.display === 'block') {
             if (photoMarker) {
                 map.removeLayer(photoMarker);
@@ -137,7 +132,6 @@ function clearMapLayers() {
         editableLayers.clearLayers();
         showToast('Карта очищена.', 'info');
     }
-    // Также очищаем маркер фото и его поля
     if (photoMarker) {
         map.removeLayer(photoMarker);
         photoMarker = null;
@@ -146,8 +140,6 @@ function clearMapLayers() {
     document.getElementById('photoLon').value = '';
 }
 
-// --- API Interactions ---
-
 async function saveWalk(event) {
     event.preventDefault();
 
@@ -155,7 +147,7 @@ async function saveWalk(event) {
     const name = document.getElementById('name').value;
     const dateInput = document.getElementById('date').value;
     const description = document.getElementById('description').value;
-    const path_geojson = getGeoJsonFromMap();  // строка
+    const path_geojson = getGeoJsonFromMap();
 
     if (!name || !dateInput) {
         showToast('Пожалуйста, заполните Название и Дату.', 'error');
@@ -185,7 +177,7 @@ async function saveWalk(event) {
                 body: JSON.stringify(walkData)
             });
         } else {
-            const geojsonObj = JSON.parse(path_geojson); // Парсим GeoJSON строку в объект
+            const geojsonObj = JSON.parse(path_geojson);
             const coordinatesToSend = geojsonObj.type === "LineString" ? geojsonObj.coordinates : (geojsonObj.type === "Point" ? [geojsonObj.coordinates] : []);
 
             response = await fetch('/admin/add_walk', {
@@ -208,20 +200,18 @@ async function saveWalk(event) {
         }
 
         const result = await response.json();
-        const newWalkId = walkId || result.id; // Получаем ID новой прогулки, если она была добавлена
+        const newWalkId = walkId || result.id;
 
         showToast(`Прогулка успешно ${walkId ? 'обновлена' : 'добавлена'}!`, 'success');
 
         setTimeout(() => {
-            window.location.href = `/walk/${walkId}`;
+            window.location.href = `/walk/${newWalkId}`;
         }, 1500);
     } catch (error) {
         console.error('Error saving walk:', error);
         showToast(`Ошибка при сохранении прогулки: ${error.message}`, 'error');
     }
 }
-
-// --- Photo Management Logic ---
 
 // Функция для переключения видимости секции фото
 function togglePhotosSection() {
@@ -250,7 +240,7 @@ function togglePhotosSection() {
 
 
 async function uploadPhoto() {
-    const walkId = currentWalkId; // Берем ID прогулки из глобальной переменной
+    const walkId = currentWalkId;
     const photoFile = document.getElementById('photoUploadInput').files[0];
     const description = document.getElementById('photoDescription').value.trim();
     const latitude = document.getElementById('photoLat').value;
@@ -285,7 +275,6 @@ async function uploadPhoto() {
 
         if (response.ok) {
             showToast(result.message, 'success');
-            // Очистка полей формы фото после загрузки
             document.getElementById('photoUploadInput').value = '';
             document.getElementById('photoDescription').value = '';
             document.getElementById('photoLat').value = '';
@@ -336,7 +325,6 @@ async function loadPhotosForWalk(walkId) {
                 existingPhotoMarker._icon.classList.add('photo-marker');
                 existingPhotoMarker.bindPopup(`<b>${photo.description || 'Фотография'}</b><br><img src="${photo.url}" style="width:150px; height:auto;">`);
 
-                // Добавляем миниатюру в секцию uploadedPhotos
                 const imgContainer = document.createElement('div');
                 imgContainer.className = 'photo-thumbnail-container';
 
@@ -393,8 +381,6 @@ async function deletePhoto(photoId) {
         return false;
     }
 }
-
-// --- Initialization ---
 
 document.addEventListener('DOMContentLoaded', () => {
     flatpickrInstance = flatpickr("#date", {
