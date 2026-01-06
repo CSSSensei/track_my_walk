@@ -1,33 +1,53 @@
 from typing import List, Optional
-from flask import Blueprint, request, jsonify, current_app, abort
-from app.utils.recommended_route import get_recommended_route
-from ..extensions.database import get_db_interface
 
+from flask import Blueprint, abort, current_app, jsonify, request
+
+from app.utils.auth import require_api_key
+from app.utils.recommended_route import get_recommended_route
 from app.utils.walk_processing import import_walks_from_json
+from ..extensions.database import get_db_interface
 from ..models.route import Route
 from ..models.walk import Walk
 
-bp = Blueprint('api', __name__, url_prefix='/api')  # API routes prefixed with /api
+bp = Blueprint("api", __name__, url_prefix="/api")
 
 
-@bp.route('/upload_location_history', methods=['POST'])
+@bp.app_errorhandler(400)
+def handle_bad_request(err):
+    return jsonify({"error": getattr(err, "description", "Bad request")}), 400
+
+
+@bp.app_errorhandler(401)
+def handle_unauthorized(err):
+    return jsonify({"error": getattr(err, "description", "Unauthorized")}), 401
+
+
+@bp.app_errorhandler(404)
+def handle_not_found(err):
+    return jsonify({"error": getattr(err, "description", "Not found")}), 404
+
+
+@bp.app_errorhandler(500)
+def handle_server_error(err):
+    return jsonify({"error": "Internal server error"}), 500
+
+
+@bp.route("/upload_location_history", methods=["POST"])
+@require_api_key
 def upload_location_history():
-    auth_header = request.headers.get('X-API-Key')
-    if not auth_header or auth_header != current_app.config['API_KEY']:
-        return jsonify({'error': 'Unauthorized: Invalid or missing API Key'}), 401
+    if "file" not in request.files:
+        abort(400, description="No file part")
 
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
+    file = request.files["file"]
+    if file.filename == "":
+        abort(400, description="No selected file")
 
-    if file:
-        try:
-            len_walk_routes = import_walks_from_json(file)
-            return jsonify({'message': f'Successfully processed {len_walk_routes} potential walks.'}), 200
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
+    try:
+        len_walk_routes = import_walks_from_json(file)
+    except Exception:
+        abort(500)
+
+    return jsonify({"message": f"Successfully processed {len_walk_routes} potential walks."}), 200
 
 
 @bp.route('/generate_route', methods=['POST'])
