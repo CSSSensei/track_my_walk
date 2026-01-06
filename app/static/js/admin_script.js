@@ -162,7 +162,25 @@ document.addEventListener('DOMContentLoaded', function() {
         dateFormat: "Y-m-d H:i",
         defaultDate: "today",
         locale: "ru",
-        // defaultHour: new Date().getHours(),
-        // defaultMinute: new Date().getMinutes()
     });
+
+    const parseBtn = document.getElementById('parseCoordinatesBtn');
+    if (parseBtn) {
+        parseBtn.addEventListener('click', parseCoordinatesString);
+    }
+
+    const clearBtn = document.getElementById('clearMapBtn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', clearMap);
+    }
+
+    const removeLastBtn = document.getElementById('removeLastPointBtn');
+    if (removeLastBtn) {
+        removeLastBtn.addEventListener('click', removeLastPoint);
+    }
+
+    const submitBtn = document.getElementById('submitWalkBtn');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', submitWalk);
+    }
 });
