@@ -41,7 +41,7 @@ body {
 
 @font-face {
     font-family: 'Morfin Sans';
-    src: url('../fonts/MorfinSans-Regular.ttf') format('truetype');
+    src: url('../../fonts/MorfinSans-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
