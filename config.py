@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).parent
 env_path = BASE_DIR / '.env'
 load_dotenv(env_path)
 INSTANCE_DIR = BASE_DIR / 'instance'
-INSTANCE_DIR.mkdir(exist_ok=True)  # Создаем папку, если нет папки instance
+INSTANCE_DIR.mkdir(exist_ok=True)
 
 project_root = os.path.abspath(os.path.dirname(__file__))
 UPLOAD_FOLDER = os.path.join(project_root, 'app', 'static', 'uploads', 'photos')
@@ -25,7 +25,6 @@ class Config:
     UPLOAD_FOLDER = UPLOAD_FOLDER
     ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
     ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
-    DATABASE_TYPE = os.getenv('DATABASE_TYPE', 'postgres')  # 'sqlite' или 'postgres'
     THUMBNAIL_PROFILES = {
         'micro': {
             'size': (50, 50),       # Для иконок в списках
