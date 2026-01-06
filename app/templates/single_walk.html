@@ -1,69 +1,69 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Прогулка: {{ walk.name }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css"/>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css"/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    <script src="https://cdn.jsdelivr.net/gh/IvanSanchez/Leaflet.Polyline.SnakeAnim@latest/L.Polyline.SnakeAnim.min.js"></script>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1 class="fancy-title">Детали прогулки</h1>
-            <nav>
-                <a href="{{ url_for('main.all_walks') }}" class="back-link">&larr; Ко всем прогулкам</a>
-            </nav>
-        </header>
+{% extends "base.html" %}
 
-        <section class="walk-map-section card">
-            <h2>Маршрут прогулки</h2>
-            <div id="singleWalkMap" class="single-walk-map"></div>
-        </section>
-        <section class="walk-details-section card">
-            <h2>{{ walk.name }}</h2>
-            <p><strong>Дата:</strong> <span id="walkDate"></span></p>
-            <p><strong>Протяженность:</strong> {{ "%.2f"|format(walk.distance) }} км</p>
-            {% if walk.co2_saved %}
-                <p><strong>CO₂ сэкономлено:</strong> {{ "%.2f"|format(walk.co2_saved) }} г</p>
-            {% endif %}
-            {% if walk.description %}
-                <p><strong>Описание:</strong></p>
-                <p>{{ walk.description }}</p>
-            {% endif %}
-        </section>
-        {% if walk.photos %}
-        <section class="walk-photos-section card">
-            <h2>Фотографии</h2>
-            <div id="photoGallery" class="photo-gallery">
-                {% for photo in walk.photos %}
-                <div class="photo-thumbnail" data-lat="{{ photo.latitude }}" data-lng="{{ photo.longitude }}" data-src="{{ photo.url }}">
-                    <img src="{{ photo.url }}" alt="Фото с прогулки" loading="lazy">
-                    {% if photo.description %}
-                    <div class="photo-thumbnail-description">{{ photo.description }}</div>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            </div>
-        </section>
+{% block title %}Прогулка: {{ walk.name }}{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/IvanSanchez/Leaflet.Polyline.SnakeAnim@latest/L.Polyline.SnakeAnim.min.js"></script>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <header>
+        <h1 class="fancy-title">Детали прогулки</h1>
+        <nav>
+            <a href="{{ url_for('main.all_walks') }}" class="back-link">&larr; Ко всем прогулкам</a>
+        </nav>
+    </header>
+
+    <section class="walk-map-section card">
+        <h2>Маршрут прогулки</h2>
+        <div id="singleWalkMap" class="single-walk-map"></div>
+    </section>
+    <section class="walk-details-section card">
+        <h2>{{ walk.name }}</h2>
+        <p><strong>Дата:</strong> <span id="walkDate"></span></p>
+        <p><strong>Протяженность:</strong> {{ "%.2f"|format(walk.distance) }} км</p>
+        {% if walk.co2_saved %}
+            <p><strong>CO₂ сэкономлено:</strong> {{ "%.2f"|format(walk.co2_saved) }} г</p>
         {% endif %}
-    </div>
+        {% if walk.description %}
+            <p><strong>Описание:</strong></p>
+            <p>{{ walk.description }}</p>
+        {% endif %}
+    </section>
+    {% if walk.photos %}
+    <section class="walk-photos-section card">
+        <h2>Фотографии</h2>
+        <div id="photoGallery" class="photo-gallery">
+            {% for photo in walk.photos %}
+            <div class="photo-thumbnail" data-lat="{{ photo.latitude }}" data-lng="{{ photo.longitude }}" data-src="{{ photo.url }}">
+                <img src="{{ photo.url }}" alt="Фото с прогулки" loading="lazy">
+                {% if photo.description %}
+                <div class="photo-thumbnail-description">{{ photo.description }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
 
-    <script>
-        const walkData = {{ walk | tojson }};
-    </script>
-    <script src="{{ url_for('static', filename='js/single_walk.js') }}"></script>
-    <footer style="text-align: center; margin-top: 20px; padding-bottom: 20px;">
-        <p id="copyrightText" style="font-size: 0.9em; color: #888; cursor: pointer;">
-            © 2025 Yan Toples, Inc.
-        </p>
-    </footer>
-</body>
-</html>
+<script type="application/json" id="walkDataJson">{{ walk | tojson }}</script>
+{% endblock %}
+
+{% block footer %}
+<footer style="text-align: center; margin-top: 20px; padding-bottom: 20px;">
+    <p id="copyrightText" style="font-size: 0.9em; color: #888; cursor: pointer;">
+        © 2025 Yan Toples, Inc.
+    </p>
+</footer>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='js/pages/single_walk.js') }}"></script>
+{% endblock %}
