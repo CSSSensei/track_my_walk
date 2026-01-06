@@ -1,15 +1,17 @@
 import json
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session, flash, current_app
-from datetime import datetime
-from app.utils import distance
-from werkzeug.utils import secure_filename
 import os
+from datetime import datetime
+
+from flask import Blueprint, current_app, flash, jsonify, redirect, render_template, request, session, url_for
+from werkzeug.utils import secure_filename
+
+from app.utils import distance
 from ..extensions.database import get_db_interface
 from ..models.walk import Walk
-from ..utils.image_utils import create_thumbnail
+from ..utils.image_utils import convert_image_to_webp, create_thumbnail
 from ..utils.walk_processing import import_walks_from_json
 
-bp = Blueprint('admin', __name__, url_prefix='/admin')  # Admin routes prefixed with /admin
+bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 
 @bp.route('/')
@@ -20,7 +22,7 @@ def admin_page():
     return render_template('admin.html')
 
 
-@bp.route('/login', methods=['GET', 'POST'])  # /admin/login
+@bp.route('/login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
         username = request.form.get('username')
@@ -37,13 +39,13 @@ def admin_login():
     return render_template('admin_login.html')
 
 
-@bp.route('/logout')  # /admin/logout
+@bp.route('/logout')
 def admin_logout():
     session.pop('is_authenticated', None)
     return redirect(url_for('main.index'))
 
 
-@bp.route('/add_walk', methods=['POST'])  # /admin/add_walk
+@bp.route('/add_walk', methods=['POST'])
 def add_walk():
     if not session.get('is_authenticated'):
         return jsonify({'error': 'Unauthorized'}), 401
@@ -97,7 +99,7 @@ def add_walk():
         return jsonify({'error': f'An error occurred: {str(e)}'}), 500
 
 
-@bp.route('/walks-manager')  # /admin/walks-manager
+@bp.route('/walks-manager')
 def walks_manager():
     if not session.get('is_authenticated'):
         flash('Доступ запрещен. Пожалуйста, войдите.', 'error')
@@ -105,7 +107,7 @@ def walks_manager():
     return render_template('admin_walks_manager.html')
 
 
-@bp.route('/edit-walk/<int:walk_id>', methods=['GET'])  # /admin/edit-walk/<int:walk_id>
+@bp.route('/edit-walk/<int:walk_id>', methods=['GET'])
 def edit_walk_page(walk_id):
     if not session.get('is_authenticated'):
         flash('Доступ запрещен. Пожалуйста, войдите.', 'error')
@@ -285,22 +287,26 @@ def upload_photo():
         return jsonify({'error': 'No selected photo file'}), 400
 
     upload_folder = current_app.config.get('UPLOAD_FOLDER', 'app/static/uploads/photos')
-    if not os.path.exists(upload_folder):
-        os.makedirs(upload_folder)
+    os.makedirs(upload_folder, exist_ok=True)
 
     filename = secure_filename(photo.filename)
     filepath = os.path.join(upload_folder, filename)
-    photo_url = f'/static/uploads/photos/{filename}'
+
+    webp_path = None
+    webp_url = None
+    webp_filename = None
+    thumb_url = None
 
     try:
         photo.save(filepath)
 
-        _, thumb_url = create_thumbnail(filepath, upload_folder, filename)
+        webp_path, webp_url, webp_filename = convert_image_to_webp(filepath, upload_folder, filename)
+        _, thumb_url = create_thumbnail(webp_path, upload_folder, webp_filename)
 
         db_interface = get_db_interface()
         photo_id = db_interface.add_photo(
             walk_id=walk_id,
-            url=photo_url,
+            url=webp_url,
             description=description,
             latitude=latitude,
             longitude=longitude,
@@ -310,11 +316,25 @@ def upload_photo():
         return jsonify({
             'message': 'Photo uploaded successfully',
             'photo_id': photo_id,
-            'url': photo_url,
+            'url': webp_url,
             'thumbnail_url': thumb_url
         }), 200
+
     except Exception as e:
         current_app.logger.error(f"Error uploading photo: {e}", exc_info=True)
+
+        try:
+            if webp_path and os.path.exists(webp_path):
+                os.remove(webp_path)
+        except Exception:
+            current_app.logger.warning("Failed to cleanup webp file after upload error", exc_info=True)
+
+        try:
+            if filepath and os.path.exists(filepath):
+                os.remove(filepath)
+        except Exception:
+            current_app.logger.warning("Failed to cleanup original file after upload error", exc_info=True)
+
         return jsonify({'error': f'An error occurred during photo upload: {str(e)}'}), 500
 
 

@@ -16,13 +16,10 @@ function initMap() {
     });
 }
 
-// Update the rendered route
 function updateRoute() {
     if (polyline) map.removeLayer(polyline);
 
     if (drawnRoute.length > 0) {
-        // Leaflet.polyline requires L objects.LatLng(latitude, longitude)
-        // Therefore, we convert [lon, lat] back to L.LatLng(lat, lon)
         const latLngs = drawnRoute.map(coord => L.latLng(coord[1], coord[0]));
         polyline = L.polyline(latLngs, {color: '#e94560', weight: 4, opacity: 0.8}).addTo(map);
     }
@@ -82,7 +79,6 @@ async function submitWalk() {
                     window.location.href = `/walk/${result.id}`;
                 }, 1500);
         } else {
-            // The server should return hresult.error in case of an error
             showMessage(result.error || 'Произошла ошибка на сервере.', 'error');
         }
     } catch (error) {
@@ -109,8 +105,6 @@ function showMessage(text, type = 'info') {
 
     setTimeout(() => {
         msgDiv.classList.remove('visible');
-        // Optional: clear the text after opening, so as not to take up memory
-        // setTimeout(() => msgDiv.textContent = '', 500); // Slight delay after disappearing
     }, 5000);
 }
 
@@ -122,7 +116,6 @@ function parseCoordinatesString() {
     }
 
     let parsedCoords = [];
-    // Используем регулярное выражение для поиска всех пар координат в формате [x, y]
     const coordPattern = /\[\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*\]/g;
     let match;
 
@@ -144,7 +137,6 @@ function parseCoordinatesString() {
     showMessage('Маршрут загружен из строки!', 'success');
 }
 
-// Clearing the form after successful submission
 function clearForm() {
     document.getElementById('name').value = '';
     document.getElementById('description').value = '';
@@ -153,7 +145,6 @@ function clearForm() {
     clearMap();
 }
 
-// Initializing the map and Flatpickr after loading the DOM
 document.addEventListener('DOMContentLoaded', function() {
     initMap();
 
