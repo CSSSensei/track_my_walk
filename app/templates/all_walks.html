@@ -1,18 +1,8 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Все мои прогулки</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+{% extends "base.html" %}
 
-</head>
-<body>
+{% block title %}Все мои прогулки{% endblock %}
+
+{% block body %}
 <div class="container">
     <header>
         <h1 class="fancy-title">Все мои прогулки</h1>
@@ -21,7 +11,7 @@
                 <a href="{{ url_for('main.index') }}" class="back-link">← На главную</a>
             </nav>
             <div class="sort-dropdown">
-                <button id="sort-dropdown-btn" class="sort-dropdown-btn">
+                <button id="sort-dropdown-btn" class="sort-dropdown-btn" type="button">
                     <span id="sort-selected-text">Сначала новые</span>
                     <span class="sort-arrow">↓</span>
                 </button>
@@ -36,11 +26,11 @@
     </header>
 
     <section class="all-walks-section card">
-        <div id="all-walks-grid" class="all-walks-grid">
-        </div>
+        <div id="all-walks-grid" class="all-walks-grid"></div>
     </section>
 </div>
+{% endblock %}
 
+{% block scripts %}
 <script src="{{ url_for('static', filename='js/all_walks.js') }}"></script>
-</body>
-</html>
+{% endblock %}
