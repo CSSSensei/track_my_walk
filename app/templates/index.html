@@ -1,40 +1,25 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Track My Walk</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% extends "base.html" %}
+
+{% block title %}Track My Walk{% endblock %}
+
+{% block head_extra %}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Стандартный фавикон -->
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    <!-- png для Android -->
+
     <link rel="icon" type="image/png" sizes="192x192" href="/yan_192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="/yan_512x512.png">
-    <!-- Manifest для PWA -->
     <link rel="manifest" href="/site.webmanifest">
 
-    <!-- Цвет темы для адресной строки -->
     <meta name="theme-color" content="#3bea62">
-    <!-- Для Windows -->
     <meta name="msapplication-TileColor" content="#3bea62">
+{% endblock %}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-</head>
-<body>
-    <div id="sticky-header-container">
-        <header class="sticky-header-content">
-            <h1 class="fancy-title"><a href="{{ url_for('main.index') }}">Track my walk</a></h1>
-            <button id="themeToggle" class="theme-toggle-button">
-                <img id="themeIcon" width="24" height="24" src="" alt="Theme toggle">
-            </button>
-        </header>
-    </div>
+{% block header %}
+    {% set show_theme_toggle = True %}
+    {% include "partials/_public_header.html" %}
+{% endblock %}
 
+{% block body %}
     <div class="content-wrapper">
         <div class="container">
             <section class="intro-section card">
@@ -229,7 +214,7 @@
             <section class="upload-section card">
                 <h2>Загрузить историю местоположений Google (JSON файл)</h2>
                 <input type="file" id="locationHistoryFile" accept=".json">
-                <button onclick="uploadFile()">Загрузить</button>
+                <button id="uploadLocationHistoryBtn" type="button">Загрузить</button>
                 <p id="uploadStatus"></p>
             </section>
 
@@ -270,71 +255,69 @@
 
     <div class="sponsors-bar">
         <div class="sponsors-track">
-            <img src="../static/images/logos/deepseek.svg" alt="Sponsor 27" class="sponsor-logo">
-            <img src="../static/images/logos/postgresql.svg" alt="Sponsor 1" class="sponsor-logo">
-            <img src="../static/images/logos/pornhub.svg" alt="Sponsor 21" class="sponsor-logo">
-            <img src="../static/images/logos/flask.svg" alt="Sponsor 5" class="sponsor-logo">
-            <img src="../static/images/logos/openai.svg" alt="Sponsor 2" class="sponsor-logo">
-            <img src="../static/images/logos/rest-api.svg" alt="Sponsor 10" class="sponsor-logo">
-            <img src="../static/images/logos/tiktok.svg" alt="Sponsor 22" class="sponsor-logo">
-            <img src="../static/images/logos/css.svg" alt="Sponsor 11" class="sponsor-logo">
-            <img src="../static/images/logos/leaflet.svg" alt="Sponsor 3" class="sponsor-logo">
-            <img src="../static/images/logos/javascript.svg" alt="Sponsor 12" class="sponsor-logo">
-            <img src="../static/images/logos/pyaterochka.svg" alt="Sponsor 23" class="sponsor-logo">
-            <img src="../static/images/logos/html.svg" alt="Sponsor 13" class="sponsor-logo">
-            <img src="../static/images/logos/python.svg" alt="Sponsor 4" class="sponsor-logo">
-            <img src="../static/images/logos/sqlite.svg" alt="Sponsor 7" class="sponsor-logo">
-            <img src="../static/images/logos/git.svg" alt="Sponsor 8" class="sponsor-logo">
-            <img src="../static/images/logos/geojson.svg" alt="Sponsor 9" class="sponsor-logo">
-            <img src="../static/images/logos/google-maps-2020-icon.svg" alt="Sponsor 14" class="sponsor-logo">
-            <img src="../static/images/logos/toples.png" alt="Sponsor 19" class="sponsor-logo">
-            <img src="../static/images/logos/json.svg" alt="Sponsor 16" class="sponsor-logo">
-            <img src="../static/images/logos/pycharm.svg" alt="Sponsor 17" class="sponsor-logo">
-            <img src="../static/images/logos/webstorm.svg" alt="Sponsor 18" class="sponsor-logo">
-            <img src="../static/images/logos/github.svg" alt="Sponsor 20" class="sponsor-logo">
-            <img src="../static/images/logos/onlyfans.svg" alt="Sponsor 24" class="sponsor-logo">
-            <img src="../static/images/logos/jagermeister.svg" alt="Sponsor 25" class="sponsor-logo">
-            <img src="../static/images/logos/Squid_Game.svg" alt="Sponsor 26" class="sponsor-logo">
-            <img src="../static/images/logos/xiaomi.svg" alt="Sponsor 27" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/deepseek.svg') }}" alt="Sponsor 27" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/postgresql.svg') }}" alt="Sponsor 1" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/pornhub.svg') }}" alt="Sponsor 21" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/flask.svg') }}" alt="Sponsor 5" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/openai.svg') }}" alt="Sponsor 2" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/rest-api.svg') }}" alt="Sponsor 10" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/tiktok.svg') }}" alt="Sponsor 22" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/css.svg') }}" alt="Sponsor 11" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/leaflet.svg') }}" alt="Sponsor 3" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/javascript.svg') }}" alt="Sponsor 12" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/pyaterochka.svg') }}" alt="Sponsor 23" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/html.svg') }}" alt="Sponsor 13" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/python.svg') }}" alt="Sponsor 4" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/sqlite.svg') }}" alt="Sponsor 7" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/git.svg') }}" alt="Sponsor 8" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/geojson.svg') }}" alt="Sponsor 9" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/google-maps-2020-icon.svg') }}" alt="Sponsor 14" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/toples.png') }}" alt="Sponsor 19" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/json.svg') }}" alt="Sponsor 16" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/pycharm.svg') }}" alt="Sponsor 17" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/webstorm.svg') }}" alt="Sponsor 18" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/github.svg') }}" alt="Sponsor 20" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/onlyfans.svg') }}" alt="Sponsor 24" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/jagermeister.svg') }}" alt="Sponsor 25" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/Squid_Game.svg') }}" alt="Sponsor 26" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/xiaomi.svg') }}" alt="Sponsor 27" class="sponsor-logo">
 
             <!-- Дублирующий набор для бесшовной анимации -->
-            <img src="../static/images/logos/deepseek.svg" alt="Sponsor 27" class="sponsor-logo">
-            <img src="../static/images/logos/postgresql.svg" alt="Sponsor 1" class="sponsor-logo">
-            <img src="../static/images/logos/pornhub.svg" alt="Sponsor 21" class="sponsor-logo">
-            <img src="../static/images/logos/flask.svg" alt="Sponsor 5" class="sponsor-logo">
-            <img src="../static/images/logos/openai.svg" alt="Sponsor 2" class="sponsor-logo">
-            <img src="../static/images/logos/rest-api.svg" alt="Sponsor 10" class="sponsor-logo">
-            <img src="../static/images/logos/tiktok.svg" alt="Sponsor 22" class="sponsor-logo">
-            <img src="../static/images/logos/css.svg" alt="Sponsor 11" class="sponsor-logo">
-            <img src="../static/images/logos/leaflet.svg" alt="Sponsor 3" class="sponsor-logo">
-            <img src="../static/images/logos/javascript.svg" alt="Sponsor 12" class="sponsor-logo">
-            <img src="../static/images/logos/pyaterochka.svg" alt="Sponsor 23" class="sponsor-logo">
-            <img src="../static/images/logos/html.svg" alt="Sponsor 13" class="sponsor-logo">
-            <img src="../static/images/logos/python.svg" alt="Sponsor 4" class="sponsor-logo">
-            <img src="../static/images/logos/sqlite.svg" alt="Sponsor 7" class="sponsor-logo">
-            <img src="../static/images/logos/git.svg" alt="Sponsor 8" class="sponsor-logo">
-            <img src="../static/images/logos/geojson.svg" alt="Sponsor 9" class="sponsor-logo">
-            <img src="../static/images/logos/google-maps-2020-icon.svg" alt="Sponsor 14" class="sponsor-logo">
-            <img src="../static/images/logos/toples.png" alt="Sponsor 19" class="sponsor-logo">
-            <img src="../static/images/logos/json.svg" alt="Sponsor 16" class="sponsor-logo">
-            <img src="../static/images/logos/pycharm.svg" alt="Sponsor 17" class="sponsor-logo">
-            <img src="../static/images/logos/webstorm.svg" alt="Sponsor 18" class="sponsor-logo">
-            <img src="../static/images/logos/github.svg" alt="Sponsor 20" class="sponsor-logo">
-            <img src="../static/images/logos/onlyfans.svg" alt="Sponsor 24" class="sponsor-logo">
-            <img src="../static/images/logos/jagermeister.svg" alt="Sponsor 25" class="sponsor-logo">
-            <img src="../static/images/logos/Squid_Game.svg" alt="Sponsor 26" class="sponsor-logo">
-            <img src="../static/images/logos/xiaomi.svg" alt="Sponsor 27" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/deepseek.svg') }}" alt="Sponsor 27" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/postgresql.svg') }}" alt="Sponsor 1" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/pornhub.svg') }}" alt="Sponsor 21" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/flask.svg') }}" alt="Sponsor 5" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/openai.svg') }}" alt="Sponsor 2" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/rest-api.svg') }}" alt="Sponsor 10" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/tiktok.svg') }}" alt="Sponsor 22" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/css.svg') }}" alt="Sponsor 11" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/leaflet.svg') }}" alt="Sponsor 3" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/javascript.svg') }}" alt="Sponsor 12" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/pyaterochka.svg') }}" alt="Sponsor 23" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/html.svg') }}" alt="Sponsor 13" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/python.svg') }}" alt="Sponsor 4" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/sqlite.svg') }}" alt="Sponsor 7" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/git.svg') }}" alt="Sponsor 8" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/geojson.svg') }}" alt="Sponsor 9" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/google-maps-2020-icon.svg') }}" alt="Sponsor 14" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/toples.png') }}" alt="Sponsor 19" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/json.svg') }}" alt="Sponsor 16" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/pycharm.svg') }}" alt="Sponsor 17" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/webstorm.svg') }}" alt="Sponsor 18" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/github.svg') }}" alt="Sponsor 20" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/onlyfans.svg') }}" alt="Sponsor 24" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/jagermeister.svg') }}" alt="Sponsor 25" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/Squid_Game.svg') }}" alt="Sponsor 26" class="sponsor-logo">
+            <img src="{{ url_for('static', filename='images/logos/xiaomi.svg') }}" alt="Sponsor 27" class="sponsor-logo">
         </div>
     </div>
-    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
-    <footer class="linktree">
-        <p class="copyright-container">
-            <span id="copyrightText" class="copyright-text">© 2025 Yan Toples, Inc.</span>
-            <a href="https://telegram.yan-toples.ru" target="_blank" class="telega">
-                <img src="{{ url_for('static', filename='images/tg-logo.svg') }}" alt="Telegram" class="telegram-icon">
-            </a>
-        </p>
-    </footer>
+{% endblock %}
+
+{% block footer %}
+    {% include "partials/_public_footer.html" %}
+{% endblock %}
+
+{% block scripts %}
     <audio id="themeSwitchSound" src="{{ url_for('static', filename='sounds/yop-yan.MP3') }}" preload="auto"></audio>
-</body>
-</html>
+    <script type="module" src="{{ url_for('static', filename='js/pages/index.js') }}"></script>
+{% endblock %}
