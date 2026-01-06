@@ -1,110 +1,102 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Редактировать прогулку #{{ walk.id }} - Admin</title>
+{% extends "admin_base.html" %}
+
+{% block title %}Редактировать прогулку #{{ walk.id }} - Admin{% endblock %}
+{% block admin_body_class %}admin-edit-walk-page{% endblock %}
+
+{% block admin_head_libs %}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_style.css') }}">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-</head>
-<body class="admin-edit-walk-page">
-    <div id="sticky-header-container" class="admin-sticky-header">
-        <header class="sticky-header-content">
-            <h1 class="fancy-title"><a href="{{ url_for('main.index') }}">Track my walk</a></h1>
-        </header>
-    </div>
+{% endblock %}
 
-    <div class="content-wrapper">
-        <div class="container">
-            <h1 id="formTitle">{{ 'Редактировать прогулку #' + walk.id|string  if walk else 'Добавить новую прогулку' }}</h1>
-            <div class="card">
-                <form id="walkForm">
-                    <input type="hidden" id="walkId" name="walkId" value="{{ walk.id if walk else '' }}">
+{% block admin_content %}
+    <h1 id="formTitle">{{ 'Редактировать прогулку #' + walk.id|string  if walk else 'Добавить новую прогулку' }}</h1>
 
-                    <div class="form-group">
-                        <label for="name">Название:</label>
-                        <input type="text" id="name" name="name" value="{{ walk.name if walk else '' }}" required>
-                    </div>
+    <div class="card">
+        <form id="walkForm">
+            <input type="hidden" id="walkId" name="walkId" value="{{ walk.id if walk else '' }}">
 
-                    <div class="form-group">
-                        <label for="date">Дата и время:</label>
-                        <input type="datetime-local" id="date" name="date" value="{{ walk.date if walk else '' }}" required>
-                    </div>
+            <div class="form-group">
+                <label for="name">Название:</label>
+                <input type="text" id="name" name="name" value="{{ walk.name if walk else '' }}" required>
+            </div>
 
-                    <div class="form-group">
-                        <label for="description">Описание:</label>
-                        <textarea id="description" name="description" rows="3">{{ walk.description if walk else '' }}</textarea>
-                    </div>
+            <div class="form-group">
+                <label for="date">Дата и время:</label>
+                <input type="datetime-local" id="date" name="date" value="{{ walk.date if walk else '' }}" required>
+            </div>
 
-                    <div class="form-group">
-                        <label>Маршрут на карте:</label>
-                        <div id="map" style="height: 500px; width: 100%; border-radius: 10px; box-shadow: inset 0 0 10px rgba(0,0,0,0.6); background-color: #334433;"></div>
-                    </div>
+            <div class="form-group">
+                <label for="description">Описание:</label>
+                <textarea id="description" name="description" rows="3">{{ walk.description if walk else '' }}</textarea>
+            </div>
 
-                    <div class="control-button-group">
-                        <button type="submit" class="submit-button">Сохранить прогулку</button>
-                        <button type="button" id="clearMapBtn" class="secondary-button">Очистить карту</button>
-                        {% if walk %}
-                        <button type="button" id="togglePhotosBtn" class="secondary-button">Управление фото ({{ walk.id }})</button>
-                        {% endif %}
-                    </div>
-                </form>
+            <div class="form-group">
+                <label>Маршрут на карте:</label>
+                <div id="map" style="height: 500px; width: 100%; border-radius: 10px; box-shadow: inset 0 0 10px rgba(0,0,0,0.6); background-color: #334433;"></div>
+            </div>
 
+            <div class="control-button-group">
+                <button type="submit" class="submit-button">Сохранить прогулку</button>
+                <button type="button" id="clearMapBtn" class="secondary-button">Очистить карту</button>
                 {% if walk %}
-                <div id="photosSection" class="photos-section">
-                    <h2>Фотографии</h2>
-                    <p class="small-info">Нажмите на карту, чтобы выбрать координаты для фото.</p>
-                    <div class="photo-upload-section">
-                        <div class="form-group">
-                            <label for="photoUploadInput">Файл:</label>
-                            <input type="file" id="photoUploadInput" accept="image/*">
-                        </div>
-                        <div class="form-group">
-                            <label for="photoDescription">Описание (опционально):</label>
-                            <input type="text" id="photoDescription" placeholder="Краткое описание фотографии">
-                        </div>
-                        <div class="form-group">
-                            <label for="photoLat">Широта (Lat):</label>
-                            <input type="text" id="photoLat" placeholder="Нажмите на карту" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="photoLon">Долгота (Lon):</label>
-                            <input type="text" id="photoLon" placeholder="Нажмите на карту" readonly>
-                        </div>
-                        <button onclick="uploadPhoto()" class="submit-button">Загрузить фото</button>
-                    </div>
-
-                    <div id="uploadedPhotos" class="uploaded-photos-preview">
-                        <h3>Загруженные фото для этой прогулки:</h3>
-                        <p>Загрузка фотографий...</p>
-                    </div>
-                </div>
+                <button type="button" id="togglePhotosBtn" class="secondary-button">Управление фото ({{ walk.id }})</button>
                 {% endif %}
+            </div>
+        </form>
+
+        {% if walk %}
+        <div id="photosSection" class="photos-section">
+            <h2>Фотографии</h2>
+            <p class="small-info">Нажмите на карту, чтобы выбрать координаты для фото.</p>
+
+            <div class="photo-upload-section">
+                <div class="form-group">
+                    <label for="photoUploadInput">Файл:</label>
+                    <input type="file" id="photoUploadInput" accept="image/*">
                 </div>
 
-            <div class="logout-link">
-                <a href="{{ url_for('admin.walks_manager') }}">Вернуться к списку прогулок</a>
+                <div class="form-group">
+                    <label for="photoDescription">Описание (опционально):</label>
+                    <input type="text" id="photoDescription" placeholder="Краткое описание фотографии">
+                </div>
+
+                <div class="form-group">
+                    <label for="photoLat">Широта (Lat):</label>
+                    <input type="text" id="photoLat" placeholder="Нажмите на карту" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="photoLon">Долгота (Lon):</label>
+                    <input type="text" id="photoLon" placeholder="Нажмите на карту" readonly>
+                </div>
+
+                <button type="button" onclick="uploadPhoto()" class="submit-button">Загрузить фото</button>
+            </div>
+
+            <div id="uploadedPhotos" class="uploaded-photos-preview">
+                <h3>Загруженные фото для этой прогулки:</h3>
+                <p>Загрузка фотографий...</p>
             </div>
         </div>
+        {% endif %}
     </div>
 
-    <div id="toastMessage" class="toast-message"></div>
+    <div class="logout-link">
+        <a href="{{ url_for('admin.walks_manager') }}">Вернуться к списку прогулок</a>
+    </div>
+{% endblock %}
 
+{% block admin_scripts_libs %}
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
-    <script>
-        const initialWalkData = {{ walk_data_json | safe }}; // Передаем данные маршрута из Flask
-        const currentWalkId = {{ walk.id | tojson | safe }}; // Передаем ID прогулки из Flask
-    </script>
+{% endblock %}
+
+{% block admin_page_script %}
+    <script id="initialWalkData" type="application/json">{{ walk_data_json | safe }}</script>
+    <script id="currentWalkId" type="application/json">{{ walk.id | tojson }}</script>
+
     <script src="{{ url_for('static', filename='js/admin_edit_walk.js') }}"></script>
-</body>
-</html>
+{% endblock %}

@@ -1,78 +1,66 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Add Walk</title>
+{% extends "admin_base.html" %}
+
+{% block title %}Admin Panel - Add Walk{% endblock %}
+{% block admin_body_class %}admin-login-page{% endblock %}
+
+{% block admin_head_libs %}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_style.css') }}">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-
-
-</head>
-<body class="admin-login-page">
-    <div id="sticky-header-container" class="admin-sticky-header">
-        <header class="sticky-header-content">
-            <h1 class="fancy-title"><a href="{{ url_for('main.index') }}">Track my walk</a></h1>
-            </header>
-    </div>
+{% block admin_content %}
     <div id="message" class="toast-message"></div>
 
-    <div class="container">
-        <div class="card">
-            <h1>Добавить новую прогулку</h1>
+    <div class="card">
+        <h1>Добавить новую прогулку</h1>
 
-            <div class="main-grid">
-                <div>
-                    <div class="form-group">
-                        <label for="name">Название прогулки</label>
-                        <input type="text" id="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="description">Описание</label>
-                        <textarea id="description" rows="3" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="walkDate">Дата и время прогулки</label>
-                        <input type="datetime-local" id="walkDate" placeholder="Выберите дату и время">
-                    </div>
+        <div class="main-grid">
+            <div>
+                <div class="form-group">
+                    <label for="name">Название прогулки</label>
+                    <input type="text" id="name" required>
                 </div>
-
-                <div>
-                    <label for="coordinatesString">Ввести координаты строкой ([долгота, широта], [долгота, широта],...):</label>
-                    <textarea id="coordinatesString" rows="6" placeholder="Пример: [37.6176, 55.7512], [37.6200, 55.7530]"></textarea>
-                    <button onclick="parseCoordinatesString()" style="margin-top: 10px;">Применить строку</button>
-                    <p style="font-size: 0.85em; color: gray; margin-top: 5px;">Долгота, широта заключены в квадратные скобки, геоточки разделяются запятыми</p>
+                <div class="form-group">
+                    <label for="description">Описание</label>
+                    <textarea id="description" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="walkDate">Дата и время прогулки</label>
+                    <input type="datetime-local" id="walkDate" placeholder="Выберите дату и время">
                 </div>
             </div>
 
-            <label style="margin-bottom: 8px;">Нарисовать маршрут на карте:</label>
-            <div id="map"></div>
-
-            <div class="control-button-group">
-                <button onclick="clearMap()">Очистить маршрут</button>
-                <button onclick="removeLastPoint()">Удалить последнюю точку</button>
+            <div>
+                <label for="coordinatesString">Ввести координаты строкой ([долгота, широта], [долгота, широта],...):</label>
+                <textarea id="coordinatesString" rows="6" placeholder="Пример: [37.6176, 55.7512], [37.6200, 55.7530]"></textarea>
+                <button id="parseCoordinatesBtn" type="button" style="margin-top: 10px;">Применить строку</button>
+                <p style="font-size: 0.85em; color: gray; margin-top: 5px;">Долгота, широта заключены в квадратные скобки, геоточки разделяются запятыми</p>
             </div>
-
-            <button onclick="submitWalk()" class="submit-button">Добавить прогулку</button>
         </div>
 
-        <div class="admin-actions-bottom">
-            <a href="{{ url_for('admin.walks_manager') }}" class="button">Управление прогулками</a>
-            <a href="{{ url_for('admin.admin_logout') }}" class="logout-link">Выйти</a>
+        <label style="margin-bottom: 8px;">Нарисовать маршрут на карте:</label>
+        <div id="map"></div>
+
+        <div class="control-button-group">
+            <button id="clearMapBtn" type="button">Очистить маршрут</button>
+            <button id="removeLastPointBtn" type="button">Удалить последнюю точку</button>
         </div>
+
+        <button id="submitWalkBtn" type="button" class="submit-button">Добавить прогулку</button>
     </div>
 
+    <div class="admin-actions-bottom">
+        <a href="{{ url_for('admin.walks_manager') }}" class="button">Управление прогулками</a>
+        <a href="{{ url_for('admin.admin_logout') }}" class="logout-link">Выйти</a>
+    </div>
+{% endblock %}
+
+{% block admin_scripts_libs %}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+{% endblock %}
+
+{% block admin_page_script %}
     <script src="{{ url_for('static', filename='js/admin_script.js') }}"></script>
-</body>
-</html>
+{% endblock %}

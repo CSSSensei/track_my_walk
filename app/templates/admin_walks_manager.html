@@ -1,66 +1,39 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Управление прогулками - Admin</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_style.css') }}">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-</head>
-<body class="admin-login-page">
-<div id="sticky-header-container" class="admin-sticky-header">
-    <header class="sticky-header-content">
-        <h1 class="fancy-title"><a href="{{ url_for('main.index') }}">Track my walk</a></h1>
-    </header>
-</div>
+{% extends "admin_base.html" %}
 
-<div class="content-wrapper">
-    <div class="container">
-        <h1>Управление прогулками</h1>
+{% block title %}Управление прогулками - Admin{% endblock %}
+{% block admin_body_class %}admin-walks-manager-page{% endblock %}
 
-        <div class="control-button-group">
-            <button id="addWalkBtn" class="add-button">Добавить новую прогулку</button>
-            <button id="refreshWalksBtn">Обновить список</button>
-        </div>
+{% block admin_content %}
+    <h1>Управление прогулками</h1>
 
-        <div class="card" style="margin-top: 20px;">
-            <h2>Список прогулок</h2>
-            <div class="table-responsive">
-                <table id="walksTable">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Название</th>
-                        <th>Дата</th>
-                        <th>Расстояние (км)</th>
-                        <th>Действия</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <div class="control-button-group">
+        <button id="addWalkBtn" class="add-button" type="button">Добавить новую прогулку</button>
+        <button id="refreshWalksBtn" type="button">Обновить список</button>
+    </div>
 
-        <div class="logout-link">
-            <a href="{{ url_for('admin.admin_page') }}">Назад в админ-панель</a>
+    <div class="card" style="margin-top: 20px;">
+        <h2>Список прогулок</h2>
+        <div class="table-responsive">
+            <table id="walksTable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Название</th>
+                    <th>Дата</th>
+                    <th>Расстояние (км)</th>
+                    <th>Действия</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
-</div>
 
-<div id="toastMessage" class="toast-message"></div>
+    <div class="logout-link">
+        <a href="{{ url_for('admin.admin_page') }}">Назад в админ-панель</a>
+    </div>
+{% endblock %}
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
-<script src="{{ url_for('static', filename='js/admin_walks_manager.js') }}"></script>
-</body>
-</html>
+{% block admin_page_script %}
+    <script src="{{ url_for('static', filename='js/admin_walks_manager.js') }}"></script>
+{% endblock %}

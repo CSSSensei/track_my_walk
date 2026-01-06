@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block base_styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block body_class %}{% block admin_body_class %}admin-page{% endblock %}{% endblock %}
+
+{% block header %}
+    {% include "partials/_admin_header.html" %}
+{% endblock %}
+
+{% block head_extra %}
+    {% block admin_head_libs %}{% endblock %}
+{% endblock %}
+
+{% block body %}
+    <div class="content-wrapper">
+        <div class="container">
+            {% block admin_content %}{% endblock %}
+        </div>
+    </div>
+
+    <div id="toastMessage" class="toast-message"></div>
+{% endblock %}
+
+{% block scripts %}
+    {% block admin_scripts_libs %}{% endblock %}
+    {% block admin_page_script %}{% endblock %}
+{% endblock %}

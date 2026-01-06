@@ -4,6 +4,24 @@ let drawControl;
 let flatpickrInstance;
 let photoMarker = null;
 
+function readJsonScriptTag(id, fallback = null) {
+    const el = document.getElementById(id);
+    if (!el) return fallback;
+
+    const raw = (el.textContent || '').trim();
+    if (!raw) return fallback;
+
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        console.error(`Failed to parse JSON from <script id="${id}">`, e);
+        return fallback;
+    }
+}
+
+const initialWalkData = readJsonScriptTag('initialWalkData', null);
+const currentWalkId = readJsonScriptTag('currentWalkId', null);
+
 function showToast(message, type = 'info', duration = 3000) {
     const toast = document.getElementById('toastMessage');
     toast.textContent = message;
