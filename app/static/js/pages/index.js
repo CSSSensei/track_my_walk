@@ -1,5 +1,6 @@
 import { getSavedTheme, setTheme } from '../common/theme.js';
 import { setupSecretClick } from '../common/secret_admin_click.js';
+import { initPublicHeader } from '../common/public_header.js';
 
 let map;
 let geoJsonLayers = [];
@@ -20,97 +21,6 @@ let creatureVisible = false;
 let eyesBounced = false;
 let isSquinting = false;
 
-function updateIconColor() {
-  const themeIcon = document.getElementById('themeIcon');
-  if (!themeIcon) return;
-
-  const isScrolled = window.scrollY > 30;
-
-  if (document.body.classList.contains('dark-mode')) {
-    if (isScrolled) {
-      themeIcon.style.filter =
-        'invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)';
-    } else {
-      themeIcon.style.filter =
-        'invert(67%) sepia(98%) saturate(354%) hue-rotate(51deg) brightness(97%) contrast(101%)';
-    }
-  } else {
-    themeIcon.style.filter =
-      'invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%)';
-  }
-}
-
-function applyThemeWithIcon() {
-  const themeIcon = document.getElementById('themeIcon');
-
-  const savedTheme = getSavedTheme();
-  const theme = savedTheme ?? 'dark';
-  setTheme(theme);
-
-  if (themeIcon) {
-    if (theme === 'dark') {
-      themeIcon.src =
-        'https://img.icons8.com/external-glyph-silhouettes-icons-papa-vector/78/external-Light-Mode-interface-glyph-silhouettes-icons-papa-vector.png';
-      themeIcon.alt = 'Switch to light mode';
-    } else {
-      themeIcon.src = 'https://img.icons8.com/ios-filled/50/do-not-disturb-2.png';
-      themeIcon.alt = 'Switch to dark mode';
-    }
-  }
-
-  updateIconColor();
-}
-
-function handleStickyHeader() {
-  const stickyHeader = document.getElementById('sticky-header-container');
-  if (!stickyHeader) return;
-
-  if (window.scrollY > 30) {
-    stickyHeader.classList.add('scrolled');
-  } else {
-    stickyHeader.classList.remove('scrolled');
-  }
-
-  updateIconColor();
-}
-
-function toggleTheme() {
-  const body = document.body;
-  const themeIcon = document.getElementById('themeIcon');
-  const themeSwitchSound = document.getElementById('themeSwitchSound');
-
-  if (themeIcon) themeIcon.classList.add('hide-icon');
-
-  setTimeout(() => {
-    body.classList.toggle('dark-mode');
-    const currentTheme = body.classList.contains('dark-mode') ? 'dark' : 'light';
-    localStorage.setItem('theme', currentTheme);
-
-    if (themeIcon) {
-      if (currentTheme === 'dark') {
-        themeIcon.src =
-          'https://img.icons8.com/external-glyph-silhouettes-icons-papa-vector/78/external-Light-Mode-interface-glyph-silhouettes-icons-papa-vector.png';
-        themeIcon.alt = 'Switch to light mode';
-        themeIcon.style.width = '30px';
-        themeIcon.style.height = '30px';
-      } else {
-        themeIcon.src = 'https://img.icons8.com/ios-filled/50/do-not-disturb-2.png';
-        themeIcon.alt = 'Switch to dark mode';
-        themeIcon.style.width = '22px';
-        themeIcon.style.height = '22px';
-      }
-
-      themeIcon.classList.remove('hide-icon');
-    }
-
-    updateIconColor();
-
-    if (themeSwitchSound) {
-      themeSwitchSound.currentTime = 0;
-      themeSwitchSound.play().catch((e) => console.error('Error playing sound:', e));
-    }
-  }, 200);
-}
 
 function isElementInViewport(el) {
   if (!el) return false;
@@ -440,12 +350,8 @@ document.addEventListener('DOMContentLoaded', () => {
   handleCreatureScroll();
   initMap();
 
-  applyThemeWithIcon();
+  initPublicHeader({ defaultTheme: 'dark' });
   setupSecretAdminClick();
-
-  document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
-  window.addEventListener('scroll', handleStickyHeader);
-  handleStickyHeader();
 
   setupUploadButton();
   setupStatCardsTilt();

@@ -11,30 +11,47 @@
 <script src="https://cdn.jsdelivr.net/gh/IvanSanchez/Leaflet.Polyline.SnakeAnim@latest/L.Polyline.SnakeAnim.min.js"></script>
 {% endblock %}
 
-{% block body %}
-<div class="container">
-    <header>
-        <h1 class="fancy-title">Детали прогулки</h1>
-        <nav>
-            <a href="{{ url_for('main.all_walks') }}" class="back-link">&larr; Ко всем прогулкам</a>
-        </nav>
-    </header>
+{% block header %}
+    {% set show_theme_toggle = True %}
+    {% include "partials/_public_header.html" %}
+{% endblock %}
 
-    <section class="walk-map-section card">
-        <h2>Маршрут прогулки</h2>
+{% block body %}
+<div class="content-wrapper">
+<main class="container">
+    <nav class="single-walk-topbar">
+        <a href="{{ url_for('main.all_walks') }}" class="back-link">&larr; Ко всем прогулкам</a>
+    </nav>
+
+    <section class="walk-map-section card walk-map-hero">
         <div id="singleWalkMap" class="single-walk-map"></div>
-    </section>
-    <section class="walk-details-section card">
-        <h2>{{ walk.name }}</h2>
-        <p><strong>Дата:</strong> <span id="walkDate"></span></p>
-        <p><strong>Протяженность:</strong> {{ "%.2f"|format(walk.distance) }} км</p>
-        {% if walk.co2_saved %}
-            <p><strong>CO₂ сэкономлено:</strong> {{ "%.2f"|format(walk.co2_saved) }} г</p>
-        {% endif %}
-        {% if walk.description %}
-            <p><strong>Описание:</strong></p>
-            <p>{{ walk.description }}</p>
-        {% endif %}
+
+        <div class="walk-meta-overlay" aria-label="Информация о прогулке">
+            <div class="walk-meta-card">
+                <h2 class="walk-meta-title">{{ walk.name }}</h2>
+
+                {% if walk.description %}
+                    <p class="walk-meta-description">{{ walk.description }}</p>
+                {% endif %}
+
+                <div class="walk-meta-stats">
+                    <div class="walk-meta-pill">
+                        <span class="walk-meta-pill-value" id="walkDate"></span>
+                    </div>
+
+                    <div class="walk-meta-pill">
+                        <span class="walk-meta-pill-value">{{ "%.2f"|format(walk.distance) }} км</span>
+                    </div>
+
+                    {% if walk.co2_saved %}
+                        <div class="walk-meta-pill">
+                            <span class="walk-meta-pill-label">CO₂</span>
+                            <span class="walk-meta-pill-value">{{ "%.2f"|format(walk.co2_saved) }} г</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </section>
     {% if walk.photos %}
     <section class="walk-photos-section card">
@@ -51,6 +68,7 @@
         </div>
     </section>
     {% endif %}
+</main>
 </div>
 
 <script type="application/json" id="walkDataJson">{{ walk | tojson }}</script>

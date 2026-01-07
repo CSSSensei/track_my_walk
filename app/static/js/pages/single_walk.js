@@ -1,4 +1,5 @@
 import { applySavedTheme } from '../common/theme.js';
+import { initPublicHeader } from '../common/public_header.js';
 import { setupSecretClick } from '../common/secret_admin_click.js';
 
 const walkData = (() => {
@@ -15,7 +16,11 @@ const walkData = (() => {
 let mapInstance = null;
 
 function initSingleWalkPage() {
+  initPublicHeader({ defaultTheme: 'dark' });
+
+  // Keep the page theme in sync even if header isn't present for some reason.
   applySavedTheme();
+
   initSingleWalkMap();
   setupSecretAdminClick();
   setupPhotoGallery();
@@ -30,11 +35,18 @@ function initSingleWalkMap() {
   const dateElement = document.getElementById('walkDate');
   if (dateElement) {
     const date = new Date(walkData.date * 1000);
-    dateElement.textContent = date.toLocaleDateString('ru-RU', {
+
+    const parts = new Intl.DateTimeFormat('ru-RU', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
-    });
+    }).formatToParts(date);
+
+    const day = parts.find((p) => p.type === 'day')?.value ?? '';
+    const month = parts.find((p) => p.type === 'month')?.value ?? '';
+    const year = parts.find((p) => p.type === 'year')?.value ?? '';
+
+    dateElement.textContent = [day, month, year].filter(Boolean).join(' ');
   }
 
   const mapContainer = document.getElementById('singleWalkMap');
@@ -112,7 +124,10 @@ function initSingleWalkMap() {
     }
 
     if (bounds.isValid()) {
-      mapInstance.fitBounds(bounds, { padding: [0, 0] });
+      mapInstance.fitBounds(bounds, {
+        paddingTopLeft: [24, 24],
+        paddingBottomRight: [24, 200],
+      });
     }
   } catch (e) {
     console.error('Error:', e);
