@@ -17,11 +17,9 @@ let mapInstance = null;
 
 function initSingleWalkPage() {
   initPublicHeader({ defaultTheme: 'dark' });
-
-  // Keep the page theme in sync even if header isn't present for some reason.
   applySavedTheme();
-
   initSingleWalkMap();
+  setupWalkDescriptionScrollHint();
   setupSecretAdminClick();
   setupPhotoGallery();
 }
@@ -133,6 +131,32 @@ function initSingleWalkMap() {
     console.error('Error:', e);
     mapContainer.innerHTML = '<p>Ошибка отображения маршрута</p>';
     mapInstance.setView([55.751244, 37.618423], 10);
+  }
+}
+
+function setupWalkDescriptionScrollHint() {
+  const descriptionEl = document.querySelector('.walk-meta-description');
+  if (!descriptionEl) return;
+
+  const EPS = 1;
+
+  const updateHint = () => {
+    const canScroll = descriptionEl.scrollHeight > descriptionEl.clientHeight + EPS;
+    const hasMoreBelow =
+      canScroll && descriptionEl.scrollTop + descriptionEl.clientHeight < descriptionEl.scrollHeight - EPS;
+
+    descriptionEl.classList.toggle('has-more-below', hasMoreBelow);
+  };
+
+  updateHint();
+  requestAnimationFrame(updateHint);
+
+  descriptionEl.addEventListener('scroll', updateHint, { passive: true });
+  window.addEventListener('resize', updateHint);
+
+  if (typeof ResizeObserver !== 'undefined') {
+    const ro = new ResizeObserver(() => updateHint());
+    ro.observe(descriptionEl);
   }
 }
 
