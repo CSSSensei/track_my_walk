@@ -57,20 +57,28 @@ function applyThemeWithIcon(defaultTheme = 'dark') {
 }
 
 function toggleTheme(defaultTheme = 'dark') {
+  const themeIcon = document.getElementById('themeIcon');
+  if (themeIcon) themeIcon.classList.add('hide-icon');
+
   const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
   const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
-  setTheme(nextTheme);
-  setThemeIcon(nextTheme);
-  updateIconColor();
+  setTimeout(() => {
+    setTheme(nextTheme);
+    setThemeIcon(nextTheme);
 
-  const themeSwitchSound = document.getElementById('themeSwitchSound');
-  if (themeSwitchSound) {
-    try {
-      themeSwitchSound.currentTime = 0;
-      themeSwitchSound.play().catch(() => {});
-    } catch {}
-  }
+    if (themeIcon) themeIcon.classList.remove('hide-icon');
+
+    updateIconColor();
+
+    const themeSwitchSound = document.getElementById('themeSwitchSound');
+    if (themeSwitchSound) {
+      try {
+        themeSwitchSound.currentTime = 0;
+        themeSwitchSound.play().catch(() => {});
+      } catch {}
+    }
+  }, 200);
 }
 
 export function initPublicHeader({ defaultTheme = 'dark' } = {}) {
