@@ -32,7 +32,15 @@
                 <h2 class="walk-meta-title">{{ walk.name }}</h2>
 
                 {% if walk.description %}
-                    <p class="walk-meta-description">{{ walk.description }}</p>
+                    {% set _desc = walk.description.replace('\r\n', '\n') %}
+                    <div class="walk-meta-description" aria-label="Описание прогулки">
+                        {% for paragraph in _desc.split('\n\n') %}
+                            {% set p = paragraph.strip() %}
+                            {% if p %}
+                                <p class="walk-meta-description-paragraph{% if loop.first %} walk-meta-description-paragraph--lead{% endif %}">{{ p }}</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 {% endif %}
 
                 <div class="walk-meta-stats">

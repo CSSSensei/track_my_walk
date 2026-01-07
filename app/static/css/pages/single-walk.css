@@ -79,14 +79,24 @@ body:not(.dark-mode) .walk-meta-card {
     opacity: 0.9;
     font-weight: 300;
 
-    white-space: pre-line;
-
     overflow-y: auto;
     min-height: 0;
 
     scrollbar-width: none;
     -ms-overflow-style: none;
     padding-right: 4px;
+}
+
+.walk-meta-description-paragraph {
+    margin: 0 0 8px;
+}
+
+.walk-meta-description-paragraph:last-child {
+    margin-bottom: 0;
+}
+
+.walk-meta-description-paragraph--lead {
+    font-weight: 400;
 }
 
 .walk-meta-description.has-more-below {
