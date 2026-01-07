@@ -123,8 +123,8 @@ function initSingleWalkMap() {
 
     if (bounds.isValid()) {
       mapInstance.fitBounds(bounds, {
-        paddingTopLeft: [24, 24],
-        paddingBottomRight: [24, 200],
+        paddingTopLeft: [5, 5],
+        paddingBottomRight: [5, 150],
       });
     }
   } catch (e) {
