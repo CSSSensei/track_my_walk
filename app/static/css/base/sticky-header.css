@@ -126,6 +126,8 @@ body.dark-mode #themeIcon {
 @media (max-width: 480px) {
     .sticky-header-content {
         flex-direction: column;
+        padding-top: 25px;
+        padding-bottom: 5px;
     }
 
     .theme-toggle-button {

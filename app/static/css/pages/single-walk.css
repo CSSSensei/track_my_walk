@@ -154,11 +154,6 @@ body:not(.dark-mode) .walk-meta-pill {
 }
 
 @media (max-width: 768px) {
-    .walk-map-hero .single-walk-map {
-        height: 62vh;
-        min-height: 420px;
-    }
-
     .walk-meta-overlay {
         padding: 12px;
     }
@@ -167,31 +162,28 @@ body:not(.dark-mode) .walk-meta-pill {
         padding: 12px;
         max-height: 30vh;
     }
+
+    .walk-meta-stats {
+        gap: 8px;
+    }
 }
 
 @media (max-width: 480px) {
-    .walk-map-hero .single-walk-map {
-        height: 40vh;
-        min-height: 360px;
-    }
-
     .walk-meta-overlay {
         padding: 10px;
     }
 
     .walk-meta-stats {
-        gap: 8px;
+        gap: 5px;
     }
 
     .walk-meta-pill {
+        font-size: 9px;
         padding: 7px 9px;
     }
-}
 
-@media (max-aspect-ratio: 3/4) {
-    .walk-map-hero .single-walk-map {
-        height: min(84vh, 980px);
-        min-height: 720px;
+    .walk-meta-pill-value {
+        font-size: 11px;
     }
 }
 

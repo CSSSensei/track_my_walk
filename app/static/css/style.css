@@ -223,6 +223,10 @@ ul {
         gap: 8px;
     }
 
+    .content-wrapper {
+        padding-top: 55px;
+    }
+
     h2 {
         font-size: 1.2em;
     }
