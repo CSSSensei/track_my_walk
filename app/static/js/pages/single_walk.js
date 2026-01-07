@@ -126,10 +126,6 @@ function setupPhotoGallery() {
   if (!photoThumbnails.length || !walkData?.photos?.length) return;
 
   let currentPhotoIndex = 0;
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let touchEndX = 0;
-  let touchEndY = 0;
 
   const overlay = document.createElement('div');
   overlay.className = 'fullscreen-photo-overlay';
@@ -138,13 +134,15 @@ function setupPhotoGallery() {
   const contentWrapper = document.createElement('div');
   contentWrapper.className = 'fullscreen-content-wrapper';
 
-  const carouselContainer = document.createElement('div');
-  carouselContainer.className = 'carousel-container';
+  const carouselViewport = document.createElement('div');
+  carouselViewport.className = 'carousel-container';
+  carouselViewport.setAttribute('role', 'group');
+  carouselViewport.setAttribute('aria-label', 'Просмотр фотографий');
 
   const description = document.createElement('div');
   description.className = 'photo-description-fullscreen';
 
-  contentWrapper.appendChild(carouselContainer);
+  contentWrapper.appendChild(carouselViewport);
   contentWrapper.appendChild(description);
   overlay.appendChild(contentWrapper);
 
@@ -168,21 +166,34 @@ function setupPhotoGallery() {
   overlay.appendChild(nextBtn);
   document.body.appendChild(overlay);
 
-  function createCarouselItems() {
-    carouselContainer.innerHTML = '';
-    walkData.photos.forEach((photo, index) => {
-      const item = document.createElement('div');
-      item.className = `carousel-item ${index === currentPhotoIndex ? 'active' : ''}`;
-      item.dataset.index = String(index);
+  let trackEl = null;
 
-      const img = document.createElement('img');
-      img.src = photo.url;
-      img.className = 'fullscreen-photo';
-      img.alt = photo.description || 'Фото с прогулки';
+  let isPointerDown = false;
+  let isHorizontalDrag = false;
+  let pointerId = null;
+  let startX = 0;
+  let startY = 0;
+  let lastX = 0;
+  let startTimeMs = 0;
+  let startTranslateX = 0;
+  let currentTranslateX = 0;
 
-      item.appendChild(img);
-      carouselContainer.appendChild(item);
-    });
+  function getViewportWidth() {
+    return carouselViewport.getBoundingClientRect().width || window.innerWidth;
+  }
+
+  function clampIndex(index) {
+    return Math.max(0, Math.min(index, walkData.photos.length - 1));
+  }
+
+  function baseTranslateForIndex(index) {
+    return -index * getViewportWidth();
+  }
+
+  function setTrackTranslate(x, { animate } = { animate: true }) {
+    if (!trackEl) return;
+    trackEl.style.transition = animate ? 'transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1)' : 'none';
+    trackEl.style.transform = `translate3d(${x}px, 0, 0)`;
   }
 
   function updateDescription(index) {
@@ -190,100 +201,217 @@ function setupPhotoGallery() {
     description.textContent = photo?.description || '';
   }
 
-  function showFullscreenPhoto(index) {
-    currentPhotoIndex = index;
-    createCarouselItems();
-    updateDescription(index);
-    overlay.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+  function updateNavButtons() {
+    prevBtn.disabled = currentPhotoIndex <= 0;
+    nextBtn.disabled = currentPhotoIndex >= walkData.photos.length - 1;
   }
 
-  function goToPhoto(newIndex, direction) {
-    if (newIndex < 0 || newIndex >= walkData.photos.length) return;
+  function preloadAround(index) {
+    [index - 1, index + 1].forEach((i) => {
+      if (i < 0 || i >= walkData.photos.length) return;
+      const img = new Image();
+      img.src = walkData.photos[i].url;
+    });
+  }
 
-    const items = carouselContainer.querySelectorAll('.carousel-item');
-    items.forEach((item) => {
-      item.classList.remove('prev', 'next', 'active');
+  function createCarouselItems() {
+    carouselViewport.innerHTML = '';
+
+    trackEl = document.createElement('div');
+    trackEl.className = 'carousel-track';
+
+    walkData.photos.forEach((photo, index) => {
+      const slide = document.createElement('div');
+      slide.className = 'carousel-slide';
+      slide.dataset.index = String(index);
+
+      const img = document.createElement('img');
+      img.src = photo.url;
+      img.className = 'fullscreen-photo';
+      img.alt = photo.description || 'Фото с прогулки';
+      img.draggable = false;
+
+      slide.appendChild(img);
+      trackEl.appendChild(slide);
     });
 
-    items[currentPhotoIndex].classList.add(direction === 'left' ? 'prev' : 'next');
-    items[newIndex].classList.add('active', direction === 'left' ? 'next' : 'prev');
-
-    carouselContainer.classList.add(`swipe-${direction}`);
-
-    setTimeout(() => {
-      currentPhotoIndex = newIndex;
-      updateDescription(newIndex);
-
-      carouselContainer.classList.remove('swipe-left', 'swipe-right');
-      items.forEach((item) => {
-        item.classList.remove('prev', 'next');
-        item.classList.toggle('active', Number(item.dataset.index) === newIndex);
-      });
-    }, 500);
+    carouselViewport.appendChild(trackEl);
   }
 
-  carouselContainer.addEventListener('touchstart', (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-    touchStartY = e.changedTouches[0].screenY;
-  });
+  function setIndex(index, { animate } = { animate: true }) {
+    currentPhotoIndex = clampIndex(index);
+    currentTranslateX = baseTranslateForIndex(currentPhotoIndex);
+    setTrackTranslate(currentTranslateX, { animate });
+    updateDescription(currentPhotoIndex);
+    updateNavButtons();
+    preloadAround(currentPhotoIndex);
+  }
 
-  carouselContainer.addEventListener('touchend', (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-    touchEndY = e.changedTouches[0].screenY;
-    handleSwipe();
-  });
+  function openFullscreen(index) {
+    currentPhotoIndex = clampIndex(index);
 
-  function handleSwipe() {
-    const diffX = touchStartX - touchEndX;
-    const diffY = touchStartY - touchEndY;
+    createCarouselItems();
+    overlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
 
-    if (Math.abs(diffX) > Math.abs(diffY)) {
-      if (diffX > 50) {
-        goToPhoto((currentPhotoIndex + 1) % walkData.photos.length, 'left');
-      } else if (diffX < -50) {
-        goToPhoto((currentPhotoIndex - 1 + walkData.photos.length) % walkData.photos.length, 'right');
+    requestAnimationFrame(() => {
+      setIndex(currentPhotoIndex, { animate: false });
+    });
+  }
+
+  function closeFullscreen() {
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+    isPointerDown = false;
+    isHorizontalDrag = false;
+    pointerId = null;
+  }
+
+  function computeRubberBand(x) {
+    const viewportWidth = getViewportWidth();
+    const minX = -((walkData.photos.length - 1) * viewportWidth);
+    const maxX = 0;
+
+    if (x > maxX) {
+      return maxX + (x - maxX) * 0.35;
+    }
+    if (x < minX) {
+      return minX + (x - minX) * 0.35;
+    }
+    return x;
+  }
+
+  function onPointerDown(e) {
+    if (!trackEl) return;
+
+    isPointerDown = true;
+    isHorizontalDrag = false;
+    pointerId = e.pointerId;
+
+    startX = e.clientX;
+    startY = e.clientY;
+    lastX = e.clientX;
+    startTimeMs = performance.now();
+
+    startTranslateX = currentTranslateX;
+
+    carouselViewport.setPointerCapture(pointerId);
+    setTrackTranslate(currentTranslateX, { animate: false });
+  }
+
+  function onPointerMove(e) {
+    if (!isPointerDown || e.pointerId !== pointerId) return;
+
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    if (!isHorizontalDrag) {
+      if (Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(dy) + 2) {
+        isHorizontalDrag = true;
+      } else if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) {
+        isPointerDown = false;
+        try {
+          carouselViewport.releasePointerCapture(pointerId);
+        } catch {}
+        pointerId = null;
+        return;
       }
     }
+
+    if (!isHorizontalDrag) return;
+
+    e.preventDefault();
+
+    lastX = e.clientX;
+
+    const nextTranslate = computeRubberBand(startTranslateX + dx);
+    currentTranslateX = nextTranslate;
+    setTrackTranslate(currentTranslateX, { animate: false });
   }
+
+  function onPointerUpOrCancel(e) {
+    if (!isPointerDown || e.pointerId !== pointerId) return;
+
+    const viewportWidth = getViewportWidth();
+    const dx = (lastX || e.clientX) - startX;
+    const dt = Math.max(1, performance.now() - startTimeMs);
+    const velocity = dx / dt;
+
+    isPointerDown = false;
+
+    try {
+      carouselViewport.releasePointerCapture(pointerId);
+    } catch {}
+    pointerId = null;
+
+    if (!isHorizontalDrag) {
+      setIndex(currentPhotoIndex, { animate: true });
+      return;
+    }
+
+    isHorizontalDrag = false;
+
+    const distanceThreshold = viewportWidth * 0.18;
+    const velocityThreshold = 0.5;
+
+    let nextIndex = currentPhotoIndex;
+
+    if (dx < -distanceThreshold || velocity < -velocityThreshold) {
+      nextIndex = currentPhotoIndex + 1;
+    } else if (dx > distanceThreshold || velocity > velocityThreshold) {
+      nextIndex = currentPhotoIndex - 1;
+    }
+
+    setIndex(nextIndex, { animate: true });
+  }
+
+  carouselViewport.addEventListener('pointerdown', onPointerDown);
+  carouselViewport.addEventListener('pointermove', onPointerMove, { passive: false });
+  carouselViewport.addEventListener('pointerup', onPointerUpOrCancel);
+  carouselViewport.addEventListener('pointercancel', onPointerUpOrCancel);
+
+  carouselViewport.addEventListener('dragstart', (e) => e.preventDefault());
 
   closeBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    overlay.style.display = 'none';
-    document.body.style.overflow = '';
+    closeFullscreen();
   });
 
   overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) {
-      overlay.style.display = 'none';
-      document.body.style.overflow = '';
-    }
+    if (e.target === overlay) closeFullscreen();
   });
 
   prevBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    goToPhoto((currentPhotoIndex - 1 + walkData.photos.length) % walkData.photos.length, 'right');
+    setIndex(currentPhotoIndex - 1, { animate: true });
   });
 
   nextBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    goToPhoto((currentPhotoIndex + 1) % walkData.photos.length, 'left');
+    setIndex(currentPhotoIndex + 1, { animate: true });
   });
 
   document.addEventListener('keydown', (e) => {
-    if (overlay.style.display === 'flex') {
-      if (e.key === 'ArrowLeft') {
-        goToPhoto((currentPhotoIndex - 1 + walkData.photos.length) % walkData.photos.length, 'right');
-      } else if (e.key === 'ArrowRight') {
-        goToPhoto((currentPhotoIndex + 1) % walkData.photos.length, 'left');
-      }
+    if (overlay.style.display !== 'flex') return;
+
+    if (e.key === 'Escape') {
+      closeFullscreen();
+    } else if (e.key === 'ArrowLeft') {
+      setIndex(currentPhotoIndex - 1, { animate: true });
+    } else if (e.key === 'ArrowRight') {
+      setIndex(currentPhotoIndex + 1, { animate: true });
     }
+  });
+
+  window.addEventListener('resize', () => {
+    if (overlay.style.display !== 'flex') return;
+    setIndex(currentPhotoIndex, { animate: false });
   });
 
   photoThumbnails.forEach((thumbnail, index) => {
     thumbnail.addEventListener('click', (e) => {
       e.preventDefault();
-      showFullscreenPhoto(index);
+      openFullscreen(index);
 
       const lat = parseFloat(thumbnail.dataset.lat);
       const lng = parseFloat(thumbnail.dataset.lng);
