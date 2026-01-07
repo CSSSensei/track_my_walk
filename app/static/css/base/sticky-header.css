@@ -106,7 +106,7 @@ body.dark-mode #themeIcon {
 
 @media (max-width: 768px) {
     #sticky-header-container {
-        padding: 10px;
+        padding-top: 0;
     }
 
     .fancy-title {
@@ -126,7 +126,6 @@ body.dark-mode #themeIcon {
 @media (max-width: 480px) {
     .sticky-header-content {
         flex-direction: column;
-        padding: 0;
     }
 
     .theme-toggle-button {
