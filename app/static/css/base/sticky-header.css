@@ -4,7 +4,6 @@
     left: 0;
     width: 100%;
     z-index: 1000;
-    padding: 5px 20px;
     box-sizing: border-box;
     background-color: var(--sticky-header-bg-initial);
     transition: background-color 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
@@ -25,7 +24,8 @@
     max-width: 960px;
     margin: 0 auto;
     position: relative;
-    padding: 0;
+    padding-top: 35px;
+    padding-bottom: 10px;
     height: auto;
     min-height: 50px;
 }

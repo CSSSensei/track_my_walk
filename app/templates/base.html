@@ -6,6 +6,8 @@
 
     <title>{% block title %}Track My Walk{% endblock %}</title>
 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+
     {% block base_styles %}
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
         <link rel="preconnect" href="https://fonts.googleapis.com">

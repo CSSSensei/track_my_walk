@@ -59,7 +59,7 @@ body {
     color: #66FF00;
     text-shadow: 2px 2px 5px var(--fancy-title-shadow);
     font-weight: 700;
-    line-height: 1;
+    line-height: 0.8;
     transition: color 0.3s ease;
     border-bottom: none;
     margin-top: 30px;
