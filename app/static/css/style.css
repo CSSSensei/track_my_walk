@@ -205,6 +205,7 @@ ul {
     color: var(--link-color);
     font-weight: 900;
     transition: color 0.3s ease;
+    padding-bottom: 5px;
 }
 
 .back-link:hover {
@@ -248,5 +249,9 @@ ul {
 
     h2 {
         font-size: 1.2em;
+    }
+
+    .back-link {
+        font-size: 0.8em;
     }
 }

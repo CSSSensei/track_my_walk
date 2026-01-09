@@ -86,3 +86,20 @@
     background-color: var(--link-color);
     color: black;
 }
+
+@media (max-width: 480px) {
+    #sort-dropdown-btn {
+        margin: 5px;
+        padding: 8px 16px;
+        min-width: 100px;
+    }
+
+    .sort-option {
+        line-height: 1.2;
+        font-size: 0.8em;
+    }
+
+    #sort-selected-text {
+        font-size: 0.8em;
+    }
+}
