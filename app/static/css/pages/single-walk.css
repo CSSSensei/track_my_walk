@@ -89,6 +89,7 @@ body:not(.dark-mode) .walk-meta-card {
 
 .walk-meta-description-paragraph {
     margin: 0 0 8px;
+    white-space: pre-line;
 }
 
 .walk-meta-description-paragraph:last-child {
