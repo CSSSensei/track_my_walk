@@ -1,11 +1,13 @@
 import logging
 import os
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from flask import current_app
 from sqlalchemy import Column, Float, ForeignKey, Integer, JSON, String, create_engine, text
+from sqlalchemy.engine import Engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
+from sqlalchemy.orm.session import Session as OrmSession
 
 from app.extensions.db_interface import DBInterface
 from app.models.walk import Walk
@@ -14,6 +16,14 @@ from config import Config
 
 logger = logging.getLogger(__name__)
 Base = declarative_base()
+
+
+def create_postgres_engine(db_config: Dict[str, Any]) -> Engine:
+    db_config = {k: v for k, v in db_config.items() if v is not None}
+    connection_string = (
+        f"postgresql+pg8000://{db_config['user']}:{db_config['password']}@{db_config['host']}/{db_config['dbname']}"
+    )
+    return create_engine(connection_string)
 
 
 class WalkModel(Base):
@@ -45,37 +55,20 @@ class PhotoModel(Base):
 
 
 class PostgresDB(DBInterface):
-    def __init__(self):
-        self.engine = None
-        self.Session = None
-        self.connect()
-        self.upload_folder = current_app.config.get('UPLOAD_FOLDER', 'app/static/uploads/photos')
+    def __init__(self, engine: Engine, session_factory: sessionmaker[OrmSession]):
+        self.engine = engine
+        self.Session = session_factory
+        self.upload_folder = current_app.config.get("UPLOAD_FOLDER", "app/static/uploads/photos")
 
     def _get_full_path_from_url(self, file_url: str) -> str:
-        """
-        Преобразует относительный URL файла в абсолютный путь на сервере.
-        Пример: '/static/uploads/photos/my_image.jpg' -> '/path/to/your/app/static/uploads/photos/my_image.jpg'
-        """
         filename = os.path.basename(file_url)
         return os.path.join(current_app.root_path, self.upload_folder, filename)
 
     def connect(self):
-        try:
-            db_config = {k: v for k, v in Config.POSTGRES_DATABASE.items() if v is not None}
-            connection_string = (
-                f"postgresql+pg8000://{db_config['user']}:{db_config['password']}@{db_config['host']}/{db_config['dbname']}"
-            )
-            self.engine = create_engine(connection_string)
-            self.Session = sessionmaker(bind=self.engine)
-        except SQLAlchemyError:
-            logger.exception("Failed to connect to Postgres")
-            raise
+        return
 
     def close(self):
-        if self.engine:
-            self.engine.dispose()
-            self.engine = None
-            self.Session = None
+        return
 
     def init_db(self):
         try:
