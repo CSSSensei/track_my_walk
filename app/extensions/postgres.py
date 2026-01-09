@@ -63,11 +63,6 @@ class PostgresDB(DBInterface):
         filename = os.path.basename(file_url)
         return os.path.join(current_app.root_path, self.upload_folder, filename)
 
-    def connect(self):
-        return
-
-    def close(self):
-        return
 
     def init_db(self):
         try:

@@ -7,18 +7,7 @@ from app.models.photo import Photo
 class DBInterface(abc.ABC):
 
     @abc.abstractmethod
-    def connect(self):
-        """Establishes a connection to the database."""
-        pass
-
-    @abc.abstractmethod
-    def close(self):
-        """Closes the database connection."""
-        pass
-
-    @abc.abstractmethod
     def init_db(self):
-        """Initializes the database schema (e.g., creates tables)."""
         pass
 
     @abc.abstractmethod
