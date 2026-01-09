@@ -1,12 +1,18 @@
+from pathlib import Path
+
 from dotenv import load_dotenv
 from flask import Flask, render_template
 
 from app.extensions import database
-from config import Config
 
 
 def create_app():
-    load_dotenv(Config.ENV_PATH)
+    root_dir = Path(__file__).resolve().parent.parent
+    load_dotenv(root_dir / ".env")
+
+    (root_dir / "instance").mkdir(exist_ok=True)
+
+    from config import Config
 
     app = Flask(__name__)
     app.config.from_object(Config)

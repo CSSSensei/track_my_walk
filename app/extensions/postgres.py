@@ -12,7 +12,6 @@ from sqlalchemy.orm.session import Session as OrmSession
 from app.extensions.db_interface import DBInterface
 from app.models.walk import Walk
 from app.models.photo import Photo
-from config import Config
 
 logger = logging.getLogger(__name__)
 Base = declarative_base()
