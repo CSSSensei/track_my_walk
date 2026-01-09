@@ -54,7 +54,7 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-    max-height: 25vh;
+    max-height: max(25vh, 200px);
     overflow: hidden;
 
     display: flex;
@@ -161,7 +161,6 @@ body:not(.dark-mode) .walk-meta-pill {
 
     .walk-meta-card {
         padding: 12px;
-        max-height: 30vh;
     }
 
     .walk-meta-stats {
