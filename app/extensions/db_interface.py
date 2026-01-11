@@ -1,10 +1,18 @@
 import abc
 from typing import List, Optional
-from app.models.walk import Walk
+
 from app.models.photo import Photo
+from app.models.walk import Walk
 
 
 class DBInterface(abc.ABC):
+    @classmethod
+    @abc.abstractmethod
+    def open(cls, **kwargs) -> "DBInterface":
+        pass
+
+    def close(self) -> None:
+        pass
 
     @abc.abstractmethod
     def init_db(self):

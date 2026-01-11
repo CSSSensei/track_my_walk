@@ -3,7 +3,7 @@ import os
 from typing import Any, Dict, List, Optional
 
 from flask import current_app
-from sqlalchemy import Column, Float, ForeignKey, Integer, JSON, String, create_engine, text
+from sqlalchemy import Column, Float, ForeignKey, Integer, JSON, String, create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
@@ -54,6 +54,15 @@ class PhotoModel(Base):
 
 
 class PostgresDB(DBInterface):
+    @classmethod
+    def open(cls, **kwargs) -> "PostgresDB":
+        engine: Engine = kwargs["engine"]
+        session_factory: sessionmaker[OrmSession] = kwargs["session_factory"]
+        return cls(engine, session_factory)
+
+    def close(self) -> None:
+        return
+
     def __init__(self, engine: Engine, session_factory: sessionmaker[OrmSession]):
         self.engine = engine
         self.Session = session_factory
@@ -62,7 +71,6 @@ class PostgresDB(DBInterface):
     def _get_full_path_from_url(self, file_url: str) -> str:
         filename = os.path.basename(file_url)
         return os.path.join(current_app.root_path, self.upload_folder, filename)
-
 
     def init_db(self):
         try:

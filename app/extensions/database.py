@@ -9,9 +9,10 @@ from app.extensions.postgres import PostgresDB, create_postgres_engine
 
 def get_db_interface() -> DBInterface:
     if "db_interface" not in g:
-        engine = current_app.extensions["db_engine"]
-        session_factory = current_app.extensions["db_session_factory"]
-        g.db_interface = PostgresDB(engine, session_factory)
+        g.db_interface = PostgresDB.open(
+            engine=current_app.extensions["db_engine"],
+            session_factory=current_app.extensions["db_session_factory"],
+        )
     return g.db_interface
 
 
@@ -22,10 +23,12 @@ def close_db_interface(e=None):
 @click.command("init-db")
 @with_appcontext
 def init_db_command():
-    engine = current_app.extensions["db_engine"]
-    session_factory = current_app.extensions["db_session_factory"]
-    db = PostgresDB(engine, session_factory)
+    db = PostgresDB.open(
+        engine=current_app.extensions["db_engine"],
+        session_factory=current_app.extensions["db_session_factory"],
+    )
     db.init_db()
+    db.close()
     click.echo("Initialized the postgres database.")
 
 
