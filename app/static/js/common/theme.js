@@ -7,7 +7,7 @@ export function getSavedTheme() {
 
 export function setTheme(theme) {
   localStorage.setItem(STORAGE_KEY, theme);
-  document.body.classList.toggle('dark-mode', theme === 'dark');
+  document.documentElement.classList.toggle('dark-mode', theme === 'dark');
 }
 
 export function applySavedTheme(defaultTheme = 'dark') {

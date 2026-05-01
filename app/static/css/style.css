@@ -45,7 +45,7 @@
     --random-walk-creature-glow: #9733FF;
 }
 
-body.dark-mode {
+html.dark-mode {
     --bg-color: #000000;
     --container-bg: #1A1A1A;
     --text-color: #E0E0E0;

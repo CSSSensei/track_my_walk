@@ -20,7 +20,7 @@ function updateIconColor() {
 
   const isScrolled = window.scrollY > 30;
 
-  if (document.body.classList.contains('dark-mode')) {
+  if (document.documentElement.classList.contains('dark-mode')) {
     if (isScrolled) {
       themeIcon.style.filter =
         'invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)';
@@ -60,7 +60,7 @@ function toggleTheme(defaultTheme = 'dark') {
   const themeIcon = document.getElementById('themeIcon');
   if (themeIcon) themeIcon.classList.add('hide-icon');
 
-  const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+  const currentTheme = document.documentElement.classList.contains('dark-mode') ? 'dark' : 'light';
   const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
   setTimeout(() => {

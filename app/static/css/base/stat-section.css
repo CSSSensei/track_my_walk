@@ -57,7 +57,7 @@
     box-shadow: 0 8px 20px var(--shadow-medium);
 }
 
-body.dark-mode .stat-card {
+html.dark-mode .stat-card {
     background: rgba(40, 80, 40, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow:
@@ -65,14 +65,14 @@ body.dark-mode .stat-card {
             inset 0 0 20px rgba(255, 255, 255, 0.05);
 }
 
-body.dark-mode .stat-card:hover {
+html.dark-mode .stat-card:hover {
     box-shadow:
             0 12px 40px rgba(0, 0, 0, 0.7),
             inset 0 0 30px rgba(255, 255, 255, 0.1),
             0 0 40px rgba(100, 255, 100, 0.5);
 }
 
-body.dark-mode .stat-card:hover .text-layer {
+html.dark-mode .stat-card:hover .text-layer {
     text-shadow: 0 0 10px rgba(100, 255, 100, 0.7);
 }
 

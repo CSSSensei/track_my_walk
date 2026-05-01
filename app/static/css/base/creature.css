@@ -41,7 +41,7 @@
     filter: brightness(1.2) drop-shadow(0 0 20px #9733FF);
 }
 
-body.dark-mode .dolboeb-svg {
+html.dark-mode .dolboeb-svg {
     filter: brightness(1.2) drop-shadow(0 0 20px #9733FF);
 }
 
