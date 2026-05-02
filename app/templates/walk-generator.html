@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Generate Walk{% endblock %}
+{% block title %}Случайный маршрут{% endblock %}
 
 {% block head_extra %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -9,7 +9,7 @@
 {% block body %}
 <div class="container">
     <header>
-        <h1 class="fancy-title">Generate Walk</h1>
+        <h1 class="fancy-title">Случайный маршрут</h1>
         <nav>
             <a href="{{ url_for('main.index') }}" class="back-link">&larr; На главную</a>
         </nav>
@@ -65,7 +65,7 @@
         </div>
 
         <div class="route-info card">
-            <h3>Информация о маршруте</h3>
+            <h3>Маршрут</h3>
             <p>Прогулка займёт: <span id="route-duration" class="highlight">0</span> мин</p>
             <p>Длина маршрута: <span id="route-distance" class="highlight">0</span> км</p>
             <div class="route-actions">
