@@ -86,6 +86,15 @@ export function initPublicHeader({ defaultTheme = 'dark' } = {}) {
 
   document.getElementById('themeToggle')?.addEventListener('click', () => toggleTheme(defaultTheme));
 
+  const siteTitleLink = document.querySelector('.site-title a');
+  const isIndexPage = document.getElementById('stats-section');
+  if (siteTitleLink && isIndexPage) {
+    siteTitleLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
   window.addEventListener('scroll', handleStickyHeader);
   handleStickyHeader();
 }
