@@ -1,0 +1,55 @@
+#clouds-viewport,
+#clouds-front-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+#clouds-front-viewport {
+  position: fixed;
+  z-index: var(--z-hero-clouds);
+}
+
+#clouds-world,
+#clouds-front-world {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 512px;
+  height: 512px;
+  margin-left: -256px;
+  margin-top: -256px;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: opacity var(--transition-slow), filter var(--transition-slow);
+}
+
+.cloud-base {
+  position: absolute;
+  left: 256px;
+  top: 256px;
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  margin-top: -10px;
+  transform-style: preserve-3d;
+}
+
+.cloud-layer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 256px;
+  height: 256px;
+  margin-left: -128px;
+  margin-top: -128px;
+  will-change: transform;
+  transition: opacity 1.2s ease-out;
+}
+
+html:not(.dark-mode) #clouds-world { opacity: 0.95; }
+html.dark-mode #clouds-world { opacity: 0.5; filter: brightness(0.6) saturate(0.85); }
+
+html:not(.dark-mode) #clouds-front-world { opacity: 0.85; filter: blur(2px); }
+html.dark-mode #clouds-front-world { opacity: 0.45; filter: blur(2px) brightness(0.6) saturate(0.85); }

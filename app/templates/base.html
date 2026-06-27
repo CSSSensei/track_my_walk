@@ -20,6 +20,7 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/clouds.css') }}">
         <link rel="preload" href="{{ url_for('static', filename='fonts/MorfinSans-Regular.ttf') }}" as="font" type="font/ttf" crossorigin>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,7 +37,8 @@
 
 <body class="{% block body_class %}{% endblock %}">
     {% block site_background %}
-    <div class="site-background" aria-hidden="true">
+    <div class="site-background" aria-hidden="true"
+         data-clouds-base="{{ url_for('static', filename='images/clouds/') }}">
         <div class="bg-grain"></div>
         <img class="bg-star" data-depth="0.25" style="top: 11%; left: 70%; width: 92px; --o: 0.95; --tw: 5.5s; --td: -0.4s;" src="{{ url_for('static', filename='images/stars/star1.png') }}" alt="">
         <img class="bg-star" data-depth="0.55" style="top: 29%; left: 17%; width: 74px; --o: 0.9; --tw: 6.5s; --td: -2.1s;" src="{{ url_for('static', filename='images/stars/star2.png') }}" alt="">
@@ -47,6 +49,7 @@
         <img class="bg-star" data-depth="0.22" style="top: 90%; left: 12%; width: 56px; --o: 0.85; --tw: 7s; --td: -5.6s;" src="{{ url_for('static', filename='images/stars/star7.png') }}" alt="">
     </div>
     <script src="{{ url_for('static', filename='js/common/parallax_background.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/clouds_background.js') }}"></script>
     {% endblock %}
 
     {% block header %}{% endblock %}

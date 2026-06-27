@@ -71,11 +71,6 @@ ul {
     justify-content: center;
     align-items: center;
 }
-
-.startup_header {
-    z-index: 9999;
-}
-
 .startup_logo svg {
     width: 100%;
     height: 100%;
@@ -103,6 +98,8 @@ ul {
 .map-container{
     width: 100%;
     background-color: var(--container-bg);
+    position: relative;
+    z-index: var(--z-above-clouds);
 }
 
 .map-wrapper {
@@ -122,6 +119,8 @@ ul {
     flex-direction: column;
     gap: 20px;
     justify-content: center;
+    position: relative;
+    z-index: var(--z-above-clouds);
 }
 
 .card {
@@ -786,6 +785,8 @@ html.dark-mode .random-walk-content {
     width: 100%;
     white-space: nowrap;
     padding: 20px 0;
+    position: relative;
+    z-index: var(--z-above-clouds);
 }
 
 .sponsors-track {
@@ -831,6 +832,8 @@ html.dark-mode .random-walk-content {
     text-align: center;
     margin-top: 20px;
     padding-bottom: 20px;
+    position: relative;
+    z-index: var(--z-above-clouds);
 }
 
 .copyright-container {
@@ -901,6 +904,8 @@ html.dark-mode .random-walk-content {
         filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.25));
     }
 }
+
+html:not(.dark-mode) .bg-star { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
     .bg-star { animation: none; }

@@ -33,6 +33,8 @@
     --blur-glass: 10px;
 
     --z-base: 1;
+    --z-hero-clouds: 2;     /* fixed foreground cloud layer over the hero */
+    --z-above-clouds: 3;    /* page content below the hero, raised over the clouds */
     --z-map-overlay: 500;
     --z-meta: 700;
     --z-header: 1000;
@@ -81,9 +83,9 @@
     --random-walk-button-text: #ffffff;
     --random-walk-creature-glow: var(--brand-sky);
 
-    --bg-grad-top: var(--brand-deep);
-    --bg-grad-mid: var(--brand-primary);
-    --bg-grad-bottom: var(--brand-sky);
+    --bg-grad-top: #1E8FD0;
+    --bg-grad-mid: #36A6E0;
+    --bg-grad-bottom: #74C4EC;
 
     --shadow-sm: 0 2px 8px var(--shadow-light);
     --shadow-md: 0 5px 15px var(--shadow-medium);
