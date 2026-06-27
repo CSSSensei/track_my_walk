@@ -799,7 +799,7 @@ html.dark-mode .random-walk-content {
     width: auto;
     margin: 0 30px;
     vertical-align: middle;
-    filter: grayscale(0.8) brightness(1.4) contrast(1.9) opacity(0.85);
+    filter: grayscale(0.95) brightness(1.4) contrast(1.9) opacity(0.85);
     transition: filter var(--transition-base);
 }
 
