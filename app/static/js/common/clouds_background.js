@@ -14,7 +14,7 @@
     layersMin: isMobile ? 6 : 8,
     layersMax: isMobile ? 11 : 13,
     spriteCap: isMobile ? 52 : 300,
-    spread: isMobile ? 256 : 700,         // initial cloud-base scatter (± px)
+    spread: isMobile ? 500 : 700,         // initial cloud-base scatter (± px)
     layerSpread: 0.025,    // sprite offset within a cloud (× ±256)
     layerZ: 100,         // sprite depth within a cloud (± px)
     scaleMin: 0.86,

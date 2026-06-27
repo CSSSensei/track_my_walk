@@ -539,3 +539,81 @@ button:hover {
 .delete-photo-btn:hover {
     background: var(--admin-danger-color-hover);
 }
+
+@media (max-width: 768px) {
+    .site-title {
+        font-size: 2.4em;
+        margin-top: 18px;
+    }
+
+    .container {
+        padding: 20px;
+        border-radius: var(--radius-xl);
+    }
+
+    .card {
+        padding: 18px 16px;
+    }
+
+    h1, h2 {
+        font-size: 1.6em;
+        margin-bottom: 18px;
+    }
+
+    .main-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .photo-upload-section {
+        grid-template-columns: 1fr;
+    }
+
+    .photo-upload-section button {
+        grid-column: span 1;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #walksTable {
+        min-width: 560px;
+    }
+
+    #map {
+        height: 60vh;
+        min-height: 320px;
+    }
+
+    .admin-actions-bottom {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+
+    .control-button-group {
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+    }
+
+    .site-title {
+        font-size: 2em;
+    }
+
+    .submit-button {
+        padding: 14px 16px;
+        font-size: 1.1em;
+        margin-top: 20px;
+    }
+
+    button, .button {
+        font-size: 1em;
+    }
+}
