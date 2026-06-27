@@ -1,14 +1,20 @@
+from pathlib import Path
 from typing import List
-from flask import Blueprint, render_template, jsonify, abort
+from flask import Blueprint, current_app, render_template, jsonify, abort
 from ..extensions.database import get_db_interface
 from ..models.walk import Walk
 
 bp = Blueprint('main', __name__)
 
 
+def _sponsor_logos() -> List[str]:
+    brands_dir = Path(current_app.static_folder) / 'images' / 'brands'
+    return sorted(p.name for p in brands_dir.iterdir() if p.is_file())
+
+
 @bp.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', sponsors=_sponsor_logos())
 
 
 @bp.route('/walks', methods=['GET'])
