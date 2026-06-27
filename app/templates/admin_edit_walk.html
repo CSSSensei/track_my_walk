@@ -33,7 +33,7 @@
 
             <div class="form-group">
                 <label>Маршрут на карте:</label>
-                <div id="map" style="height: 500px; width: 100%; border-radius: 10px; box-shadow: inset 0 0 10px rgba(0,0,0,0.6); background-color: #334433;"></div>
+                <div id="map" style="height: 500px; width: 100%; border-radius: 10px; box-shadow: inset 0 0 10px rgba(0,0,0,0.6); background-color: #0e1a30;"></div>
             </div>
 
             <div class="control-button-group">
@@ -98,5 +98,5 @@
     <script id="initialWalkData" type="application/json">{{ walk_data_json | safe }}</script>
     <script id="currentWalkId" type="application/json">{{ walk.id | tojson }}</script>
 
-    <script src="{{ url_for('static', filename='js/admin_edit_walk.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin/admin_edit_walk.js') }}"></script>
 {% endblock %}

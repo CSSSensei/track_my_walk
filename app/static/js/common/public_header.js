@@ -18,30 +18,22 @@ function updateIconColor() {
   const themeIcon = document.getElementById('themeIcon');
   if (!themeIcon) return;
 
-  const isScrolled = window.scrollY > 30;
-
-  if (document.documentElement.classList.contains('dark-mode')) {
-    if (isScrolled) {
-      themeIcon.style.filter =
-        'invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)';
-    } else {
-      themeIcon.style.filter =
-        'invert(67%) sepia(98%) saturate(354%) hue-rotate(51deg) brightness(97%) contrast(101%)';
-    }
-  } else {
-    themeIcon.style.filter =
-      'invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%)';
-  }
+  themeIcon.style.filter = 'brightness(0) invert(1)';
 }
 
 function handleStickyHeader() {
   const stickyHeader = document.getElementById('sticky-header-container');
   if (!stickyHeader) return;
 
-  if (window.scrollY > 30) {
-    stickyHeader.classList.add('scrolled');
+  const startup = document.querySelector('.startup_container');
+
+  if (startup) {
+    const passedStartup = startup.getBoundingClientRect().bottom <= 80;
+    stickyHeader.classList.toggle('revealed', passedStartup);
+    stickyHeader.classList.toggle('scrolled', passedStartup);
   } else {
-    stickyHeader.classList.remove('scrolled');
+    stickyHeader.classList.add('revealed');
+    stickyHeader.classList.toggle('scrolled', window.scrollY > 30);
   }
 
   updateIconColor();

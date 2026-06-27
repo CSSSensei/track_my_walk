@@ -1,7 +1,9 @@
 <div id="sticky-header-container">
     <header class="sticky-header-content">
         <h1 class="site-title">
-            <a href="{{ url_for('main.index') }}">Track my walk</a>
+            <a href="{{ url_for('main.index') }}" aria-label="Track my walk">
+                <img class="site-logo" src="{{ url_for('static', filename='images/logo/logo-w.svg') }}" alt="Track my walk" width="320" height="34">
+            </a>
         </h1>
 
         {% if show_theme_toggle %}

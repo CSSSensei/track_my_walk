@@ -103,7 +103,7 @@ function initSingleWalkMap() {
       const lineCoordinates = walkData.path_geojson.coordinates.map((coord) => [coord[1], coord[0]]);
 
       const animatedLine = L.polyline([], {
-        color: '#4CAF50',
+        color: '#034DE2',
         weight: 5,
         opacity: 0.9,
         snakingSpeed: 500,

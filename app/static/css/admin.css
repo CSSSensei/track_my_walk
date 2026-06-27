@@ -1,31 +1,37 @@
+@import url("tokens.css");
+
 :root {
-    --admin-bg-color: #0A140A;
-    --admin-container-bg: #152015;
-    --admin-card-bg: #202B20;
-    --admin-text-color: #E0E0E0;
-    --admin-heading-color: #F0F0F0;
-    --admin-border-color: #334433;
-    --admin-accent-color: #66FF00;
-    --admin-accent-color-hover: #99FF33;
-    --admin-primary-color: #2B3D2B;
+    --admin-bg-color: #070b14;
+    --admin-container-bg: #0e1626;
+    --admin-card-bg: #121c2e;
+    --admin-text-color: #d7e0ee;
+    --admin-heading-color: #f1f5fc;
+    --admin-border-color: #24344d;
+    --admin-accent-color: var(--brand-sky);
+    --admin-accent-color-hover: #5cc6ff;
+    --admin-primary-color: #1a2740;
     --admin-danger-color: #FF4444;
     --admin-danger-color-hover: #CC0000;
     --admin-success-color: #00FF99;
-    --admin-info-color: #00CCFF;
+    --admin-success-color-hover: #00CC88;
+    --admin-info-color: var(--brand-sky);
+    --admin-on-accent: #000000;
+    --admin-secondary-bg: #6c757d;
+    --admin-secondary-bg-hover: #5a6268;
     --admin-shadow-light: rgba(0, 0, 0, 0);
     --admin-shadow-medium: rgba(0, 0, 0, 0);
-    --admin-header-text-color: #F0F0F0;
-    --admin-map-overlay-color: rgba(102, 255, 0, 0.3);
+    --admin-header-text-color: #f1f5fc;
+    --admin-map-overlay-color: rgba(var(--brand-sky-rgb), 0.3);
     --toast-bg-opacity: 0.3;
     --toast-blur-amount: 20px;
     --toast-error-bg: rgba(255, 68, 68, var(--toast-bg-opacity));
     --toast-success-bg: rgba(0, 255, 153, var(--toast-bg-opacity));
-    --toast-info-bg: rgba(0, 204, 255, var(--toast-bg-opacity));
-    --fancy-title-shadow: rgba(102, 255, 0, 0.5);
+    --toast-info-bg: rgba(var(--brand-sky-rgb), var(--toast-bg-opacity));
+    --fancy-title-shadow: rgba(var(--brand-sky-rgb), 0.5);
 }
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     background: var(--admin-bg-color);
     color: var(--admin-text-color);
     padding: 0;
@@ -36,31 +42,30 @@ body {
     align-items: center;
     min-height: 100vh;
     box-sizing: border-box;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color var(--transition-base), color var(--transition-base);
 }
 
 @font-face {
     font-family: 'Morfin Sans';
-    src: url('../../fonts/MorfinSans-Regular.ttf') format('truetype');
+    src: url('../fonts/MorfinSans-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
 }
 
-/* Header */
 .sticky-header-content {
     max-width: 100%;
     width: 100%;
 }
 
 .site-title {
-    font-family: 'Morfin Sans', sans-serif;
+    font-family: var(--font-display);
     font-size: 3.2em;
-    color: #66FF00;
+    color: var(--admin-accent-color);
     text-shadow: 2px 2px 5px var(--fancy-title-shadow);
     font-weight: 700;
     line-height: 0.8;
-    transition: color 0.3s ease;
+    transition: color var(--transition-base);
     border-bottom: none;
     margin-top: 30px;
     margin-bottom: 0;
@@ -69,15 +74,14 @@ body {
 .site-title a {
     color: inherit;
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color var(--transition-base);
 }
 
 .site-title a:hover {
-    color: #388E3C;
+    color: var(--admin-accent-color-hover);
     text-decoration: none;
 }
 
-/* Layout */
 .content-wrapper {
     width: 100%;
     box-sizing: border-box;
@@ -94,23 +98,22 @@ body {
     max-width: 960px;
     width: 100%;
     background: var(--admin-container-bg);
-    border-radius: 20px;
+    border-radius: var(--radius-3xl);
     padding: 30px;
     box-shadow: 0 10px 30px var(--admin-shadow-medium);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 .card {
     background: var(--admin-card-bg);
     padding: 25px 30px;
-    border-radius: 10px;
+    border-radius: var(--radius-lg);
     margin-bottom: 5px;
     box-shadow: 0 5px 20px var(--admin-shadow-light);
     border: 1px solid var(--admin-border-color);
-    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
-/* Typography */
 h1, h2 {
     color: var(--admin-heading-color);
     border-bottom: 1px solid var(--admin-border-color);
@@ -119,10 +122,9 @@ h1, h2 {
     margin-bottom: 25px;
     font-size: 2em;
     text-align: center;
-    transition: color 0.3s ease, border-color 0.3s ease;
+    transition: color var(--transition-base), border-color var(--transition-base);
 }
 
-/* Forms */
 .form-group {
     margin-bottom: 20px;
 }
@@ -133,7 +135,7 @@ label {
     font-weight: bold;
     color: var(--admin-text-color);
     font-size: 1em;
-    transition: color 0.3s ease;
+    transition: color var(--transition-base);
 }
 
 input[type="text"],
@@ -143,12 +145,12 @@ textarea {
     width: calc(100% - 24px);
     padding: 12px;
     border: 1px solid var(--admin-border-color);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: var(--admin-primary-color);
     color: var(--admin-text-color);
     font-size: 1.05em;
     box-sizing: border-box;
-    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    transition: background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base);
 }
 
 input[type="text"]:focus,
@@ -160,16 +162,15 @@ textarea:focus {
     box-shadow: 0 0 0 3px var(--admin-accent-color-hover);
 }
 
-/* Buttons */
 button {
     background: var(--admin-accent-color);
-    color: black;
+    color: var(--admin-on-accent);
     border: none;
     padding: 12px 25px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     font-size: 1.1em;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    transition: background-color var(--transition-base), transform var(--transition-fast), box-shadow var(--transition-base);
     box-shadow: 0 2px 8px var(--admin-shadow-light);
 }
 
@@ -199,7 +200,6 @@ button:hover {
     flex-wrap: wrap;
 }
 
-/* Buttons inside control group: destructive by default */
 .control-button-group button {
     background: var(--admin-danger-color);
     color: white;
@@ -209,7 +209,6 @@ button:hover {
     background: var(--admin-danger-color-hover);
 }
 
-/* Actions row and navigation links */
 .admin-actions-bottom {
     display: flex;
     justify-content: space-between;
@@ -222,11 +221,11 @@ button:hover {
     display: inline-block;
     padding: 10px 20px;
     background-color: var(--admin-accent-color);
-    color: black;
+    color: var(--admin-on-accent);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--radius-xs);
     text-decoration: none;
-    transition: background-color 0.3s ease;
+    transition: background-color var(--transition-base);
     cursor: pointer;
 }
 
@@ -238,7 +237,7 @@ button:hover {
     color: #dc3545;
     text-decoration: none;
     font-weight: bold;
-    transition: all 0.3s ease;
+    transition: all var(--transition-base);
     margin-top: 30px;
 }
 
@@ -247,7 +246,7 @@ button:hover {
     text-decoration: none;
     font-weight: bold;
     font-size: 1.1em;
-    transition: color 0.3s ease;
+    transition: color var(--transition-base);
 }
 
 .logout-link a:hover {
@@ -256,24 +255,23 @@ button:hover {
 }
 
 .secondary-button {
-    background: #6c757d !important;
+    background: var(--admin-secondary-bg) !important;
     color: white !important;
     border: none;
     padding: 12px 25px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     font-size: 1.1em;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    transition: background-color var(--transition-base), transform var(--transition-fast), box-shadow var(--transition-base);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .secondary-button:hover {
-    background: #5a6268 !important;
+    background: var(--admin-secondary-bg-hover) !important;
     transform: translateY(-1px);
     color: white !important;
 }
 
-/* Tables */
 .table-responsive {
     margin-top: 0;
     width: 100%;
@@ -308,70 +306,66 @@ button:hover {
 
 .edit-button {
     background: var(--admin-accent-color);
-    color: black;
+    color: var(--admin-on-accent);
     padding: 8px 15px;
-    border-radius: 5px;
+    border-radius: var(--radius-xs);
     font-size: 0.9em;
-    transition: background-color 0.3s ease;
+    transition: background-color var(--transition-base);
 }
 
 .edit-button:hover {
     background: var(--admin-accent-color-hover);
 }
 
-/* Used for Delete buttons in table */
 .control-button-group.button {
     background: var(--admin-danger-color);
     color: white;
     padding: 8px 15px;
-    border-radius: 5px;
+    border-radius: var(--radius-xs);
     font-size: 0.9em;
-    transition: background-color 0.3s ease;
+    transition: background-color var(--transition-base);
 }
 
 .control-button-group.button:hover {
     background: var(--admin-danger-color-hover);
 }
 
-/* “Add walk” primary action */
 .add-button {
     background: var(--admin-success-color);
-    color: black;
+    color: var(--admin-on-accent);
     padding: 12px 25px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 1.1em;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    transition: background-color var(--transition-base), transform var(--transition-fast), box-shadow var(--transition-base);
     box-shadow: 0 2px 8px var(--admin-shadow-light);
 }
 
 .add-button:hover {
-    background: #00CC88;
+    background: var(--admin-success-color-hover);
     transform: translateY(-1px);
 }
 
-/* Map */
 #map {
     height: 500px;
     width: 100%;
     margin-top: 25px;
-    border-radius: 10px;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.6);
-    background-color: #334433;
+    border-radius: var(--radius-lg);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
+    background-color: var(--surface-map);
 }
 
 .leaflet-control-attribution {
     display: none !important;
 }
 
-/* Toast */
 .toast-message {
     position: fixed;
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 1000;
+    z-index: var(--z-header);
     padding: 15px 30px;
-    border-radius: 10px;
+    border-radius: var(--radius-lg);
     font-weight: bold;
     text-align: center;
     font-size: 1.1em;
@@ -381,7 +375,7 @@ button:hover {
     -webkit-backdrop-filter: blur(var(--toast-blur-amount));
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out, background-color 0.3s ease;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out, background-color var(--transition-base);
     max-width: 600px;
     width: 90%;
 }
@@ -409,7 +403,6 @@ button:hover {
     border: 1px solid var(--admin-info-color);
 }
 
-/* Grid */
 .main-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -417,7 +410,6 @@ button:hover {
     margin-bottom: 1px;
 }
 
-/* Flatpickr overrides for dark theme */
 .flatpickr-calendar {
     background: var(--admin-card-bg) !important;
     border: 1px solid var(--admin-border-color) !important;
@@ -439,7 +431,7 @@ button:hover {
 .flatpickr-day.endRange, .flatpickr-day.endRange:hover {
     background: var(--admin-accent-color) !important;
     border-color: var(--admin-accent-color) !important;
-    color: black !important;
+    color: var(--admin-on-accent) !important;
 }
 
 .flatpickr-day.today.selected {
@@ -471,13 +463,12 @@ button:hover {
     color: var(--admin-text-color) !important;
 }
 
-/* Photos (admin edit walk) */
 .photos-section {
     display: none;
     margin-top: 20px;
     padding: 20px;
     border: 1px solid var(--admin-border-color);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
 }
 
 .photos-section h2 {
@@ -516,8 +507,8 @@ button:hover {
 .photo-thumbnail-container {
     border: 1px solid var(--admin-border-color);
     padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: var(--radius-xs);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
 
@@ -542,7 +533,7 @@ button:hover {
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.8em;
-    transition: background-color 0.3s ease;
+    transition: background-color var(--transition-base);
 }
 
 .delete-photo-btn:hover {

@@ -191,7 +191,7 @@ function setupFormSubmit() {
         if (routeLayer) map.removeLayer(routeLayer);
 
         const leafletCoords = currentRouteCoords.map((coord) => [coord[1], coord[0]]);
-        routeLayer = L.polyline(leafletCoords, { color: '#388E3C', weight: 5 }).addTo(map);
+        routeLayer = L.polyline(leafletCoords, { color: '#034DE2', weight: 5 }).addTo(map);
         map.fitBounds(routeLayer.getBounds());
       } else {
         showError(data.error || 'Произошла ошибка при получении маршрута.');

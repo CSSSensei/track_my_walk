@@ -21,7 +21,7 @@ function updateRoute() {
 
     if (drawnRoute.length > 0) {
         const latLngs = drawnRoute.map(coord => L.latLng(coord[1], coord[0]));
-        polyline = L.polyline(latLngs, {color: '#e94560', weight: 4, opacity: 0.8}).addTo(map);
+        polyline = L.polyline(latLngs, {color: '#27B1F2', weight: 4, opacity: 0.8}).addTo(map);
     }
 }
 

@@ -65,7 +65,7 @@ function initMap(initialGeoJson = null) {
             const geoJsonLayer = L.geoJSON(initialGeoJson, {
                 style: function() {
                     return {
-                        color: '#FF0000',
+                        color: '#034DE2',
                         weight: 4,
                         opacity: 0.8
                     };
@@ -93,7 +93,7 @@ function initMap(initialGeoJson = null) {
         draw: {
             polyline: {
                 shapeOptions: {
-                    color: '#FF0000'
+                    color: '#034DE2'
                 }
             },
             polygon: false,

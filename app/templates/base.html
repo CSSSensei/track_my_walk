@@ -17,7 +17,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
 
     {% block base_styles %}
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
         <link rel="preload" href="{{ url_for('static', filename='fonts/MorfinSans-Regular.ttf') }}" as="font" type="font/ttf" crossorigin>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,6 +35,20 @@
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
+    {% block site_background %}
+    <div class="site-background" aria-hidden="true">
+        <div class="bg-grain"></div>
+        <img class="bg-star" data-depth="0.25" style="top: 11%; left: 70%; width: 92px; --o: 0.95; --tw: 5.5s; --td: -0.4s;" src="{{ url_for('static', filename='images/stars/star1.png') }}" alt="">
+        <img class="bg-star" data-depth="0.55" style="top: 29%; left: 17%; width: 74px; --o: 0.9; --tw: 6.5s; --td: -2.1s;" src="{{ url_for('static', filename='images/stars/star2.png') }}" alt="">
+        <img class="bg-star" data-depth="0.18" style="top: 54%; left: 82%; width: 58px; --o: 0.8; --tw: 7.5s; --td: -3.7s;" src="{{ url_for('static', filename='images/stars/star3.png') }}" alt="">
+        <img class="bg-star" data-depth="0.42" style="top: 67%; left: 33%; width: 50px; --o: 0.85; --tw: 4.8s; --td: -1.2s;" src="{{ url_for('static', filename='images/stars/star4.png') }}" alt="">
+        <img class="bg-star" data-depth="0.32" style="top: 83%; left: 62%; width: 80px; --o: 0.9; --tw: 6s; --td: -4.5s;" src="{{ url_for('static', filename='images/stars/star5.png') }}" alt="">
+        <img class="bg-star" data-depth="0.62" style="top: 40%; left: 48%; width: 38px; --o: 0.75; --tw: 5.2s; --td: -2.8s;" src="{{ url_for('static', filename='images/stars/star6.png') }}" alt="">
+        <img class="bg-star" data-depth="0.22" style="top: 90%; left: 12%; width: 56px; --o: 0.85; --tw: 7s; --td: -5.6s;" src="{{ url_for('static', filename='images/stars/star7.png') }}" alt="">
+    </div>
+    <script src="{{ url_for('static', filename='js/common/parallax_background.js') }}"></script>
+    {% endblock %}
+
     {% block header %}{% endblock %}
 
     {% block body %}{% endblock %}

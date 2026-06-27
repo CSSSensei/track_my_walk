@@ -167,7 +167,7 @@ async function fetchWalksAndDisplay() {
         const geoJsonLayer = L.geoJSON(geojsonData, {
           style() {
             return {
-              color: '#FF0000',
+              color: '#034DE2',
               weight: 4,
               opacity: 0.8,
             };
@@ -177,7 +177,7 @@ async function fetchWalksAndDisplay() {
 
             layer.on('mouseover', function () {
               layer.setStyle({
-                color: '#00FF00',
+                color: '#27B1F2',
                 weight: 5,
                 opacity: 1.0,
               });
@@ -185,7 +185,7 @@ async function fetchWalksAndDisplay() {
 
             layer.on('mouseout', function () {
               layer.setStyle({
-                color: '#FF0000',
+                color: '#034DE2',
                 weight: 4,
                 opacity: 0.8,
               });
