@@ -27,6 +27,8 @@
     interactionDamp: 0.92,   // per-1/60s decay of the interaction velocity
     maxInteraction: 220,     // px/s cap on cursor-induced speed
     boundMargin: isMobile ? 160 : 360,  // px the roam field extends past each viewport edge (bounce)
+    textRepel: 1600,     // px/s² push out of the heading's keep-clear zone
+    textPad: isMobile ? 120 : 220,  // px the keep-clear zone extends past the heading box (sprites are wide)
   };
 
   const TEXTURES = [
@@ -120,6 +122,22 @@
     by = window.innerHeight * 0.5 + CONFIG.boundMargin;
   }, { passive: true });
 
+  let heroText = null;
+  let zone = null;
+  function measureZone() {
+    if (!heroText) { zone = null; return; }
+    const r = heroText.getBoundingClientRect();
+    if (r.width <= 0 || r.bottom <= 0 || r.top >= window.innerHeight) { zone = null; return; }
+    zone = {
+      cx: (r.left + r.right) / 2 - window.innerWidth / 2,
+      cy: (r.top + r.bottom) / 2 - window.innerHeight / 2,
+      hw: r.width / 2 + CONFIG.textPad,
+      hh: r.height / 2 + CONFIG.textPad,
+    };
+  }
+  window.addEventListener('scroll', measureZone, { passive: true });
+  window.addEventListener('resize', measureZone, { passive: true });
+
   // .startup_container isn't in the DOM yet when this script runs (later <body>
   // block); on the hero page, move some clouds into the fixed front layer
   function promoteFrontClouds() {
@@ -127,6 +145,8 @@
     const worldFront = buildWorld('clouds-front', document.body, null);
     const frontCount = Math.min(clouds.length, Math.max(1, Math.round(clouds.length * CONFIG.frontRatio)));
     for (let i = 0; i < frontCount; i++) worldFront.appendChild(clouds[i].el);
+    heroText = document.querySelector('.startup_header');
+    measureZone();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', promoteFrontClouds);
@@ -179,6 +199,20 @@
           const push = CONFIG.repel * fall * fall;
           c.ix += ex * inv * push * ds;
           c.iy += ey * inv * push * ds;
+        }
+      }
+
+      if (zone) {
+        const dx = c.x - zone.cx, dy = c.y - zone.cy;
+        const nx = dx / zone.hw, ny = dy / zone.hh;
+        const r2 = nx * nx + ny * ny;
+        if (r2 < 1) {
+          const len = Math.hypot(dx, dy);
+          const ux = len > 1 ? dx / len : 0;
+          const uy = len > 1 ? dy / len : -1;
+          const push = CONFIG.textRepel * (1 - Math.sqrt(r2));
+          c.ix += ux * push * ds;
+          c.iy += uy * push * ds;
         }
       }
 
