@@ -682,6 +682,13 @@ html.dark-mode .photo-nav-btn {
     transform: translateY(-2px);
 }
 
+#map-container {
+    height: 500px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 4px 12px var(--shadow-light);
+}
+
 #map {
     height: 100%;
     width: 100%;
@@ -839,11 +846,19 @@ html.dark-mode .photo-nav-btn {
     .submit-button {
         grid-column: span 1;
     }
+
+    #map-container {
+        height: 400px;
+    }
 }
 
 @media (max-width: 480px) {
     .coord-inputs {
         grid-template-columns: 1fr;
+    }
+
+    #map-container {
+        height: 350px;
     }
 
     .route-actions {
